@@ -2,89 +2,10 @@
   text-align: center;
 }
 
-
-
- .Tile {
- 	width: 75px;
- 	height: 75px;
- 	border: 1px solid #000;
- 	background-color: #ccc;
- }
-
-.Door {
-
+.active {
+	border: 3px solid #00bcd4 !important;
 }
 
-
- .active {
- 	border: 3px solid #FFFC00 !important;
- }
-
-/*.floor {
- 	background-image: url(../img/brick-wall.png);
- 	background-size: 75px;
- }
-
-.stairs {
- 	background-image: url(../img/stairs.png);
- 	background-size: 75px;
- }
-
-.door {
- 	background-image: url(../img/door.png);
-  	background-size: 75px;
- }
-
-  .gloop {
- 	background-image: url(../img/gloop.png);
- 	background-size: 75px;
- }
-
-   .spiky-pit {
- 	background-image: url(../img/spiky-pit.png);
- 	background-size: 75px;
- }
-
-.entry {
- 	background-image: url(../img/entry.png);
-  	background-size: 75px;
- }
-
-.exit {
- 	background-image: url(../img/exit.png);
-  	background-size: 75px;
- }*/
-
-.Door {
- 	background-image: url(../img/door.png);
-  	background-size: 75px;
- 	z-index: 5;
-	width: 75px;
-	height: 75px;
- }
-
-.Door.left {
-	transform: rotate(-0.25turn);
-    left: -38px;
-    top: -93px;
-	position: relative;
-}
-.Door.right {
-	transform: rotate(0.25turn);
-	left: 38px;
-    top: -93px;
-	position: relative;
-}
-
-.Door.bottom {
-	transform: rotate(-0.5turn);
-	top: 20px;
-	position: relative;
-}
-.Door.top {
-	top: -56px;
-	position: relative;
-}
 
 .characters {
 	background-size: 75px;
@@ -95,47 +16,83 @@
 }
 
 
- .floor {
- 	background-image: url(../img/brick-wall.png);
- 	background-size: 75px;
- }
+.floor {
+	background-image: url(../img/brick-wall.png);
+	background-size: 75px;
+}
 
- .stairs {
- 	background-image: url(../img/stairs.png);
- 	background-size: 75px;
- }
+.stairs {
+	background-image: url(../img/stairs.png);
+	background-size: 75px;
+}
 
- .door {
- 	background-image: url(../img/door.png);
-  	background-size: 75px;
- }
+.door {
+	background-image: url(../img/door.png);
+	background-size: 75px;
+}
 
- .gloop {
- 	background-image: url(../img/gloop.png);
- 	background-size: 75px;
- }
+.gloop {
+	background-image: url(../img/gloop.png);
+	background-size: 75px;
+}
 
- .spiky-pit {
- 	background-image: url(../img/spiky-pit.png);
- 	background-size: 75px;
- }
+.spiky-pit {
+	background-image: url(../img/spiky-pit.png);
+	background-size: 75px;
+}
 
- .entry {
- 	background-image: url(../img/entry.png);
-  	background-size: 75px;
- }
+.entry {
+	background-image: url(../img/entry.png);
+	background-size: 75px;
+}
 
- .exit {
- 	background-image: url(../img/exit.png);
-  	background-size: 75px;
- }
+.exit {
+	background-image: url(../img/exit.png);
+	background-size: 75px;
+}
 
- .exit {
- 	background-image: url(../img/exit.png);
-  	background-size: 75px;
- }
+.gravel {
+	background-image: url(../img/gravel.png);
+	background-size: 75px;
+}
 
- .chest {
- 	  background-image: url(../img/chest.png);
-  	background-size: 75px;
- }
+.chest {
+	background-image: url(../img/chest.png);
+	background-size: 75px;
+}
+
+.door_ew {
+  background-image: url(../img/door_ew.png);
+  background-size: 75px;
+}
+
+.door_ns {
+  background-image: url(../img/door_ns.png);
+  background-size: 75px;
+}
+
+.portcullus_ew {
+  background-image: url(../img/portcullus_ew.png);
+  background-size:  75px 150px;
+}
+
+.portcullus_ns {
+  background-image: url(../img/portcullus_ns.png);
+  background-size: 150px 75px;
+}
+
+.EntityPaper{
+  height: 75px;
+  width: 250px;
+  margin: 15px;
+  text-align: center;
+  display: block;
+}
+
+.TilePaper{
+  margin: 21px;
+  text-align: center;
+  display: block;
+  background-color: #CCC !important;
+  padding: 5px;
+}

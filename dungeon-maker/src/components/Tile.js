@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 
+import '../css/Tile.css';
+
 class Tile extends Component {
 
   render() {
-  	let {id, label, onSelectTile, isActive} = this.props;
-  	let className = label+' Tile';
-  	className += isActive ? ' active' : '';
+  	let {id, tile, onSelectTile, isActive} = this.props;
+  	let className = tile.label+' Tile';
+  	let style = {
+  		width: (75 * ((tile.size === undefined) ? 1 : tile.size.width)),
+  		height: (75 * ((tile.size === undefined) ? 1 : tile.size.height)),
+  	}
+  	
 	  return (
-	      <div className={className} onClick={onSelectTile.bind(this,id)}></div>
+	      <div style={style} className={className} onClick={onSelectTile.bind(this,id)}></div>
 	    );
 	}
 }

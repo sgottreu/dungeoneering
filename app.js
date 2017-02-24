@@ -45,14 +45,14 @@ app.get('/findDungeonGrid', function (req, res) {
 
 app.get('/findDungeonGrids', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
-
+	console.log('Finding grids');
 	dungeon_grid.find({ _type: 'encounter' }).then(function(docs) {
     let grids = [];
     for(var x=0,len=docs.length;x<len;x++){
-		grids[x] = { encounter_id: docs[x].encounter_id, title: (docs[x].title !== undefined) ? docs[x].title : '' };
-	}
-    res.writeHead(200, {"Content-Type": "application/json"});
-    res.end( JSON.stringify( grids ) );
+  		grids[x] = { encounter_id: docs[x].encounter_id, title: (docs[x].title !== undefined) ? docs[x].title : '' };
+  	}
+	 console.log(`Found ${grids.length} grids`);
+    sendJSON(res, grids);
   });
 });
 

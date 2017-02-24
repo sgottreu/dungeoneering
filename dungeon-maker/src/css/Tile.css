@@ -1,0 +1,7 @@
+.Tile {
+	width: 75px;
+	height: 75px;
+	background-color: #ccc;
+  background-position: center;
+  background-repeat: no-repeat;
+}

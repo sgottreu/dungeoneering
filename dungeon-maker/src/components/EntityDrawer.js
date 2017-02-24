@@ -3,6 +3,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Drawer from 'material-ui/Drawer';
 import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
+import Paper from 'material-ui/Paper';
 import axios from 'axios';
 import {Variables} from './Variables';
 
@@ -47,8 +48,6 @@ class EntityDrawer extends Component {
       display: 'block'
     };
 
-    console.log(availableMonsters);
-
 		return (
 			<div className="EntityDrawer">
 			 <RaisedButton
@@ -65,16 +64,20 @@ class EntityDrawer extends Component {
             {availableMonsters.map((monster, index) => {
               let m = monster;
               let entity_id = (selectedEntity === undefined) ? false : selectedEntity.entity_id;
-              let className = (entity_id === m.entity_id ) ? ' active' : '';
+              let className = '';//(entity_id === m.entity_id ) ? ' active' : '';
+
               return (
-                <ListItem 
-                  className={className}
-                  key={index}
-                  onTouchTap={onSelectEntity.bind(this, m.entity_id)}
-                  primaryText={m.name}
-                  secondaryText={<span>HP: {m.hp}, XP: {m.xp}, Lvl: {m.level}</span>}
-                  leftAvatar={<Avatar data-icon={m.iconClass} className={`${m.iconClass} icon`} />}
-                />
+                <Paper key={index} className="EntityPaper" zDepth={(entity_id === m.entity_id ) ? 4 : 1 } >
+
+                  <ListItem 
+                    className={className}
+                    key={index}
+                    onTouchTap={onSelectEntity.bind(this, m.entity_id)}
+                    primaryText={m.name}
+                    secondaryText={<span>HP: {m.hp}, XP: {m.xp}, Lvl: {m.level}</span>}
+                    leftAvatar={<Avatar data-icon={m.iconClass} className={`${m.iconClass} icon`} />}
+                  />
+                </Paper>
               );
             })}
           </List>
