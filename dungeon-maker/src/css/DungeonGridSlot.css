@@ -7,7 +7,6 @@
 	border: 1px solid #000;
 	/*display: inline-block;*/
     flex-basis: auto;
-    z-index: 1;
 }
 
  .DungeonGridSlot.selected {
@@ -57,11 +56,6 @@
     
  }
 
-.DungeonGridSlot.door:before {
-    background-image: url(../img/door.png);
-    
- }
-
 .DungeonGridSlot.gloop:before {
     background-image: url(../img/gloop.png);
     
@@ -80,7 +74,29 @@
     background-image: url(../img/exit.png);
     
 }
-
+.DungeonGridSlot.gravel:before {
+    background-image: url(../img/gravel.png);
+}
 .DungeonGridSlot.chest:before {
     background-image: url(../img/chest.png);
 }
+
+.DungeonGridSlot.door_ew:before {
+    background-image: url(../img/door_ew.png);
+    
+ }
+
+ .DungeonGridSlot.door_ns:before {
+    background-image: url(../img/door_ns.png);
+    
+ }
+
+ .DungeonGridSlot.portcullus_ew:before {
+    background-image: url(../img/portcullus_ew.png);
+    
+ }
+
+ .DungeonGridSlot.portcullus_ns:before {
+    background-image: url(../img/portcullus_ns.png);
+    
+ }

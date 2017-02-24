@@ -5,23 +5,44 @@ import '../css/DungeonGridSlot.css';
 
 class DungeonGridSlot extends Component {
   
+  constructor(props){
+    super(props);
+    this.loadEntityTile = this.loadEntityTile.bind(this);
+
+  }
+
+  loadEntityTile(slot){
+    if(!slot.overlays.entity){
+      return false;
+    }
+    let entity = slot.overlays.entity;
+    let style = {
+      width: (75 * entity.size),
+      height: (75 * entity.size),
+      position: 'absolute',
+      top: slot.top,
+      left: slot.left,
+      backgroundSize: (75 * entity.size)
+    }
+
+    return (
+      <div style={style} key={slot.overlays.entity.entity_id} className={slot.overlays.entity.iconClass+' Entity icon'}/>
+    );
+  }
+
+
   render() {
-    let {id, tileType, onAddTile, overlays} = this.props;
+    let {id, slot, onAddTile, overlays, availableCharacters, availableMonsters} = this.props;
     let className = 'DungeonGridSlot ';
-    className += (tileType === undefined || tileType === 'door') ? '' : tileType;
-//console.log(id);
+    className += (slot.tileType === undefined || slot.tileType === '') ? '' : slot.tileType;
+
     if(onAddTile === undefined){
       onAddTile = function() { return false };
     }
 
     return (
       <div className={className} data-slot={id} onClick={onAddTile.bind(this, id)}>&nbsp;
-        {overlays.doors.map( (door, x) => (
-          <Door key={x} door={door}/>
-        ))}
-        {(overlays.entity) ? <div key={overlays.entity.entity_id} className={overlays.entity.iconClass+' Entity icon'}/> : ''}
-
-
+        {this.loadEntityTile(slot)}
       </div>
     );
   }

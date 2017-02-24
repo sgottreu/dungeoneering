@@ -17,7 +17,7 @@ class DungeonMaker extends Component {
 
     this.selectTile = this.selectTile.bind(this);
     this.addTile = this.addTile.bind(this);
-    this.setDoors = this.setDoors.bind(this);
+    // this.setDoors = this.setDoors.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.saveDungeonGrid = this.saveDungeonGrid.bind(this);
     this.chooseDungeon = this.chooseDungeon.bind(this);
@@ -106,12 +106,12 @@ class DungeonMaker extends Component {
       return false;
     } 
 
-    state.tileType = tileType.label;
+    state.tileType = (state.tileType === tileType.label) ? '' : tileType.label;
 
-    // if(tileType.overlay){
-    //   state = this.setDoors(state, e, slot);        
-    //   this.setState( state );    
+    // if(tileType.size !== undefined){
+    //   state = this.setDoors(state, e, slot);          
     // } 
+    this.setState( state );
   }
 
   setEntity(e, state, slot){
@@ -142,37 +142,37 @@ class DungeonMaker extends Component {
     this.setState( { title: e.target.value } );
   }
 
-  setDoors(state, e, slot){
-    if(typeof state.connectedDoor === "object" ){
-      let startSlot = state.connectedDoor.side1;
+  // setDoors(state, e, slot){
+  //   if(typeof state.connectedDoor === "object" ){
+  //     let startSlot = state.connectedDoor.side1;
 
-      //Update Original 
+  //     //Update Original 
 
-      let i = state.slots[ startSlot - 1 ].overlays.doors.findIndex( function(val) { return val.side1.slot === startSlot} );
-      state.slots[ startSlot - 1 ].overlays.doors[ i ].side2 = {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot };
-      let startSlotSide1 = state.slots[ startSlot - 1 ].overlays.doors[ i ].side1;
+  //     let i = state.slots[ startSlot - 1 ].overlays.doors.findIndex( function(val) { return val.side1.slot === startSlot} );
+  //     state.slots[ startSlot - 1 ].overlays.doors[ i ].side2 = {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot };
+  //     let startSlotSide1 = state.slots[ startSlot - 1 ].overlays.doors[ i ].side1;
 
-      if(startSlot !== slot){
-        state.slots[ slot - 1 ].overlays.doors.push( 
-          { side1: {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot },
-            side2: startSlotSide1 } 
-        );      
-      }
-      state.connectedDoor = false;
-    } else {
-      state.slots[ slot - 1 ].overlays.doors.push( 
-        {
-          side1: {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot },
-          side2: false 
-        } 
-      );
-      state.connectedDoor = { side1: slot, side2: false };
-    }
+  //     if(startSlot !== slot){
+  //       state.slots[ slot - 1 ].overlays.doors.push( 
+  //         { side1: {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot },
+  //           side2: startSlotSide1 } 
+  //       );      
+  //     }
+  //     state.connectedDoor = false;
+  //   } else {
+  //     state.slots[ slot - 1 ].overlays.doors.push( 
+  //       {
+  //         side1: {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot },
+  //         side2: false 
+  //       } 
+  //     );
+  //     state.connectedDoor = { side1: slot, side2: false };
+  //   }
 
-    return state;
-  }
+  //   return state;
+  // }
 
-  addTile(slot) {
+  addTile(slot, e) {
     let state = this.state;
 
     let selectedTile = state.selectedTile;
@@ -182,7 +182,9 @@ class DungeonMaker extends Component {
       return false;
     }
 
-    state.slots[ slot-1 ].tileType = (selectedTile === '') ? '' : tileType.label;
+    state.slots[ slot-1 ].tileType = (state.slots[ slot-1 ].tileType === tileType.label) ? '' : tileType.label;
+    state.slots[ slot-1 ].left = e.target.offsetLeft;
+    state.slots[ slot-1 ].top = e.target.offsetTop;
 
     if(tileType.entrance) {
       state.slots[ slot-1 ].entrance = true;
