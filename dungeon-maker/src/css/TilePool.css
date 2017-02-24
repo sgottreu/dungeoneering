@@ -5,38 +5,3 @@
   display: inline-block;
   position: relative;
 }
-
-.TilePool .floor {
- 	background-image: url(../img/brick-wall.png);
- 	background-size: 75px;
- }
-
-.TilePool .stairs {
- 	background-image: url(../img/stairs.png);
- 	background-size: 75px;
- }
-
-.TilePool .door {
- 	background-image: url(../img/door.png);
-  	background-size: 75px;
- }
-
-.TilePool .gloop {
- 	background-image: url(../img/gloop.png);
- 	background-size: 75px;
- }
-
-.TilePool .spiky-pit {
- 	background-image: url(../img/spiky-pit.png);
- 	background-size: 75px;
- }
-
-.TilePool .entry {
- 	background-image: url(../img/entry.png);
-  	background-size: 75px;
- }
-
-.TilePool .exit {
- 	background-image: url(../img/exit.png);
-  	background-size: 75px;
- }

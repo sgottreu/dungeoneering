@@ -189,13 +189,31 @@ function getDefenseModifier(state, defense)
   return score;
 }
 
+export var findEntity = function(_this){
+  axios.get(`${Variables.host}/findEntities`)
+  .then(res => {
+    let state = _this.state;
+    state.availableMonsters = res.data.monster;
+    state.availableCharacters = res.data.character;
+    _this.setState( state );
+  }); 
+}
+
 export var saveEntity = function(_this){
   let state = _this.state;
   state.entity.type = _this.EntityType;
 
+  let key = (_this.EntityType === 'monster') ? 'availableMonsters' : 'availableCharacters';
+  state.entity_id = (state.selectedEntity) ? state[key][state.selectedEntity].entity_id : false;
+
   axios.post(`${Variables.host}/saveEntity`, state)
   .then(res => {
-      _this.setState( {snackbarOpen: true, snackbarMsg: state.entity.type+' successfully saved', entity: Variables.clone(EntityTemplate) });
+      _this.setState( {
+        snackbarOpen: true, 
+        snackbarMsg: state.entity.type+' successfully saved', 
+        entity: Variables.clone(EntityTemplate),
+        selectedEntity: false
+      });
   });
 }
 
@@ -207,6 +225,8 @@ export var EntityIcons = [
   { label: 'Critter', class: 'critter', type: 'monster' },
   { label: 'Rat', class: 'rat', type: 'monster' },
   { label: 'Bat', class: 'bat', type: 'monster' },
+  { label: 'Bear', class: 'bear', type: 'monster' },
+  { label: 'Wolf', class: 'wolf', type: 'monster' },
   { label: 'Cleric', class: 'cleric', type: 'character' },
   { label: 'Ranger', class: 'ranger', type: 'character' },
   { label: 'Wizard', class: 'wizard', type: 'character' },

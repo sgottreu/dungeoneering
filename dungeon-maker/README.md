@@ -1,5 +1,4 @@
 ## TODO
 
-* Add ability to load previously created monsters/characters
-* Add in additional tiles.
+* Add in damage to powers
 * Add form to add weapons/shields

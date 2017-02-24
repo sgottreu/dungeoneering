@@ -91,6 +91,16 @@
     background-size: 450px 500px;	
 }
 
+.icon.wolf {
+	background-image: url(../img/wolf.png);
+	background-position: -5px -5px;
+}
+
+.icon.bear {
+	background-image: url(../img/bear.png);	
+	background-position: -5px -5px;
+}
+
 .icon.ranger {
  	background-image: url(../img/ranger.png);
  	background-position: center;

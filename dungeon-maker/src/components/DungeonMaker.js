@@ -108,10 +108,10 @@ class DungeonMaker extends Component {
 
     state.tileType = tileType.label;
 
-    if(tileType.overlay){
-      state = this.setDoors(state, e, slot);        
-      this.setState( state );    
-    } 
+    // if(tileType.overlay){
+    //   state = this.setDoors(state, e, slot);        
+    //   this.setState( state );    
+    // } 
   }
 
   setEntity(e, state, slot){
@@ -163,8 +163,9 @@ class DungeonMaker extends Component {
       state.slots[ slot - 1 ].overlays.doors.push( 
         {
           side1: {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot },
-          side2: false } 
-        );
+          side2: false 
+        } 
+      );
       state.connectedDoor = { side1: slot, side2: false };
     }
 
