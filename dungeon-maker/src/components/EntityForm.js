@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { EntityTemplate, AbilityModifier, AttackModifier, AbilityScorePoints, EntityRole, EntitySize, EntityRace, EntityClass, getInitialHitPoints, HalfLevelModifier, EntityArmor, calculateArmorClass, calculateDefense, saveEntity, EntityIcons} from './EntityTemplate';
+import { EntityTemplate, AbilityModifier, AttackModifier, AbilityScorePoints, EntityRole, EntitySize, EntityRace, EntityClass, getInitialHitPoints, HalfLevelModifier, EntityArmor, calculateArmorClass, calculateDefense, saveEntity, EntityIcons, findEntity} from './EntityTemplate';
 import PowersForm from './PowersForm';
 import {Variables} from './Variables';
 import {_Powers} from './_Powers';
@@ -49,6 +49,7 @@ class EntityForm extends Component {
     this.findPowers = this.findPowers.bind(this);
     this.includePower = this.includePower.bind(this);
     this.loadPowersField = this.loadPowersField.bind(this);
+    this.handleSelectedEntity = this.handleSelectedEntity.bind(this);
     
     let state = {};
 
@@ -59,6 +60,9 @@ class EntityForm extends Component {
     state.snackbarOpen = false;
     state.snackbarMsg = '';
     state.existingPowers = [];
+    state.availableMonsters = [];
+    state.availableCharacters = [];
+    state.selectedEntity = false;
     this.state = state;
   }
 
@@ -66,6 +70,16 @@ class EntityForm extends Component {
     let state = this.calcRemainingPoints(this.state);
     this.setState( state );
     this.findPowers();
+    findEntity(this);
+  }
+
+  handleSelectedEntity = (event, index) => {
+    let state = this.state;
+    state.selectedEntity = index;
+    let key = (this.EntityType === 'monster') ? 'availableMonsters' : 'availableCharacters';
+    state.entity = state[key][index];
+
+    this.setState(state);
   }
 
   findPowers(){
@@ -345,9 +359,15 @@ class EntityForm extends Component {
     let abilities = this.state.entity.abilities;
     let AbilityMap = new Map(Object.entries(abilities));
     let _this = this;
+    let saveEntities = (this.EntityType === 'monster') ? this.state.availableMonsters : this.state.availableCharacters;
 
 		return (
 			<div className="EntityForm">
+        <SelectField floatingLabelText={`Saved ${this.EntityType}`} value={this.state.selectedEntity} onChange={this.handleSelectedEntity} >
+          {saveEntities.map( (entity, index) => (
+            <MenuItem key={index} value={index} primaryText={`${entity.name} - Lvl: ${entity.level}`} />
+          ))}
+        </SelectField>
 				<TextField  floatingLabelText="Name" value={this.state.entity.name} name="name" onChange={this.handleChange} />
         <br/>
 				{(this.EntityType === 'character') ? this.loadRaceField() : ''}

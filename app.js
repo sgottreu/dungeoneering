@@ -87,10 +87,21 @@ app.post('/saveEntity', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 
 	let payload = {
-		entity_id: uuidV4(),
 		_type: req.body.entity.type,
 		entity: req.body.entity
 	};
+	payload.entity.entity_id = (req.body.entity_id) ? req.body.entity_id : uuidV4();
+
+	if(req.body.entity_id) {
+		dungeon_grid.findOneAndUpdate( { "entity.entity_id" : req.body.entity_id }, payload )
+		.then(function (data) {
+			sendJSON(res, data);
+		});	
+	} else {
+		dungeon_grid.insert( payload ).then(function (data) {
+			sendJSON(res, data);
+		});
+	}
 
 	dungeon_grid.insert( payload ).then(function (data) {
 		sendJSON(res, data);
@@ -114,7 +125,7 @@ app.get('/findEntities', function (req, res) {
 app.get('/findEntity', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 
-	dungeon_grid.findOne({ entity_id: req.query.entity_id }).then(function(docs) {
+	dungeon_grid.findOne({ "entity.entity_id": req.query.entity_id }).then(function(docs) {
     	sendJSON(res, docs);
   });
 });
