@@ -1,0 +1,130 @@
+.EntityForm {
+	margin: 15px;
+}
+
+.shortField {
+	width: 100px !important;
+}
+
+.AbilityList {
+    display: flex;
+    width: 840px;
+    flex-wrap: wrap;
+}
+
+.AbilityList .Ability{
+	display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    width: 250px !important;
+    margin-right: 30px;
+}
+
+.Ability.strength {
+	order: 1;
+}
+.Ability.dexterity {
+	order: 2;
+}
+.Ability.wisdom {
+	order: 3;
+}
+.Ability.constitution {
+	order: 4;
+}
+.Ability.intelligence {
+	order: 5;
+}
+.Ability.charisma {
+	order: 6;
+}
+
+
+.abilityChip {
+	height: 35px;
+	margin: 5px !important;
+}
+
+.icon {
+	
+}
+
+.icon.kobold {
+	background-image: url(../img/Map-monsters-humanoids.png);
+	background-position: 307px 541px;
+	background-size: 500px 600px;
+}
+
+.icon.goblin {
+	background-image: url(../img/Map-monsters-humanoids.png);
+	background-position: 307px 398px;
+	background-size: 500px 600px;
+}
+
+.icon.skeleton {
+	background-image: url(../img/Map-monsters-undead.png);
+	background-position: 253px 370px;
+    background-size: 400px 450px;
+}
+
+.icon.zombie {
+	background-image: url(../img/Map-monsters-undead.png);
+	background-position: 248px 439px;
+    background-size: 400px 450px;
+}
+
+.icon.critter {
+	background-image: url(../img/Map-monsters-beasts1.png);
+	background-position: 282px 447px;
+    background-size: 450px 500px;	
+}
+
+.icon.bat {
+	background-image: url(../img/Map-monsters-beasts1.png);
+	background-position: 255px 286px;
+    background-size: 400px 450px;
+}
+
+.icon.rat {
+	background-image: url(../img/Map-monsters-beasts1.png);
+	background-position: 282px 377px;
+    background-size: 450px 500px;	
+}
+
+.icon.ranger {
+ 	background-image: url(../img/ranger.png);
+ 	background-position: center;
+ 	background-size: 30px;
+ 	background-repeat: no-repeat;
+ }
+
+ .icon.cleric {
+ 	background-image: url(../img/cleric.png);
+ 	background-position: center;
+ 	background-size: 30px;
+ 	background-repeat: no-repeat;
+ }
+
+ .icon.warlock {
+ 	background-image: url(../img/warlock.png);
+ 	background-position: center;
+ 	background-size: 30px;
+ 	background-repeat: no-repeat;
+ }
+
+  .icon.wizard {
+ 	background-image: url(../img/wizard.png);
+ 	background-position: center;
+ 	background-size: 30px;
+ 	background-repeat: no-repeat;
+ }
+
+ .icon.melee {
+ 	background-image: url(../img/melee.png);
+ 	background-repeat: no-repeat;
+ }
+
+ .icon.ranged {
+ 	background-image: url(../img/ranged.png);
+ 	background-repeat: no-repeat;
+ }

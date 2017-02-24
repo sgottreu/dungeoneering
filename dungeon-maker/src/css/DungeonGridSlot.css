@@ -1,0 +1,87 @@
+
+
+
+.DungeonGridSlot {
+	width: 75px;
+	height: 75px;
+	border: 1px solid #000;
+	/*display: inline-block;*/
+    flex-basis: auto;
+    z-index: 1;
+}
+
+ .DungeonGridSlot.selected {
+ 	background-color: #dedede;
+ }
+
+
+.DungeonGridSlot .Entity {
+	width: 50px;
+	height: 50px;
+	display: block;
+	z-index: 5;
+    position: relative;
+    top: -80px;
+    left: 10px;
+}
+
+.DungeonGridSlot:before {
+    content: ' ';
+    display: block;
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 75px;
+    height: 75px;
+    z-index: 2;
+    opacity: 0.6;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: 50% 0;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+
+.DungeonGridSlot.floor:before {
+    background-image: url(../img/brick-wall.png);
+}
+
+.DungeonGridSlot.floor:before {
+    background-image: url(../img/brick-wall.png);
+}
+.DungeonGridSlot.stairs:before {
+    background-image: url(../img/stairs.png);
+    
+ }
+
+.DungeonGridSlot.door:before {
+    background-image: url(../img/door.png);
+    
+ }
+
+.DungeonGridSlot.gloop:before {
+    background-image: url(../img/gloop.png);
+    
+ }
+.DungeonGridSlot.spiky-pit:before {
+    background-image: url(../img/spiky-pit.png);
+    
+ }
+
+.DungeonGridSlot.entry:before {
+    background-image: url(../img/entry.png);
+    
+ }
+
+.DungeonGridSlot.exit:before {
+    background-image: url(../img/exit.png);
+    
+}
+
+.DungeonGridSlot.chest:before {
+    background-image: url(../img/chest.png);
+    
+}
