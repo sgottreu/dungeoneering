@@ -50,43 +50,43 @@
 }
 
 .icon.kobold {
-	background-image: url(../img/Map-monsters-humanoids.png);
+	background-image: url(../img/kolbold.png);
 	background-position: 307px 541px;
 	background-size: 500px 600px;
 }
 
 .icon.goblin {
-	background-image: url(../img/Map-monsters-humanoids.png);
+	background-image: url(../img/goblin.png);
 	background-position: 307px 398px;
 	background-size: 500px 600px;
 }
 
 .icon.skeleton {
-	background-image: url(../img/Map-monsters-undead.png);
+	background-image: url(../img/skeleton.png);
 	background-position: 253px 370px;
     background-size: 400px 450px;
 }
 
 .icon.zombie {
-	background-image: url(../img/Map-monsters-undead.png);
+	background-image: url(../img/zombie.png);
 	background-position: 248px 439px;
     background-size: 400px 450px;
 }
 
 .icon.critter {
-	background-image: url(../img/Map-monsters-beasts1.png);
+	background-image: url(../img/beetle.png);
 	background-position: 282px 447px;
     background-size: 450px 500px;	
 }
 
 .icon.bat {
-	background-image: url(../img/Map-monsters-beasts1.png);
+	background-image: url(../img/bat.png);
 	background-position: 255px 286px;
     background-size: 400px 450px;
 }
 
 .icon.rat {
-	background-image: url(../img/Map-monsters-beasts1.png);
+	background-image: url(../img/rat.png);
 	background-position: 282px 377px;
     background-size: 450px 500px;	
 }
