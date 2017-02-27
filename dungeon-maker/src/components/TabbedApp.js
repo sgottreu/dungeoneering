@@ -4,6 +4,8 @@ import DungeonMaker from './DungeonMaker';
 import RunEncounter from './RunEncounter';
 import AddMonster from './AddMonster';
 import CreateCharacter from './CreateCharacter';
+import AddWeapon from './AddWeapon';
+
 
 class TabbedApp extends Component {
   constructor(props){
@@ -14,6 +16,7 @@ class TabbedApp extends Component {
     this.loadRunEncounter = this.loadRunEncounter.bind(this);
     this.loadAddMonster = this.loadAddMonster.bind(this);
     this.loadCreateCharacter = this.loadCreateCharacter.bind(this);
+    this.loadAddWeapon = this.loadAddWeapon.bind(this);
 
     this.state = {
       selectedTab: 'runEncounter',
@@ -53,6 +56,12 @@ class TabbedApp extends Component {
     }
     return false;
   }
+  loadAddWeapon(){
+    if(this.state.selectedTab === 'addWeapon'){
+      return (<AddWeapon selectedTab={this.state.selectedTab}/>);
+    }
+    return false;
+  }
 
   render() {
     return (    	
@@ -69,6 +78,9 @@ class TabbedApp extends Component {
           </Tab>
           <Tab label="Add Monster" value="addMonster">
             {this.loadAddMonster()}
+          </Tab>
+          <Tab label="Add Weapon" value="addWeapon">
+            {this.loadAddWeapon()}
           </Tab>
         </Tabs>
       	

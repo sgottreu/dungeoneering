@@ -46,95 +46,67 @@
 }
 
 .icon {
-	
+	background-repeat: no-repeat !important;
+	background-size: 40px ;
 }
 
 .icon.kobold {
-	background-image: url(../img/kolbold.png);
-	background-position: 307px 541px;
-	background-size: 500px 600px;
+	background-image: url(../img/kobold.png);
+	
 }
 
 .icon.goblin {
 	background-image: url(../img/goblin.png);
-	background-position: 307px 398px;
-	background-size: 500px 600px;
 }
 
 .icon.skeleton {
 	background-image: url(../img/skeleton.png);
-	background-position: 253px 370px;
-    background-size: 400px 450px;
 }
 
 .icon.zombie {
 	background-image: url(../img/zombie.png);
-	background-position: 248px 439px;
-    background-size: 400px 450px;
 }
 
 .icon.critter {
 	background-image: url(../img/beetle.png);
-	background-position: 282px 447px;
-    background-size: 450px 500px;	
 }
 
 .icon.bat {
 	background-image: url(../img/bat.png);
-	background-position: 255px 286px;
-    background-size: 400px 450px;
 }
 
 .icon.rat {
 	background-image: url(../img/rat.png);
-	background-position: 282px 377px;
-    background-size: 450px 500px;	
 }
 
 .icon.wolf {
 	background-image: url(../img/wolf.png);
-	background-position: -5px -5px;
 }
 
 .icon.bear {
 	background-image: url(../img/bear.png);	
-	background-position: -5px -5px;
 }
 
 .icon.ranger {
  	background-image: url(../img/ranger.png);
- 	background-position: center;
- 	background-size: 30px;
- 	background-repeat: no-repeat;
  }
 
  .icon.cleric {
  	background-image: url(../img/cleric.png);
- 	background-position: center;
- 	background-size: 30px;
- 	background-repeat: no-repeat;
  }
 
  .icon.warlock {
  	background-image: url(../img/warlock.png);
- 	background-position: center;
- 	background-size: 30px;
- 	background-repeat: no-repeat;
  }
 
   .icon.wizard {
  	background-image: url(../img/wizard.png);
- 	background-position: center;
- 	background-size: 30px;
- 	background-repeat: no-repeat;
  }
 
  .icon.melee {
  	background-image: url(../img/melee.png);
- 	background-repeat: no-repeat;
  }
 
  .icon.ranged {
  	background-image: url(../img/ranged.png);
- 	background-repeat: no-repeat;
  }

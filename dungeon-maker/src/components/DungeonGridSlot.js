@@ -16,6 +16,7 @@ class DungeonGridSlot extends Component {
       return false;
     }
     let entity = slot.overlays.entity;
+console.log(entity);
     let style = {
       width: (75 * entity.size),
       height: (75 * entity.size),
@@ -26,7 +27,7 @@ class DungeonGridSlot extends Component {
     }
 
     return (
-      <div style={style} key={slot.overlays.entity.entity_id} className={slot.overlays.entity.iconClass+' Entity icon'}/>
+      <div style={style} data-slot={slot.id} key={slot.overlays.entity.entity_id} className={slot.overlays.entity.iconClass+' Entity icon'}/>
     );
   }
 

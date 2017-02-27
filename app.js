@@ -3,7 +3,8 @@ var mongo = require('mongodb');
 var monk = require('monk');
 var bodyParser = require('body-parser');
 const uuidV4 = require('uuid/v4');
-var dotenv = require('dotenv')
+var dotenv = require('dotenv');
+var methodOverride = require('method-override');
 
 var mongodb_config = (process.env.mongodb) ? process.env.mongodb : process.argv[2];
 mongodb_config = (!mongodb_config) ? dotenv['mongodb'] : mongodb_config;
@@ -20,13 +21,48 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+app.use(methodOverride());
+app.use(logErrors);
+app.use(clientErrorHandler);
+app.use(errorHandler);
+
+
+function logErrors (err, req, res, next) {
+  console.error(err.stack)
+  next(err)
+}
+
+function clientErrorHandler (err, req, res, next) {
+  if (req.xhr) {
+    res.status(500).send({ error: 'Something failed!' })
+  } else {
+    next(err)
+  }
+}
+
+function errorHandler (err, req, res, next) {
+  if (res.headersSent) {
+    return next(err)
+  }
+  res.status(500)
+  res.render('error', { error: err })
+}
+
+
 
 app.use(express.static(__dirname + '/dungeon-maker/build'))
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+  if ('OPTIONS' == req.method) {
+    console.log('preflight');
+    res.send(200);
+  }
+  else {
+    next();
+  }
 });
 
 app.get('/', function (req, res) {
@@ -51,8 +87,10 @@ app.get('/findDungeonGrids', function (req, res) {
     for(var x=0,len=docs.length;x<len;x++){
   		grids[x] = { encounter_id: docs[x].encounter_id, title: (docs[x].title !== undefined) ? docs[x].title : '' };
   	}
-	 console.log(`Found ${grids.length} grids`);
+	  console.log(`Found ${grids.length} grids`);
     sendJSON(res, grids);
+  }).catch(function(err){ 
+    console.log(err);
   });
 });
 
@@ -130,7 +168,7 @@ app.get('/findEntity', function (req, res) {
   });
 });
 
-// ************* Dungeons ******************//
+// ************* Powers ******************//
 
 app.get('/findPowers', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
@@ -163,6 +201,39 @@ app.post('/savePower', function (req, res) {
 	dungeon_grid.insert( payload ).then(function (data) {
 		sendJSON(res, data);
 	});
+});
+
+// ************* Weapons ******************//
+
+app.get('/findWeapons', function (req, res) {
+  var dungeon_grid = db.get('dungeoneering');
+  console.log('Finding Weapons');
+  dungeon_grid.find({ 
+    "$query" : {_type: 'weapon' }, 
+    "$orderby": { "weapon.name": 1 }
+  }).then(function(docs) {
+    console.log(`Found ${docs.length} weapons`);
+    sendJSON(res, docs);
+  });
+});
+
+app.post('/saveWeapon', function (req, res) {
+  console.log('Saving Weapon');
+  var dungeon_grid = db.get('dungeoneering');
+
+  let payload = req.body;
+  payload._type = 'weapon';
+
+  if(req.body.weapon_id) {
+    dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body.weapon_id) }, payload )
+    .then(function (data) {
+      sendJSON(res, data);
+    }); 
+  } else {
+    dungeon_grid.insert( payload ).then(function (data) {
+      sendJSON(res, data);
+    });
+  }
 });
 
 function sendJSON(res, data){
