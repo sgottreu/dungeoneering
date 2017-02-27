@@ -28,28 +28,28 @@ class TabbedApp extends Component {
 
   loadRunEncounter(){
     if(this.state.selectedTab === 'runEncounter'){
-      return (<RunEncounter />);
+      return (<RunEncounter selectedTab={this.state.selectedTab}/>);
     }
     return false;
   }
 
   loadDungeonMaker(){
     if(this.state.selectedTab === 'dungeonMaker'){
-      return (<DungeonMaker />);
+      return (<DungeonMaker selectedTab={this.state.selectedTab}/>);
     }
     return false;
   }
 
   loadAddMonster(){
     if(this.state.selectedTab === 'addMonster'){
-      return (<AddMonster />);
+      return (<AddMonster selectedTab={this.state.selectedTab}/>);
     }
     return false;
   }
 
   loadCreateCharacter(){
     if(this.state.selectedTab === 'createCharacter'){
-      return (<CreateCharacter />);
+      return (<CreateCharacter selectedTab={this.state.selectedTab}/>);
     }
     return false;
   }
