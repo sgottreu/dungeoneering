@@ -24,7 +24,8 @@ class RunEncounter extends Component {
     	choosingEntrance: false,
     	choosingExit: false,
       foundDungeonGrids: [],
-      selectedDungeon: false
+      selectedDungeon: false,
+      isMounted: false
     };
   }
 
@@ -32,16 +33,25 @@ class RunEncounter extends Component {
     window.addEventListener("click", this.handleMyEvent);
 
     let _this = this;
+    let state = _this.state;
+    this.setState( { isMounted: true });
+    
+    
 
     axios.get(`${Variables.host}/findDungeonGrids`)
     .then(res => {
-      let state = _this.state;
-      state.foundDungeonGrids = res.data;
-      _this.setState( state );
+      if(_this.state.isMounted){
+        let state = _this.state;
+        state.foundDungeonGrids = res.data;
+        _this.setState( state );
+      }
+      
     });      
 
   }
   componentWillUnmount() {
+    let state = this.state;
+    this.setState( { isMounted: false });
     window.removeEventListener("click", this.handleMyEvent);
   }
 
