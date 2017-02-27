@@ -3,6 +3,7 @@ import { EntityTemplate, AbilityModifier, AttackModifier, AbilityScorePoints, En
 import PowersForm from './PowersForm';
 import {Variables} from './Variables';
 import {_Powers} from './_Powers';
+import {Weapons, saveWeapon} from './Weapons';
 
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
@@ -412,7 +413,7 @@ class EntityForm extends Component {
         <TextField className="shortField" floatingLabelText="Armor Class" type="number" value={this.state.entity.defense.armorClass.total} name="armorClass"  />
         <TextField className="shortField" floatingLabelText="Fortitude" type="number" value={this.state.entity.defense.fortitude.total} name="fortitude"  />
         <TextField className="shortField" floatingLabelText="Reflex" type="number" value={this.state.entity.defense.reflex.total} name="reflex"  />
-        <TextField className="shortField" floatingLabelText="Initiative" type="number" value={this.state.entity.defense.willpower.total} name="willpower"  />
+        <TextField className="shortField" floatingLabelText="Willpower" type="number" value={this.state.entity.defense.willpower.total} name="willpower"  />
         <TextField className="shortField" floatingLabelText="Initiative" type="number" value={this.state.entity.initiative} name="initiative" onChange={this.handleChange} />
         {this.loadEntityIconField()}
         {this.loadPowersField()}

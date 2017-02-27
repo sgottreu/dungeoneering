@@ -115,8 +115,15 @@ class DungeonMaker extends Component {
   }
 
   setEntity(e, state, slot){
-    state.slots[ slot - 1 ].overlays.entity = state.selectedEntity;
-    state.slots[ slot - 1 ].occupied = true;
+    let slotEntity = state.slots[ slot - 1 ].overlays.entity;
+
+    if(slotEntity.entity_id === state.selectedEntity.entity_id){
+      state.slots[ slot - 1 ].overlays.entity = false;
+      state.slots[ slot - 1 ].occupied = false;
+    } else {
+      state.slots[ slot - 1 ].overlays.entity = state.selectedEntity;
+      state.slots[ slot - 1 ].occupied = true;
+    }
     this.setState( state );
   }
 
@@ -174,10 +181,13 @@ class DungeonMaker extends Component {
 
   addTile(slot, e) {
     let state = this.state;
-
+console.log(slot);
+// console.log(e.target);
     let selectedTile = state.selectedTile;
     let tileType = TileOptions.find( function(val) { return val.id === selectedTile });
-    
+ // console.log('selectedTile:'+selectedTile)   ;
+ // console.log(state.selectedEntity);
+ // console.log(tileType)   ;
     if(tileType === undefined || tileType.overlay){
       return false;
     }
