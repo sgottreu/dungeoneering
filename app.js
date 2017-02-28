@@ -208,10 +208,8 @@ app.post('/savePower', function (req, res) {
 app.get('/findWeapons', function (req, res) {
   var dungeon_grid = db.get('dungeoneering');
   console.log('Finding Weapons');
-  dungeon_grid.find({ 
-    "$query" : {_type: 'weapon' }, 
-    "$orderby": { "weapon.name": 1 }
-  }).then(function(docs) {
+  dungeon_grid.find({ _type: 'weapon' }, 
+    { sort : { name : 1 } }).then(function(docs) {
     console.log(`Found ${docs.length} weapons`);
     sendJSON(res, docs);
   });
@@ -221,16 +219,19 @@ app.post('/saveWeapon', function (req, res) {
   console.log('Saving Weapon');
   var dungeon_grid = db.get('dungeoneering');
 
-  let payload = req.body;
+  let payload = JSON.parse(JSON.stringify(req.body));
   payload._type = 'weapon';
+  delete payload._id;
 
-  if(req.body.weapon_id) {
-    dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body.weapon_id) }, payload )
+  if(req.body._id) {
+    dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload )
     .then(function (data) {
+     console.log('findOneAndUpdate');
       sendJSON(res, data);
     }); 
   } else {
     dungeon_grid.insert( payload ).then(function (data) {
+      console.log('insert');
       sendJSON(res, data);
     });
   }

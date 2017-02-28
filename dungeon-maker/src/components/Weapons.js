@@ -46,19 +46,22 @@ export var WeaponTemplate = {
 	type: "", 
 	name: "", 
 	prof: 2, 
-	damage: '1d6',
+	damage: { die: '1d6', num: 1},
 	price: 5, 
 	weight: 2, 
-	range: { low: 10, high: 20 }
+	range: { low: 10, high: 20 },
+  hands: 1
 };
 
-export var saveWeapon = function(state) {
-	 axios.post(`${Variables.host}/saveWeapon`, state)
+export var saveWeapon = function(_this) {
+	 axios.post(`${Variables.host}/saveWeapon`, _this.state.weapon)
   .then(res => {
-      // _this.setState( {
-      //   snackbarOpen: true, 
-      //   snackbarMsg: state.weapon.label+' successfully saved', 
-      //   weapon: Variables.clone(WeaponTemplate)
-      // });
+    let _id = _this.state.weapon._id;
+    let state = _this.state;
+    state.snackbarOpen = true, 
+    state.snackbarMsg = _this.state.weapon.name+' successfully saved', 
+    state.weapon = Variables.clone(WeaponTemplate),
+    state.availableWeapons[_id] = res.data;
+    _this.setState(state);
   });
 }
