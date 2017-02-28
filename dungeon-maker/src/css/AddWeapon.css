@@ -1,0 +1,9 @@
+.AddWeapon {
+	margin: 15px;
+}
+
+.damage {
+	position: relative;
+	/*top: 30px;*/
+	height: 72px;
+}

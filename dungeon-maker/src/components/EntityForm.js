@@ -3,7 +3,7 @@ import { EntityTemplate, AbilityModifier, AttackModifier, AbilityScorePoints, En
 import PowersForm from './PowersForm';
 import {Variables} from './Variables';
 import {_Powers} from './_Powers';
-import {Weapons, saveWeapon} from './Weapons';
+import {saveWeapon, findWeapons} from './Weapons';
 
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
@@ -50,12 +50,14 @@ class EntityForm extends Component {
     this.findPowers = this.findPowers.bind(this);
     this.includePower = this.includePower.bind(this);
     this.loadPowersField = this.loadPowersField.bind(this);
+    this.loadWeaponsField = this.loadWeaponsField.bind(this);
     this.handleSelectedEntity = this.handleSelectedEntity.bind(this);
+    this.selectWeapon = this.selectWeapon.bind(this);
     
     let state = {};
 
     state.entity = Variables.clone(EntityTemplate);
-    state.entity.type = this.EntityType;
+    state.entity._type = this.EntityType;
     state.totalRacePoints = 0;
     state.usedPoints = 0;
     state.snackbarOpen = false;
@@ -63,6 +65,7 @@ class EntityForm extends Component {
     state.existingPowers = [];
     state.availableMonsters = [];
     state.availableCharacters = [];
+    state.availableWeapons = [];
     state.selectedEntity = false;
     this.state = state;
   }
@@ -72,6 +75,7 @@ class EntityForm extends Component {
     this.setState( state );
     this.findPowers();
     findEntity(this);
+    findWeapons(this);
   }
 
   handleSelectedEntity = (event, index) => {
@@ -92,6 +96,17 @@ class EntityForm extends Component {
       snackbarOpen: false,
     });
   };
+
+  selectWeapon = (id) => {
+    let state = this.state;
+    if( state.entity.weapons.includes(id) ){
+      let _i = state.entity.weapons.findIndex(function(w) { return w === id})
+      state.entity.weapons.splice(_i, 1);
+    } else {
+      state.entity.weapons.push(id);  
+    }
+    this.setState( state ); 
+  }
 
   _setEntityState(key, value){
 		let state = this.state;
@@ -228,7 +243,7 @@ class EntityForm extends Component {
         state.entity.surgesPerDay = parseInt(EntityClass[ state.entity.class ].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
         state.entity.hp = getInitialHitPoints(state, state.entity.class);
       }
-      state.entity.initiative = HalfLevelModifier(state.entity.level, state.entity.type) + state.entity.abilities.dexterity.abilityMod;
+      state.entity.initiative = HalfLevelModifier(state.entity.level, state.entity._type) + state.entity.abilities.dexterity.abilityMod;
       state = calculateDefense(state);
       state = calculateArmorClass(state);
       this.setState( state );      
@@ -238,7 +253,7 @@ class EntityForm extends Component {
   calculateAbility(state, label, level, score){
     state.entity.abilities[ label ].score = score;
     state.entity.abilities[ label ].abilityMod = AbilityModifier(score);
-    state.entity.abilities[ label ].AttackModifier = AttackModifier(level, score, state.entity.type);
+    state.entity.abilities[ label ].AttackModifier = AttackModifier(level, score, state.entity._type);
 
     return state;
   }
@@ -264,7 +279,7 @@ class EntityForm extends Component {
   loadRoleField(){
   	let selectStyle = {};//{marginTop: '56px'};
     return (
-    	<SelectField style={selectStyle} listStyle={selectStyle} menuStyle={selectStyle}  floatingLabelText="Role" value={this.state.entity.role} onChange={this.handleRoleChange} >
+    	<SelectField style={Variables.getSelectListStyle(this.state.entity.role, EntityRole.map( (role, index) => {return index}) )} floatingLabelText="Role" value={this.state.entity.role} onChange={this.handleRoleChange} >
         {EntityRole.map( (role, index) => (
         	<MenuItem key={index} value={index} primaryText={role} />
         ))}
@@ -284,7 +299,7 @@ class EntityForm extends Component {
   }
 
   loadClassField(){
-    let selectStyle = {};//{marginTop: '56px'};
+    let selectStyle = {};
     return (
       <SelectField style={selectStyle} listStyle={selectStyle} menuStyle={selectStyle}  floatingLabelText="Class" value={this.state.entity.class} onChange={this.handleClassChange} >
         {EntityClass.map( (_class, index) => (
@@ -304,7 +319,7 @@ class EntityForm extends Component {
     let _this = this;
     let listStyle = { height: '100px', width: '250px', overflowY: 'scroll' };
     return(
-      <div>
+      <div className="container">
         <Subheader>Entity Icons</Subheader>
         <List className="EntityIcons" style={listStyle}>
           
@@ -331,7 +346,7 @@ class EntityForm extends Component {
     let _this = this;
     let listStyle = { height: '100px', width: '250px', overflowY: 'scroll' };
     return(
-      <div>
+      <div className="container">
         <Subheader>Powers</Subheader>
         <List className="EntityPowers" style={listStyle}>
           
@@ -354,6 +369,33 @@ class EntityForm extends Component {
     );
   }
 
+  loadWeaponsField(){
+    let _this = this;
+    let listStyle = { height: '100px', width: '250px', overflowY: 'scroll' };
+    return(
+      <div className="container">
+        <Subheader>Weapons</Subheader>
+        <List className="EntityWeapons" style={listStyle}>
+          {this.state.availableWeapons.map( (weapon, index) => {
+            let _found = _this.state.entity.weapons.findIndex(function(w) { 
+              return weapon._id === w
+            });
+            let className = (_found > -1) ? ' active' : '';
+            let weapon_icon = (weapon.type !== undefined) ? `weapon_${weapon.type.toLowerCase()}` : '';
+            //
+            return (
+              <ListItem className={className} key={index}  
+                onTouchTap={this.selectWeapon.bind(this, weapon._id)}
+                primaryText={<div >{weapon.name}</div>}  
+                leftAvatar={<Avatar className={`icon ${weapon_icon}`} />}
+              />
+            );
+          })}
+        </List>
+      </div>
+    );
+  }
+
 	render() {
 		let selectStyle = {};//{marginTop: '56px'};
     
@@ -364,22 +406,25 @@ class EntityForm extends Component {
 
 		return (
 			<div className="EntityForm">
-        <SelectField floatingLabelText={`Saved ${this.EntityType}`} value={this.state.selectedEntity} onChange={this.handleSelectedEntity} >
-          {saveEntities.map( (entity, index) => (
-            <MenuItem key={index} value={index} primaryText={`${entity.name} - Lvl: ${entity.level}`} />
-          ))}
+        <SelectField style={ {top: -46} } floatingLabelText={`Saved ${this.EntityType}`} value={this.state.selectedEntity} onChange={this.handleSelectedEntity} >
+          {saveEntities.map( (entity, index) => {
+            return (
+              <MenuItem key={index} value={index} primaryText={`${entity.name} - Lvl: ${entity.level}`} />
+            );
+          })}
         </SelectField>
+        
 				<TextField  floatingLabelText="Name" value={this.state.entity.name} name="name" onChange={this.handleChange} />
         <br/>
 				{(this.EntityType === 'character') ? this.loadRaceField() : ''}
         {(this.EntityType === 'character') ? this.loadClassField() : ''}
         {(this.EntityType === 'monster') ? this.loadRoleField() : ''}
-        <SelectField menuStyle={selectStyle} floatingLabelText="Size" value={this.state.entity.size} onChange={this.handleSizeChange} >
+        <SelectField style={Variables.getSelectListStyle(this.state.entity.size, EntitySize.map( (size, index) => {return index}) )} floatingLabelText="Size" value={this.state.entity.size} onChange={this.handleSizeChange} >
           {EntitySize.map( (size, index) => (
             <MenuItem key={index} value={index} primaryText={`${size.label}`} />
           ))}
         </SelectField>
-        <SelectField menuStyle={selectStyle} floatingLabelText="Armor" value={this.state.entity.armor} onChange={this.handleArmorChange} >
+        <SelectField style={Variables.getSelectListStyle(this.state.entity.armor, EntityArmor.map( (armor, index) => {return index}) )} floatingLabelText="Armor" value={this.state.entity.armor} onChange={this.handleArmorChange} >
           {EntityArmor.map( (armor, index) => (
             <MenuItem key={index} value={index} primaryText={`${armor.name}`} />
           ))}
@@ -415,8 +460,11 @@ class EntityForm extends Component {
         <TextField className="shortField" floatingLabelText="Reflex" type="number" value={this.state.entity.defense.reflex.total} name="reflex"  />
         <TextField className="shortField" floatingLabelText="Willpower" type="number" value={this.state.entity.defense.willpower.total} name="willpower"  />
         <TextField className="shortField" floatingLabelText="Initiative" type="number" value={this.state.entity.initiative} name="initiative" onChange={this.handleChange} />
-        {this.loadEntityIconField()}
-        {this.loadPowersField()}
+        <div className="Lists">
+          {this.loadEntityIconField()}
+          {this.loadPowersField()}
+          {this.loadWeaponsField()}
+        </div>
         <PowersForm entityType={this.EntityType} existingPowers={this.state.existingPowers} onFindPowers={this.findPowers} onIncludePower={this.includePower}/>        
         <RaisedButton primary={true}
           label={(this.EntityType === 'character') ? 'Save Character' : 'Save Monster'}

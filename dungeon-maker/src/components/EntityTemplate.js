@@ -2,13 +2,13 @@ import axios from 'axios';
 import {Variables} from './Variables';
 
 export var EntityTemplate = {
-
+    _id: false,
+    _type: false,
     name: '',
     level: 1,
     role: '',
     race: false,
     class: false,
-    type: '',
     size: false,
     xp: 0,
     initiative: 0,
@@ -53,7 +53,8 @@ export var EntityTemplate = {
       thievery: { score: 0, halfLevelModifier: 0, abilityMod: 0, train: 0, raceModifier: 0, ability: 'dexterity' }
     },
     powers: [],
-    iconClass: ''
+    iconClass: '',
+    weapons: []
   
 };
 
@@ -164,7 +165,7 @@ export var calculateDefense = function(state){
     if(state.entity.defense.hasOwnProperty(d)){
       let def = state.entity.defense[d];
       def.abilityMod = getDefenseModifier(state, d);
-      def.halfLvl = + HalfLevelModifier(state.entity.level, state.entity.type);
+      def.halfLvl = + HalfLevelModifier(state.entity.level, state.entity._type);
       def.total = def.default + def.halfLvl + def.abilityMod + def.classBonus + def.raceBonus;
       state.entity.defense[d] = def;
     }
@@ -201,19 +202,19 @@ export var findEntity = function(_this){
 
 export var saveEntity = function(_this){
   let state = _this.state;
-  state.entity.type = _this.EntityType;
+  state.entity._type = _this.EntityType;
 
   let key = (_this.EntityType === 'monster') ? 'availableMonsters' : 'availableCharacters';
-  state.entity_id = (state.selectedEntity) ? state[key][state.selectedEntity].entity_id : false;
 
-  axios.post(`${Variables.host}/saveEntity`, state)
+  axios.post(`${Variables.host}/saveEntity`, state.entity)
   .then(res => {
-      _this.setState( {
-        snackbarOpen: true, 
-        snackbarMsg: state.entity.type+' successfully saved', 
-        entity: Variables.clone(EntityTemplate),
-        selectedEntity: false
-      });
+    let state = {};
+    state.snackbarOpen = true, 
+    state.snackbarMsg = state.entity._type+' successfully saved', 
+    state.entity = Variables.clone(EntityTemplate);
+    state[key][state.selectedEntity] = res.data;
+    state.selectedEntity = false;
+    _this.setState( state );
   });
 }
 

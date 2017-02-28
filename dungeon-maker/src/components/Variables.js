@@ -11,5 +11,12 @@ export var Variables = {
   mapObj: function(obj){
 	  let _Map = new Map(Object.entries(obj));
 	  return [..._Map.entries()].map(function(obj, i) { return obj[0]; });
-	}
+	},
+  getSelectListStyle: (value, key) => {
+    let selectListStyle = { position: 'relative' };
+    let selected = key.includes(value);
+    selectListStyle.top = (selected) ? 0 : -56;
+
+    return selectListStyle;
+  }
 };

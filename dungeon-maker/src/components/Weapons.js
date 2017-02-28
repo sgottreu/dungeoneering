@@ -65,3 +65,14 @@ export var saveWeapon = function(_this) {
     _this.setState(state);
   });
 }
+
+export var findWeapons = (_this) => {
+	axios.get(`${Variables.host}/findWeapons`)
+  .then(res => {
+    let state = _this.state;
+    state.availableWeapons = res.data;
+    _this.setState( state );
+  }).catch(function(err){ 
+
+  });  
+};
