@@ -124,14 +124,11 @@ app.post('/saveEntity', function (req, res) {
 	console.log('Saving Entity');
 	var dungeon_grid = db.get('dungeoneering');
 
-	let payload = {
-		_type: req.body.entity.type,
-		entity: req.body.entity
-	};
-	payload.entity.entity_id = (req.body.entity_id) ? req.body.entity_id : uuidV4();
+  let payload = JSON.parse(JSON.stringify(req.body));
+  delete payload._id;
 
-	if(req.body.entity_id) {
-		dungeon_grid.findOneAndUpdate( { "entity.entity_id" : req.body.entity_id }, payload )
+	if(req.body._id) {
+		dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload )
 		.then(function (data) {
 			sendJSON(res, data);
 		});	
@@ -141,9 +138,6 @@ app.post('/saveEntity', function (req, res) {
 		});
 	}
 
-	dungeon_grid.insert( payload ).then(function (data) {
-		sendJSON(res, data);
-	});
 });
 
 app.get('/findEntities', function (req, res) {
@@ -153,17 +147,20 @@ app.get('/findEntities', function (req, res) {
     let entities = { "monster": [], "character": [] };
 
     for(var x=0,len = docs.length;x<len;x++){
-    	docs[x].entity.entity_id = docs[x].entity_id;
-    	entities[ docs[x]._type ].push(docs[x].entity);
+
+    	entities[ docs[x]._type ].push(docs[x]);
     }
-    sendJSON(res, entities);
+
+    console.log(`Found ${docs.length} entities`);
+    res.writeHead(200, {"Content-Type": "application/json"});
+    res.end( JSON.stringify( entities ) );
   });
 });
 
 app.get('/findEntity', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 
-	dungeon_grid.findOne({ "entity.entity_id": req.query.entity_id }).then(function(docs) {
+	dungeon_grid.findOne({ "_id" : monk.id(req.body._id) }).then(function(docs) {
     	sendJSON(res, docs);
   });
 });
@@ -244,4 +241,5 @@ function sendJSON(res, data){
 
 app.listen(port, function () {
   console.log('API listening on port '+port)
-})
+});
+

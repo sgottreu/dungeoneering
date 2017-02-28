@@ -45,14 +45,27 @@
 	margin: 5px !important;
 }
 
+.Lists {
+  display: flex;
+}
+
+.Lists .container{
+  justify-content: space-around;
+  margin: 0px 20px;
+}
+
+.EntityIcons, .EntityPowers, .EntityWeapons{
+  border: 2px solid #00bcd4;
+}
+
 .icon {
-	background-repeat: no-repeat !important;
-	background-size: 40px ;
+  background-repeat: no-repeat !important;
+  background-size: 40px ;
 }
 
 .icon.kobold {
 	background-image: url(../img/kobold.png);
-	
+
 }
 
 .icon.goblin {
@@ -88,25 +101,29 @@
 }
 
 .icon.ranger {
- 	background-image: url(../img/ranger.png);
- }
+	background-image: url(../img/ranger.png);
+}
 
- .icon.cleric {
- 	background-image: url(../img/cleric.png);
- }
+.icon.cleric {
+	background-image: url(../img/cleric.png);
+}
 
- .icon.warlock {
- 	background-image: url(../img/warlock.png);
- }
+.icon.warlock {
+	background-image: url(../img/warlock.png);
+}
 
-  .icon.wizard {
- 	background-image: url(../img/wizard.png);
- }
+.icon.wizard {
+	background-image: url(../img/wizard.png);
+}
 
- .icon.melee {
- 	background-image: url(../img/melee.png);
- }
+.icon.weapon_melee {
+	background-image: url(../img/weapon_melee.png);
+}
 
- .icon.ranged {
- 	background-image: url(../img/ranged.png);
- }
+.icon.weapon_ranged {
+	background-image: url(../img/weapon_ranged.png);
+}
+
+.icon.weapon_both {
+	background-image: url(../img/weapon_both.png);
+}
