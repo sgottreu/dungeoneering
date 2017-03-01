@@ -171,17 +171,8 @@ app.get('/findPowers', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 
 	dungeon_grid.find({ _type: 'power' }).then(function(docs) {
-    let powers = [];
-    for(var x=0,len=docs.length;x<len;x++){
-			powers[x] = { power_id: docs[x].power_id };
-			for(p in docs[x].power){
-				if(docs[x].power.hasOwnProperty(p)){
-					powers[x][p] = docs[x].power[p];
-				}
-			}
-		}
     res.writeHead(200, {"Content-Type": "application/json"});
-    res.end( JSON.stringify( powers ) );
+    res.end( JSON.stringify( docs ) );
   });
 });
 
@@ -189,15 +180,19 @@ app.post('/savePower', function (req, res) {
 	console.log('Saving Power');
 	var dungeon_grid = db.get('dungeoneering');
 
-	let payload = {
-		power_id: uuidV4(),
-		_type: 'power',
-		power: req.body
-	};
+  let payload = JSON.parse(JSON.stringify(req.body));
+  delete payload._id;
 
-	dungeon_grid.insert( payload ).then(function (data) {
-		sendJSON(res, data);
-	});
+  if(req.body._id) {
+    dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload )
+    .then(function (data) {
+      sendJSON(res, data);
+    }); 
+  } else {
+    dungeon_grid.insert( payload ).then(function (data) {
+      sendJSON(res, data);
+    });
+  }
 });
 
 // ************* Weapons ******************//

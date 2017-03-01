@@ -4,8 +4,6 @@ import Drawer from 'material-ui/Drawer';
 import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import Paper from 'material-ui/Paper';
-import axios from 'axios';
-import {Variables} from './Variables';
 
 class EntityDrawer extends Component {
 	
@@ -28,25 +26,6 @@ class EntityDrawer extends Component {
 
 	render(){
 		let {entityType, onSelectEntity, selectedEntity, availableMonsters } = this.props;
-
-    const styles = {
-      root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-      },
-      gridList: {
-        width: 400,
-        height: 450,
-        overflowY: 'auto',
-      },
-    };
-
-    const iconStyle = {
-      width: '50px',
-      height: '50px',
-      display: 'block'
-    };
 
 		return (
 			<div className="EntityDrawer">

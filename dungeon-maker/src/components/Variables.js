@@ -12,11 +12,18 @@ export var Variables = {
 	  let _Map = new Map(Object.entries(obj));
 	  return [..._Map.entries()].map(function(obj, i) { return obj[0]; });
 	},
-  getSelectListStyle: (value, key) => {
+  getSelectListStyle: (value, arr, isObj=false) => {
     let selectListStyle = { position: 'relative' };
-    let selected = key.includes(value);
+    let selected = false;
+    if(isObj) {
+      selected = arr.find(function(v, index) { return index === value });
+    } else {
+      selected = arr.includes(value);
+    }
+    
     selectListStyle.top = (selected) ? 0 : -56;
 
     return selectListStyle;
   }
 };
+

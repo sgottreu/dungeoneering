@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import Die from './Die';
 import {_Powers, PowerTemplate} from './_Powers';
-import {EntityTemplate} from './EntityTemplate';
+import {EntityTemplate, EntityClass} from './EntityTemplate';
 import {Variables} from './Variables';
 
 
@@ -30,6 +30,7 @@ class PowersForm extends Component {
 		this.handleDefenseChange = this.handleDefenseChange.bind(this);
 		this.addPower = this.addPower.bind(this);
 		this.loadPowerAttackModifier = this.loadPowerAttackModifier.bind(this);
+    this.loadClassField = this.loadClassField.bind(this);
 
 		this.state = { 
 			current_power: false,
@@ -43,14 +44,14 @@ class PowersForm extends Component {
 
   handleChoosePower(event, index) {
   	let state = this.state;
-  	state.current_power = this.props.existingPowers[index];
+  	state.power = this.props.existingPowers[index];
   	this.setState( state );
-  	this.props.onIncludePower(state.current_power);
+  	// this.props.onIncludePower(state.current_power);
   }
 
   addPower(){
   	_Powers.savePower(this);
-  	this.props.onIncludePower(this.state.current_power);
+  	// this.props.onIncludePower(this.state.current_power);
   	this.props.onFindPowers();
   }
 
@@ -89,22 +90,37 @@ class PowersForm extends Component {
 		this._setEntityState( 'defense', index);
   }
 
+  handleClassChange = (event, index) => {
+    this._setEntityState( 'class', EntityClass[index]);
+  }
+
   loadPowerAttackModifier(_power) {
   	return(
   		<TextField className="shortField" floatingLabelText="Modifier" value={_power.attack.modifier}  onChange={this.handleChange} />
   	);
   }
 
+  loadClassField(_power){
+    return (
+      <SelectField floatingLabelText="Power Type" value={EntityClass.findIndex((_class, index)=> { return _class.name === _power.class})} name="type" onChange={this.handleClassChange} >
+        {EntityClass.map( (_class, index) => (
+          <MenuItem key={index} value={index} primaryText={_class.name} />
+        ))}
+      </SelectField>
+      
+    );
+  }
+
 	render(){
-		let { existingPowers, onFindPowers, entityType } = this.props;
+		let { existingPowers, entityType } = this.props;
 		let _power = this.state.power;
 
 		return (
 			<div className="PowersForm">
 				
-				<SelectField floatingLabelText="Choose Power" value="" onChange={this.handleChoosePower} >
+				<SelectField floatingLabelText="Choose Power" value={_power._id} onChange={this.handleChoosePower} >
           {existingPowers.map( (powers, index) => (
-          	<MenuItem key={index} value={powers.power_id} primaryText={`${powers.name} - ${_Powers.powerType[powers.type].name}`} />
+          	<MenuItem key={index} value={powers._id} primaryText={`${powers.name} - ${_Powers.powerType[powers.type].name}`} />
           ))}
         </SelectField>
         <Subheader>Add New Power</Subheader>
@@ -127,6 +143,9 @@ class PowersForm extends Component {
           	<MenuItem key={index} value={index} primaryText={recharge} />
           ))}
         </SelectField>
+        <br/>
+        {this.loadClassField(_power)}
+        <br/>
         <div className="attack">
         	{(entityType === 'monster') ? this.loadPowerAttackModifier(_power) : ''}
         	<SelectField floatingLabelText="Offense" value={this.abilities.findIndex( (val) => { return val === _power.attack.for })} onChange={this.handleAttackChange} >
@@ -142,7 +161,7 @@ class PowersForm extends Component {
 	        </SelectField> 
         </div>
         <RaisedButton primary={true}
-          label={'Add Power'}
+          label={'Save Power'}
           onTouchTap={this.addPower}
         />
 			</div>

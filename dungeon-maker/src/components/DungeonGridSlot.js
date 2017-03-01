@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Door from './Door';
+// import Door from './Door';
 
 import '../css/DungeonGridSlot.css';
 
@@ -16,7 +16,7 @@ class DungeonGridSlot extends Component {
       return false;
     }
     let entity = slot.overlays.entity;
-console.log(entity);
+
     let style = {
       width: (75 * entity.size),
       height: (75 * entity.size),
@@ -27,13 +27,13 @@ console.log(entity);
     }
 
     return (
-      <div style={style} data-slot={slot.id} key={slot.overlays.entity.entity_id} className={slot.overlays.entity.iconClass+' Entity icon'}/>
+      <div style={style} data-slot={slot.id} key={slot.overlays.entity._id} className={slot.overlays.entity.iconClass+' Entity icon'}/>
     );
   }
 
 
   render() {
-    let {id, slot, onAddTile, overlays, availableCharacters, availableMonsters} = this.props;
+    let {id, slot, onAddTile} = this.props;
     let className = 'DungeonGridSlot ';
     className += (slot.tileType === undefined || slot.tileType === '') ? '' : slot.tileType;
 

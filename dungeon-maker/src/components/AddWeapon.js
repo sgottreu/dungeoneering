@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import {Die} from './Die';
 import {Variables} from './Variables';
-import axios from 'axios';
+
 import {saveWeapon, findWeapons} from './Weapons';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
-import Subheader from 'material-ui/Subheader';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import '../css/AddWeapon.css';
