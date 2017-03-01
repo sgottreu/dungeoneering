@@ -5,7 +5,7 @@ import RunEncounter from './RunEncounter';
 import AddMonster from './AddMonster';
 import CreateCharacter from './CreateCharacter';
 import AddWeapon from './AddWeapon';
-
+import AddPowers from './AddPowers';
 
 class TabbedApp extends Component {
   constructor(props){
@@ -17,6 +17,7 @@ class TabbedApp extends Component {
     this.loadAddMonster = this.loadAddMonster.bind(this);
     this.loadCreateCharacter = this.loadCreateCharacter.bind(this);
     this.loadAddWeapon = this.loadAddWeapon.bind(this);
+    this.loadAddPowers = this.loadAddPowers.bind(this);
 
     this.state = {
       selectedTab: 'runEncounter',
@@ -62,6 +63,12 @@ class TabbedApp extends Component {
     }
     return false;
   }
+  loadAddPowers(){
+    if(this.state.selectedTab === 'AddPowers'){
+      return (<AddPowers selectedTab={this.state.selectedTab}/>);
+    }
+    return false;
+  }
 
   render() {
     return (    	
@@ -79,14 +86,19 @@ class TabbedApp extends Component {
           <Tab label="Add Monster" value="addMonster">
             {this.loadAddMonster()}
           </Tab>
-          <Tab label="Add Weapon" value="addWeapon">
-            {this.loadAddWeapon()}
+          <Tab label="Add Powers" value="AddPowers">
+            {this.loadAddPowers()}
           </Tab>
+
         </Tabs>
       	
         
       </div>
     );
+          // <Tab label="Add Weapon" value="addWeapon">
+          //   {this.loadAddWeapon()}
+          // </Tab>
+
   }
 }
 

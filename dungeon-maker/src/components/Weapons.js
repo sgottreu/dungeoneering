@@ -58,9 +58,9 @@ export var saveWeapon = function(_this) {
   .then(res => {
     let _id = _this.state.weapon._id;
     let state = _this.state;
-    state.snackbarOpen = true, 
-    state.snackbarMsg = _this.state.weapon.name+' successfully saved', 
-    state.weapon = Variables.clone(WeaponTemplate),
+    state.snackbarOpen = true;
+    state.snackbarMsg = _this.state.weapon.name+' successfully saved';
+    state.weapon = Variables.clone(WeaponTemplate);
     state.availableWeapons[_id] = res.data;
     _this.setState(state);
   });

@@ -45,8 +45,6 @@ class RunEncounter extends Component {
 
   }
   componentWillUnmount() {
-    let state = this.state;
-    this.setState( { isMounted: false });
     window.removeEventListener("click", this.handleMyEvent);
   }
 

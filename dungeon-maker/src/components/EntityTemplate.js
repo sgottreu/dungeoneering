@@ -11,7 +11,7 @@ export var EntityTemplate = {
     class: false,
     size: false,
     xp: 0,
-    initiative: 0,
+    initiative: {total: 0, base: 0, modifier: 0},
     hp: 0,
     bloodied: 0,
     speed: 0,
@@ -28,10 +28,10 @@ export var EntityTemplate = {
     healingSurge: 0,
     surgesPerDay: 0,
     defense: {
-      armorClass: { total: 0, default: 10, abilityMod: 0, armorBonus: 0, shield: 0 },
-      fortitude: { total: 0, default: 10, abilityMod: 0, classBonus: 0, raceBonus: 0 },
-      reflex: { total:0, default: 10, abilityMod: 0, classBonus: 0, raceBonus: 0 },
-      willpower: { total: 0, default: 10, abilityMod: 0, classBonus: 0, raceBonus: 0 }
+      armorClass: { total: 0, default: 10, abilityMod: 0, armorBonus: 0, shield: 0, misc: 0 },
+      fortitude: { total: 0, default: 10, abilityMod: 0, classBonus: 0, raceBonus: 0, misc: 0 },
+      reflex: { total:0, default: 10, abilityMod: 0, classBonus: 0, raceBonus: 0, misc: 0 },
+      willpower: { total: 0, default: 10, abilityMod: 0, classBonus: 0, raceBonus: 0, misc: 0 }
     },
     skills: {
       acrobatics: { score: 0, halfLevelModifier: 0, abilityMod: 0, train: 0, raceModifier: 0, ability: 'dexterity' },
@@ -78,7 +78,17 @@ export var HalfLevelModifier = function(level, type){
 
 export var AttackModifier = function(level, score, type){
   return HalfLevelModifier(level, type) + AbilityModifier(score);
-}
+};
+
+export var calculateInitiative = function(state, value=false){
+  let base = HalfLevelModifier(state.entity.level, state.entity._type) + state.entity.abilities.dexterity.abilityMod;
+  let mod = (value) ? value - base : state.entity.initiative.modifier;
+  return {
+    base: HalfLevelModifier(state.entity.level, state.entity._type) + state.entity.abilities.dexterity.abilityMod,
+    modifier: mod,
+    total: base+mod
+  }
+};
 
 export var AbilityScorePoints = 76;
 
@@ -145,28 +155,34 @@ export var EntityArmor = [
   { name: 'Plate', score: 8 }
 ];
 
-export var calculateArmorClass = function(state){
+export var calculateArmorClass = function(state, value=false){
   let armor = state.entity.defense.armorClass;
   let ability = (!state.entity.class) ? 'constitution' : EntityClass[ state.entity.class ].ability;
   armor.armorBonus = EntityArmor[ state.entity.armor].score;
   if(state.entity.armor <= 2){
     armor.armorBonus += getDefenseModifier(state, 'reflex');
   }
+  
   armor.abilityMod = state.entity.abilities[ ability ].abilityMod;
   armor.halfLvl = HalfLevelModifier(state.entity.level);
-  armor.total = armor.default + armor.halfLvl + armor.abilityMod + armor.armorBonus + armor.shield;
+  let subTotal = armor.default + armor.halfLvl + armor.abilityMod + armor.armorBonus + armor.shield;
+  armor.misc = (value) ? value - subTotal : 0;
+
+  armor.total = subTotal + armor.misc;
   state.entity.defense.armorClass = armor;
 
   return state;
 };
 
-export var calculateDefense = function(state){
+export var calculateDefense = function(state, _defense=false,value=false){
   for(let d in state.entity.defense){
-    if(state.entity.defense.hasOwnProperty(d)){
+    if(state.entity.defense.hasOwnProperty(d) && d !== 'armorClass'){
       let def = state.entity.defense[d];
       def.abilityMod = getDefenseModifier(state, d);
       def.halfLvl = + HalfLevelModifier(state.entity.level, state.entity._type);
-      def.total = def.default + def.halfLvl + def.abilityMod + def.classBonus + def.raceBonus;
+      let subTotal = def.default + def.halfLvl + def.abilityMod + def.classBonus + def.raceBonus;
+      def.misc = (_defense === d && value) ? value-subTotal : def.misc;
+      def.total = def.misc + subTotal;
       state.entity.defense[d] = def;
     }
   }
@@ -208,11 +224,17 @@ export var saveEntity = function(_this){
 
   axios.post(`${Variables.host}/saveEntity`, state.entity)
   .then(res => {
-    let state = {};
-    state.snackbarOpen = true, 
-    state.snackbarMsg = state.entity._type+' successfully saved', 
+    let key2 = Variables.clone(_this.state.selectedEntity);
+    state.snackbarOpen = true;
+    state.snackbarMsg = state.entity._type+' successfully saved';
     state.entity = Variables.clone(EntityTemplate);
-    state[key][state.selectedEntity] = res.data;
+    
+    if(!key2){
+      state[key].push(res.data);
+    } else {
+      state[key][key2] = res.data;
+    }
+    
     state.selectedEntity = false;
     _this.setState( state );
   });

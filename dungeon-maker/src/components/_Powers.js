@@ -51,7 +51,7 @@ _Powers.findPowers = (_this) => {
 _Powers.savePower = (_this) => {
   axios.post(`${Variables.host}/savePower`, _this.state.power)
   .then(res => {
-    _this.state.current_power = Variables.clone(res.data.power_id);
+    _this.state.current_power = Variables.clone(res.data._id);
     _this.state.power = Variables.clone(PowerTemplate);
     _this.setState( _this.state );
     _this.props.onFindPowers();
@@ -59,7 +59,7 @@ _Powers.savePower = (_this) => {
 };
 
 _Powers.matchPower = (powers, id) => {
-  let power = powers.find( function(val) { return val.power_id === id });
+  let power = powers.find( function(val) { return val._id === id });
   return power;
 };
 

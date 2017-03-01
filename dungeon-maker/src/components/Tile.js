@@ -5,7 +5,7 @@ import '../css/Tile.css';
 class Tile extends Component {
 
   render() {
-  	let {id, tile, onSelectTile, isActive} = this.props;
+  	let {id, tile, onSelectTile} = this.props;
   	let className = tile.label+' Tile';
   	let style = {
   		width: (75 * ((tile.size === undefined) ? 1 : tile.size.width)),
