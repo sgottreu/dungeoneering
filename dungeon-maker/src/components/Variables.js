@@ -15,14 +15,18 @@ export var Variables = {
   getSelectListStyle: (value, arr, isObj=false) => {
     let selectListStyle = { position: 'relative' };
     let selected = false;
-    if(isObj) {
-      selected = arr.find(function(v, index) { return index === value });
-    } else {
-      selected = arr.includes(value);
-    }
+    // if(isObj) {
+    //   selected = arr.find(function(v, index) { return index === value });
+    // } else {
+    //   selected = arr.includes(value);
+    // }
     
-    selectListStyle.top = (selected) ? 0 : -56;
+    if(value){
+      selected = true;
+    }
 
+    selectListStyle.top = (selected) ? '0px' : '-56px';
+    selectListStyle = {};
     return selectListStyle;
   }
 };

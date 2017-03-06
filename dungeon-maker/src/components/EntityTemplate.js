@@ -6,7 +6,7 @@ export var EntityTemplate = {
     _type: false,
     name: '',
     level: 1,
-    role: '',
+    role: false,
     race: false,
     class: false,
     size: false,
@@ -16,7 +16,7 @@ export var EntityTemplate = {
     bloodied: 0,
     speed: 0,
     resistances: [],
-    armor: [],
+    armor: false,
     abilities: {
       strength: { score: 12, abilityMod: 0, AttackModifier: 0 },
       constitution: { score: 12, abilityMod: 0, AttackModifier: 0 },
