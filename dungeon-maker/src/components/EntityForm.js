@@ -4,7 +4,7 @@ import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize
 import {Variables} from './Variables';
 import {_Powers} from './_Powers';
 import {findWeapons} from './Weapons';
-
+import PowersForm from './PowersForm';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import {List, ListItem} from 'material-ui/List';
@@ -52,6 +52,7 @@ class EntityForm extends Component {
     this.loadClassField = this.loadClassField.bind(this);
     this.loadRaceField = this.loadRaceField.bind(this);
     this.loadEntityIconField = this.loadEntityIconField.bind(this);
+    this.loadPowersForm = this.loadPowersForm.bind(this);
 
     this.findPowers = this.findPowers.bind(this);
     this.includePower = this.includePower.bind(this);
@@ -352,6 +353,12 @@ class EntityForm extends Component {
     );
   }
 
+  loadPowersForm() {
+    return (
+      <PowersForm existingPowers={this.state.entity.powers} entityType="monster" onChange={this.onIncludePower} />
+    );
+  }
+
   loadEntityIconField(){
     let _this = this;
     let listStyle = { height: '150px', width: '250px', overflowY: 'scroll' };
@@ -477,7 +484,7 @@ class EntityForm extends Component {
     let saveEntities = (this.EntityType === 'monster') ? this.state.availableMonsters : this.state.availableCharacters;
 
     let selectedStyle = Variables.getSelectListStyle(this.state.selectedEntity, saveEntities, true);
-    selectedStyle.top = selectedStyle.top+15;
+    // selectedStyle.top = selectedStyle.top+15;
 		return (
 			<div className="EntityForm">
         <SelectField floatingLabelText={`Saved ${this.EntityType}`} value={this.state.selectedEntity} onChange={this.handleSelectedEntity} 
@@ -544,7 +551,7 @@ class EntityForm extends Component {
           {this.loadPowersField()}
           {this.loadWeaponsField()}
         </div>
-             
+        {(this.EntityType === 'monster') ? this.loadPowersForm() : ''}   
         <RaisedButton primary={true}
           label={(this.EntityType === 'character') ? 'Save Character' : 'Save Monster'}
           onTouchTap={this.handleEntitySave}

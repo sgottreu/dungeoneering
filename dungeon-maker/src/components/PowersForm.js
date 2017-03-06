@@ -50,9 +50,12 @@ class PowersForm extends Component {
   }
 
   addPower(){
-  	_Powers.savePower(this);
-  	// this.props.onIncludePower(this.state.current_power);
-  	this.props.onFindPowers();
+    if(this.props.onFindPowers !== undefined){
+      _Powers.savePower(this);
+      this.props.onFindPowers();
+    } else {
+      this.props.onIncludePower(this.state.power);
+    }
   }
 
   _setEntityState(key, value){
@@ -101,8 +104,8 @@ class PowersForm extends Component {
   }
 
   loadClassField(_power){
-    return (
-      <SelectField floatingLabelText="Power Type" value={EntityClass.findIndex((_class, index)=> { return _class.name === _power.class})} name="type" onChange={this.handleClassChange} >
+   return (
+      <SelectField maxHeight={200} style={Variables.getSelectListStyle(_power.class)} floatingLabelText="Power Class" value={EntityClass.findIndex((_class, index)=> { return _class.name === _power.class})} name="type" onChange={this.handleClassChange} >
         {EntityClass.map( (_class, index) => (
           <MenuItem key={index} value={index} primaryText={_class.name} />
         ))}
@@ -114,7 +117,7 @@ class PowersForm extends Component {
 	render(){
 		let { existingPowers, entityType } = this.props;
 		let _power = this.state.power;
-
+    
 		return (
 			<div className="PowersForm">
 				
@@ -126,25 +129,26 @@ class PowersForm extends Component {
         <Subheader>Add New Power</Subheader>
 				<TextField className="" floatingLabelText="Power Name" value={_power.name} name="name" onChange={this.handleChange} />
 				<br/>
-				<SelectField floatingLabelText="Power Type" value={_power.type} name="type" onChange={this.handleTypeChange} >
-          {_Powers.powerType.map( (type, index) => (
-          	<MenuItem key={index} value={index} primaryText={type.name} />
-          ))}
-        </SelectField>
-        <br/>
-				<SelectField floatingLabelText="Power Action" value={_power.action} name="action" onChange={this.handleActionChange} >
-          {_Powers.powerAction.map( (action, index) => (
-          	<MenuItem key={index} value={index} primaryText={action} />
-          ))}
-        </SelectField>
-        <br/>
-				<SelectField floatingLabelText="Power Recharge" value={_power.recharge} name="recharge" onChange={this.handleRechargeChange} >
-          {_Powers.powerRecharge.map( (recharge, index) => (
-          	<MenuItem key={index} value={index} primaryText={recharge} />
-          ))}
-        </SelectField>
-        <br/>
-        {this.loadClassField(_power)}
+        <div className="selectRow">
+  				<SelectField maxHeight={200} style={Variables.getSelectListStyle(_power.type)} floatingLabelText="Power Type" value={_power.type} name="type" onChange={this.handleTypeChange} >
+            {_Powers.powerType.map( (type, index) => (
+            	<MenuItem key={index} value={index} primaryText={type.name} />
+            ))}
+          </SelectField>
+          
+  				<SelectField maxHeight={200} style={Variables.getSelectListStyle(_power.action)} floatingLabelText="Power Action" value={_power.action} name="action" onChange={this.handleActionChange} >
+            {_Powers.powerAction.map( (action, index) => (
+            	<MenuItem key={index} value={index} primaryText={action} />
+            ))}
+          </SelectField>
+          
+  				<SelectField maxHeight={200} style={Variables.getSelectListStyle(_power.recharge)} floatingLabelText="Power Recharge" value={_power.recharge} name="recharge" onChange={this.handleRechargeChange} >
+            {_Powers.powerRecharge.map( (recharge, index) => (
+            	<MenuItem key={index} value={index} primaryText={recharge} />
+            ))}
+          </SelectField>
+          {(this.EntityType === 'character') ? this.loadClassField(_power) : ''} 
+        </div>
         <br/>
         <div className="attack">
         	{(entityType === 'monster') ? this.loadPowerAttackModifier(_power) : ''}
@@ -160,10 +164,12 @@ class PowersForm extends Component {
 	          ))}
 	        </SelectField> 
         </div>
+        <br/>
         <RaisedButton primary={true}
           label={'Save Power'}
           onTouchTap={this.addPower}
         />
+        <br/>
 			</div>
 		);
 	}
