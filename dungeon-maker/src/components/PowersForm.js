@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {_Powers, PowerTemplate} from './_Powers';
 import {EntityTemplate, EntityClass} from './EntityTemplate';
 import {Variables} from './Variables';
+import {Weapons} from './Weapons';
 
 
 import MenuItem from 'material-ui/MenuItem';
@@ -31,6 +32,9 @@ class PowersForm extends Component {
 		this.addPower = this.addPower.bind(this);
 		this.loadPowerAttackModifier = this.loadPowerAttackModifier.bind(this);
     this.loadClassField = this.loadClassField.bind(this);
+    this.loadPowerChooser = this.loadPowerChooser.bind(this);
+    this.loadWeaponsField = this.loadWeaponsField.bind(this);
+    this.handleWeaponChange = this.handleWeaponChange.bind(this);
 
 		this.state = { 
 			current_power: false,
@@ -44,18 +48,29 @@ class PowersForm extends Component {
 
   handleChoosePower(event, index) {
   	let state = this.state;
-  	state.power = this.props.existingPowers[index];
+    if(index === 0){
+      state.power = Variables.clone(PowerTemplate);
+      state.current_power = false;
+    } else {
+      state.power = this.props.existingPowers[index-1];
+      state.current_power = index;
+    }
+  	
   	this.setState( state );
   	// this.props.onIncludePower(state.current_power);
   }
 
   addPower(){
+    
     if(this.props.onFindPowers !== undefined){
       _Powers.savePower(this);
       this.props.onFindPowers();
     } else {
-      this.props.onIncludePower(this.state.power);
+      let state = this.state;
+      state.current_power = this.props.onIncludePower(this.state.power, this.state.current_power);
+      this.setState( state );
     }
+    
   }
 
   _setEntityState(key, value){
@@ -79,6 +94,10 @@ class PowersForm extends Component {
 
   handleActionChange = (event, index) => {
 		this._setEntityState( 'action', index);
+  }
+
+  handleWeaponChange = (event, index) => {
+    this._setEntityState( 'weapon', index);
   }
 
   handleRechargeChange = (event, index) => {
@@ -114,18 +133,51 @@ class PowersForm extends Component {
     );
   }
 
+  loadWeaponsField(weapons){
+    let availableWeapons = this.props.availableWeapons;
+    return (
+      <SelectField   floatingLabelText="Weapon" value={this.state.power.weapon} onChange={this.handleWeaponChange} >
+        {weapons.map( (weapon, index) => {
+          let _weapon = availableWeapons.find(function(w, i){ return w._id === weapon});
+          return (
+            <MenuItem key={index} value={index} primaryText={`${_weapon.name} - ${_weapon.type}`} />
+          );
+        })}
+      </SelectField>
+    );
+  }
+
+  loadPowerChooser(){
+    let _power = this.state.power;
+    let existingPowers = this.props.existingPowers;
+    //if(this.props.entityType === 'character'){
+      return (
+        <SelectField floatingLabelText="Choose Power" value={this.state.current_power} onChange={this.handleChoosePower} >
+          <MenuItem key={0} value={0} primaryText="Add New Power" />
+          {existingPowers.map( (power, index) => (
+            <MenuItem key={index+1} value={index+1} primaryText={`${power.name} - ${_Powers.powerType[power.type].name}`} />
+          ))}
+        </SelectField>
+      );
+    // } else {
+    //   return (
+    //     <SelectField floatingLabelText="Choose Power" value={_power._id} onChange={this.handleChoosePower} >
+    //       {existingPowers.map( (power, index) => (
+    //         <MenuItem key={index} value={power._id} primaryText={`${power.name} - ${power.type}`} />
+    //       ))}
+    //     </SelectField>
+    //   );
+    // }
+  }
+
 	render(){
-		let { existingPowers, entityType } = this.props;
+		let { existingPowers, entityType, weapons } = this.props;
 		let _power = this.state.power;
     
 		return (
 			<div className="PowersForm">
 				
-				<SelectField floatingLabelText="Choose Power" value={_power._id} onChange={this.handleChoosePower} >
-          {existingPowers.map( (powers, index) => (
-          	<MenuItem key={index} value={powers._id} primaryText={`${powers.name} - ${_Powers.powerType[powers.type].name}`} />
-          ))}
-        </SelectField>
+				{this.loadPowerChooser()}
         <Subheader>Add New Power</Subheader>
 				<TextField className="" floatingLabelText="Power Name" value={_power.name} name="name" onChange={this.handleChange} />
 				<br/>
@@ -147,7 +199,7 @@ class PowersForm extends Component {
             	<MenuItem key={index} value={index} primaryText={recharge} />
             ))}
           </SelectField>
-          {(this.EntityType === 'character') ? this.loadClassField(_power) : ''} 
+          {(entityType === 'character') ? this.loadClassField(_power) : ''} 
         </div>
         <br/>
         <div className="attack">
@@ -164,6 +216,7 @@ class PowersForm extends Component {
 	          ))}
 	        </SelectField> 
         </div>
+        {(entityType === 'monster') ? this.loadWeaponsField(weapons) : ''}
         <br/>
         <RaisedButton primary={true}
           label={'Save Power'}
