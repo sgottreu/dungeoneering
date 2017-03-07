@@ -171,10 +171,17 @@ class EntityForm extends Component {
     this.setState(state);
   }
 
-  includePower = (power) => {
+  includePower = (power, current_power=false) => {
     let state = this.state;
-    state.entity.powers.push(power);
+    if(current_power){
+      state.entity.powers[current_power] = power;
+    } else {
+      state.entity.powers.push(power);
+      current_power = state.entity.powers.length;
+    }
     this.setState(state);
+
+    return current_power;
   }
 
   handleRaceChange = (event, index) => {
@@ -355,7 +362,7 @@ class EntityForm extends Component {
 
   loadPowersForm() {
     return (
-      <PowersForm existingPowers={this.state.entity.powers} entityType="monster" onChange={this.onIncludePower} />
+      <PowersForm existingPowers={this.state.entity.powers} entityType="monster" onIncludePower={this.includePower} availableWeapons={this.state.availableWeapons} weapons={this.state.entity.weapons} />
     );
   }
 
@@ -411,17 +418,11 @@ class EntityForm extends Component {
         <List className="EntityPowers" style={listStyle}>
           
           {this.state.entity.powers.map( (power, index) => {
-            
-            let _power = _Powers.matchPower(this.state.existingPowers, power._id);
-            let _pt = _Powers.powerType.find(function(type, i) { 
-              return index === i
-            });
-
-            let className = _pt.class;
+            let className = power.class;
             return (
               <ListItem className={className} key={index} 
-                primaryText={<div >{_power.name}</div>}  
-                leftAvatar={<Avatar className={'icon weapon_'+_pt.class} />}
+                primaryText={<div >{power.name}</div>}  
+                leftAvatar={<Avatar className={'icon weapon_'+power.class} />}
               />
             );
           })}
