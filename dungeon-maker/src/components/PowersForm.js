@@ -4,7 +4,7 @@ import {_Powers, PowerTemplate} from './_Powers';
 import {EntityTemplate, EntityClass} from './EntityTemplate';
 import {Variables} from './Variables';
 import {Weapons} from './Weapons';
-
+import {Die} from './Die';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
@@ -35,6 +35,8 @@ class PowersForm extends Component {
     this.loadPowerChooser = this.loadPowerChooser.bind(this);
     this.loadWeaponsField = this.loadWeaponsField.bind(this);
     this.handleWeaponChange = this.handleWeaponChange.bind(this);
+    this.handleDieChange = this.handleDieChange.bind(this);
+    this.handleDieNumChange = this.handleDieNumChange.bind(this);
 
 		this.state = { 
 			current_power: false,
@@ -97,7 +99,21 @@ class PowersForm extends Component {
   }
 
   handleWeaponChange = (event, index) => {
-    this._setEntityState( 'weapon', index);
+    let weapons = this.props.weapons;
+    let state = this.state;
+    state.power.weapon = index;
+    let _weapon = this.props.availableWeapons.find(function(w, i){ return w._id === weapons[index] });
+
+    if(_weapon.damage.die === undefined) {
+      let damage = _weapon.damage.split('d');
+      state.power.damage.die = `d${damage[1]}`;
+      state.power.damage.num = damage[0];
+    } else {
+      state.power.damage.die = _weapon.damage.die;
+      state.power.damage.num = _weapon.damage.num;
+    }
+
+    this.setState( state );
   }
 
   handleRechargeChange = (event, index) => {
@@ -170,6 +186,18 @@ class PowersForm extends Component {
     // }
   }
 
+  handleDieNumChange = (event) => {
+    let state = this.state;
+    state.power.damage.num = event.target.value;
+    this.setState( state );
+  }
+
+  handleDieChange = (event, index) => {
+    let state = this.state;
+    state.power.damage.die = Die[index].label;
+    this.setState( state );
+  }
+
 	render(){
 		let { existingPowers, entityType, weapons } = this.props;
 		let _power = this.state.power;
@@ -217,6 +245,15 @@ class PowersForm extends Component {
 	        </SelectField> 
         </div>
         {(entityType === 'monster') ? this.loadWeaponsField(weapons) : ''}
+        <br/>
+        <div className="damage">
+          <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={this.state.power.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
+          <SelectField style={ { position: 'relative', top: 15 } } floatingLabelText="Damage" name="damage_die" value={this.state.power.damage.die}  onChange={this.handleDieChange} >
+            {Die.map( (die, index) => (
+              <MenuItem key={index} value={`${die.label}`} primaryText={`${die.label}`} />
+            ))}
+          </SelectField>
+        </div>
         <br/>
         <RaisedButton primary={true}
           label={'Save Power'}

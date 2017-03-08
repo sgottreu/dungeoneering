@@ -75,11 +75,20 @@ class AddWeapon extends Component {
     this._setWeaponState( event.target.name, event.target.value);
   }
 
-  handleNumChange = (event) => {
+  handleDieNumChange = (event) => {
     let state = this.state;
     state.weapon.damage = {
       die: state.weapon.damage.die,
       num : event.target.value
+    };
+    this.setState( state );
+  }
+
+  handleDieChange = (event, index) => {
+    let state = this.state;
+    state.weapon.damage = {
+      die: Die[index].label,
+      num : state.weapon.damage.num
     };
     this.setState( state );
   }
@@ -97,14 +106,7 @@ class AddWeapon extends Component {
     this._setWeaponState( 'type', this.weaponType[index]);
   }
 
-  handleDieChange = (event, index) => {
-    let state = this.state;
-    state.weapon.damage = {
-      die: Die[index].label,
-      num : state.weapon.damage.num
-    };
-    this.setState( state );
-  }
+
 
   handleProfChange = (event, index) => {
     this._setWeaponState( 'prof', index+2);
@@ -167,7 +169,7 @@ class AddWeapon extends Component {
         </div>
         <br/>
         <div className="damage">
-          <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_weapon.damage.num}      name="damage_num"      onChange={this.handleNumChange} />
+          <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_weapon.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
           <SelectField style={ { position: 'relative', top: 15 } } floatingLabelText="Damage" name="damage_die" value={_weapon.damage.die}  onChange={this.handleDieChange} >
             {Die.map( (die, index) => (
               <MenuItem key={index} value={`${die.label}`} primaryText={`${die.label}`} />
