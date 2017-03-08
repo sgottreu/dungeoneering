@@ -12,7 +12,8 @@ export var PowerTemplate = {
   against: '',
   damage: {
     modifier: 0,
-    die: [], // { type: 'd6', num: 1 }
+    die: 'd6',
+    num: 1
   },
   defense: false
 };
