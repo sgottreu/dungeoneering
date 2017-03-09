@@ -3,14 +3,11 @@ import React, { Component } from 'react';
 import {_Powers, PowerTemplate} from './_Powers';
 import {EntityTemplate, EntityClass} from './EntityTemplate';
 import {Variables} from './Variables';
-import {Weapons} from './Weapons';
 import {Die} from './Die';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
-// import {List, ListItem} from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import '../css/PowersForm.css';
@@ -56,15 +53,11 @@ class PowersForm extends Component {
     if(nextProps.selEntity === false && this.props.selEntity){
       let state = this.state;
       state.power = Variables.clone(PowerTemplate);
+      state.current_power = false;
       this.setState( state );
     }
-    
-  //   console.log('===============');
-  //   console.log(this.props);
-  //   console.log(nextProps);
-  //   console.log(nextState);
-  // console.log('Deciding to update');
-  return true;
+
+    return true;
   }
 
   handleChoosePower(event, index) {
@@ -88,8 +81,10 @@ class PowersForm extends Component {
       _Powers.savePower(this);
       this.props.onFindPowers();
     } else {
+      this.props.onIncludePower(this.state.power, this.state.current_power);
       let state = this.state;
-      state.current_power = this.props.onIncludePower(this.state.power, this.state.current_power);
+      state.power = Variables.clone(PowerTemplate);
+      state.current_power = false;
       this.setState( state );
     }
     
@@ -227,9 +222,9 @@ class PowersForm extends Component {
   }
 
 	render(){
-		let { existingPowers, entityType, weapons, selEntity } = this.props;
+		let { entityType, weapons } = this.props;
 		let _power = this.state.power;
-    console.log(selEntity);
+
 		return (
 			<div className={'PowersForm '+((entityType === 'monster') ? 'inset' : '')}>
 				
