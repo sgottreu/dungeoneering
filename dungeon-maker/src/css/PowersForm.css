@@ -1,0 +1,15 @@
+.PowersForm {
+	margin: 15px;
+}
+
+.inset {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #FCFCFC;
+    width: 50%;
+}
+
+.shortField {
+	width: 100px !important;
+}
