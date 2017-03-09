@@ -5,6 +5,8 @@ import {Variables} from './Variables';
 import {_Powers} from './_Powers';
 import {findWeapons} from './Weapons';
 import PowersForm from './PowersForm';
+
+import EntityChooser from './EntityChooser';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import {List, ListItem} from 'material-ui/List';
@@ -84,6 +86,9 @@ class EntityForm extends Component {
     findEntity(this);
     findWeapons(this);
   }
+
+
+
 
   resetForm(){
     let state = this.state;
@@ -489,14 +494,7 @@ class EntityForm extends Component {
     // selectedStyle.top = selectedStyle.top+15;
 		return (
 			<div className="EntityForm">
-        <SelectField floatingLabelText={`Saved ${this.EntityType}`} value={this.state.selectedEntity} onChange={this.handleSelectedEntity} 
-        style={selectedStyle}>
-          {saveEntities.map( (entity, index) => {
-            return (
-              <MenuItem key={index} value={index} primaryText={`${entity.name} - Lvl: ${entity.level}`} />
-            );
-          })}
-        </SelectField>
+        <EntityChooser onHandleSelectedEntity={this.handleSelectedEntity.bind(this)} saveEntities={saveEntities} EntityType={this.EntityType} selectedStyle={selectedStyle} selectedEntity={this.state.selectedEntity} />
         
 				<TextField  floatingLabelText="Name" value={this.state.entity.name} name="name" onChange={this.handleChange} />
         <RaisedButton primary={true}
