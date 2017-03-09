@@ -173,8 +173,8 @@ class EntityForm extends Component {
 
   includePower = (power, current_power=false) => {
     let state = this.state;
-    if(current_power){
-      state.entity.powers[current_power] = power;
+    if(current_power !== false){
+      state.entity.powers[current_power-1] = power;
     } else {
       state.entity.powers.push(power);
       current_power = state.entity.powers.length;
@@ -362,7 +362,7 @@ class EntityForm extends Component {
 
   loadPowersForm() {
     return (
-      <PowersForm existingPowers={this.state.entity.powers} entityType="monster" onIncludePower={this.includePower} availableWeapons={this.state.availableWeapons} weapons={this.state.entity.weapons} />
+      <PowersForm selEntity={this.state.selectedEntity} existingPowers={this.state.entity.powers} entityType="monster" onIncludePower={this.includePower} availableWeapons={this.state.availableWeapons} weapons={this.state.entity.weapons} />
     );
   }
 
@@ -419,6 +419,7 @@ class EntityForm extends Component {
           
           {this.state.entity.powers.map( (power, index) => {
             let className = power.class;
+            console.log(power);
             return (
               <ListItem className={className} key={index} 
                 primaryText={<div >{power.name}</div>}  
