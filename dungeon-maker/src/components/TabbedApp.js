@@ -20,7 +20,7 @@ class TabbedApp extends Component {
     this.loadAddPowers = this.loadAddPowers.bind(this);
 
     this.state = {
-      selectedTab: 'runEncounter',
+      selectedTab: 'addMonster',
     };
   }
 

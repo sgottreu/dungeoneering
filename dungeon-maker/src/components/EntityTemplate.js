@@ -229,7 +229,7 @@ export var saveEntity = function(_this){
     state.snackbarMsg = state.entity._type+' successfully saved';
     state.entity = Variables.clone(EntityTemplate);
     
-    if(!key2){
+    if(state[key][key2] === undefined){
       state[key].push(res.data);
     } else {
       state[key][key2] = res.data;
