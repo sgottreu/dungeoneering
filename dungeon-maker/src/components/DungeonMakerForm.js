@@ -29,7 +29,7 @@ class DungeonMakerForm extends Component {
 
 	      <SelectField onChange={this.handleChange} value={selectedDungeon} floatingLabelText="Saved Dungeon Grids" >
           {foundDungeonGrids.map( (grid, x) => (
-          	<MenuItem key={grid.encounter_id} value={grid.encounter_id} primaryText={grid.encounter_id} />
+          	<MenuItem key={grid._id} value={grid._id} primaryText={grid._id} />
           ))}
         </SelectField>
 	    </div>

@@ -4,6 +4,7 @@ import {Variables} from './Variables';
 export var PowerTemplate = {
   name: '',
   type: false,
+  _type: "power",
   action: false,
   recharge: false,
   class: false,
@@ -15,7 +16,10 @@ export var PowerTemplate = {
     die: 'd6',
     num: 1
   },
-  defense: false
+  defense: false,
+  weapon: false,
+  weapon_modifier: 0,
+  ability_modifier: false
 };
 
 class _Powers {};
@@ -52,10 +56,10 @@ _Powers.findPowers = (_this) => {
 _Powers.savePower = (_this) => {
   axios.post(`${Variables.host}/savePower`, _this.state.power)
   .then(res => {
-    _this.state.current_power = Variables.clone(res.data._id);
-    _this.state.power = Variables.clone(PowerTemplate);
+    _this.state.current_power = false;//Variables.clone(res.data._id);
+    // _this.state.power = Variables.clone(PowerTemplate);
+    _this.state.power._id = false;
     _this.setState( _this.state );
-    _this.props.onFindPowers();
   }); 
 };
 

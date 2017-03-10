@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Slots from './Slots.js';
 import DungeonGrid from './DungeonGrid';
 import DungeonLoadDrawer from './DungeonLoadDrawer';
+import EntityTooltip from './EntityTooltip';
 import axios from 'axios';
 import {Variables} from './Variables';
 
@@ -16,6 +17,7 @@ class RunEncounter extends Component {
     this.chooseDungeon = this.chooseDungeon.bind(this);
     this.setDungeon = this.setDungeon.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
+    this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -25,7 +27,11 @@ class RunEncounter extends Component {
     	choosingExit: false,
       foundDungeonGrids: [],
       selectedDungeon: false,
-      isMounted: false
+      hoverEntity: false,
+      mouse: {
+        clientX: false,
+        clientY: false
+      }
     };
   }
 
@@ -52,6 +58,14 @@ class RunEncounter extends Component {
   
   }
 
+  handleEntityMouseOver = (entity, eve) => {
+    let state = this.state;
+    state.hoverEntity = entity;
+    state.mouse.clientX = eve.clientX;
+    state.mouse.clientY = eve.clientY;
+    this.setState(state);
+  }
+
   addTile(slot) {
   }
 
@@ -64,7 +78,7 @@ class RunEncounter extends Component {
 
   setDungeon(selectedDungeon){
     let _this = this;
-    axios.get(`${Variables.host}/findDungeonGrid?encounter_id=${selectedDungeon}`)
+    axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
       .then(res => {
         let state = _this.state;
         state.slots = res.data.slots;
@@ -88,7 +102,8 @@ class RunEncounter extends Component {
 
     return (    	
 	      <div className="RunEncounter">
-          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon}/>
+          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleEntityMouseOver={this.handleEntityMouseOver}/>
+          <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
           <DungeonLoadDrawer onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids}/>
 	      </div>
     );

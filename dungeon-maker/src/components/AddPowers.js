@@ -21,14 +21,26 @@ class AddPowers extends Component {
   componentWillUnmount() {
   }
 
-  findPowers(){
-    _Powers.findPowers(this);
+  findPowers(power){
+    if(power === undefined){
+      _Powers.findPowers(this);
+      return true;
+    }
+
+    let state = this.state;
+    if(power._id !== undefined && power._id !== false){
+      let _i = state.existingPowers.findIndex(function(p) { return p._id === power._id});
+      state.existingPowers[_i] = power;
+    } else {
+      state.existingPowers.push(power);
+    }
+    this.setState(state);
   }
 
 	render() {
     return (
       <div className="AddPowers">
-		    <PowersForm existingPowers={this.state.existingPowers} onFindPowers={this.findPowers} /> 
+		    <PowersForm entityType='character' existingPowers={this.state.existingPowers} onFindPowers={this.findPowers} /> 
       </div>
 		);
 

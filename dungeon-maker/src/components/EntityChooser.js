@@ -7,7 +7,7 @@ class EntityChooser extends Component {
   constructor(props){
     super(props);
 
-    this.handleMyEvent = this.handleMyEvent.bind(this);
+    this.handleMouseOver = this.handleMouseOver.bind(this);
 
     this.state = {
       hoverEntity: false,
@@ -19,14 +19,14 @@ class EntityChooser extends Component {
 
   }
 
-  handleMyEvent = (entity, eve) => {
+  handleMouseOver = (entity, eve) => {
     let state = this.state;
     state.hoverEntity = entity;
     state.mouse.clientX = eve.clientX;
     state.mouse.clientY = eve.clientY;
     this.setState(state);
   }
-  //onMouseLeave={this.handleMyEvent.bind(this, false)}
+
 	render() {
     let {saveEntities, selectedEntity, EntityType, selectedStyle, onHandleSelectedEntity} = this.props;
 
@@ -37,7 +37,8 @@ class EntityChooser extends Component {
               style={selectedStyle}>
               {saveEntities.map( (entity, index) => {
                   return (
-                  <MenuItem onMouseEnter={this.handleMyEvent.bind(this, entity)}  key={index} value={index} primaryText={`${entity.name} - Lvl: ${entity.level}`} />
+                  <MenuItem onMouseEnter={this.handleMouseOver.bind(this, entity)} onMouseLeave={this.handleMouseOver.bind(this, false)} 
+                    key={index} value={index} primaryText={`${entity.name} - Lvl: ${entity.level}`} />
                   );
               })}
         </SelectField>
