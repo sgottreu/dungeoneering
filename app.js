@@ -72,8 +72,8 @@ app.get('/', function (req, res) {
 // ************* Dungeons ******************//
 app.get('/findDungeonGrid', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
-
-	dungeon_grid.findOne({ encounter_id: req.query.encounter_id }).then(function(docs) {
+	dungeon_grid.findOne({ "_id" : monk.id(req.query._id) }).then(function(docs) {
+    console.log('Found grid');
     res.writeHead(200, {"Content-Type": "application/json"});
     res.end( JSON.stringify( docs ) );
   });
@@ -83,11 +83,9 @@ app.get('/findDungeonGrids', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 	console.log('Finding grids');
 	dungeon_grid.find({ _type: 'encounter' }).then(function(docs) {
+	  console.log(`Found ${docs.length} grids`);
     let grids = [];
-    for(var x=0,len=docs.length;x<len;x++){
-  		grids[x] = { encounter_id: docs[x].encounter_id, title: (docs[x].title !== undefined) ? docs[x].title : '' };
-  	}
-	  console.log(`Found ${grids.length} grids`);
+    docs.map( (grid, i) => { grids.push({_id: docs[i]._id, title: docs[i].title }) });
     sendJSON(res, grids);
   }).catch(function(err){ 
     console.log(err);
@@ -99,13 +97,12 @@ app.post('/saveDungeonGrids', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 
 	let payload = {
-		encounter_id: (req.body.encounter_id) ? req.body.encounter_id : uuidV4(),
 		_type: 'encounter',
 		title: req.body.title,
 		slots: req.body.slots
 	};
-	if(req.body.encounter_id) {
-		dungeon_grid.findOneAndUpdate( { "encounter_id" : req.body.encounter_id }, payload ).then(function (data) {
+	if(req.body._id) {
+		dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
 			res.writeHead(200, {"Content-Type": "application/json"});
 	    	res.end( JSON.stringify( data ) );
 		});	
@@ -171,8 +168,7 @@ app.get('/findPowers', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 
 	dungeon_grid.find({ _type: 'power' }).then(function(docs) {
-    res.writeHead(200, {"Content-Type": "application/json"});
-    res.end( JSON.stringify( docs ) );
+    sendJSON(res, docs);
   });
 });
 

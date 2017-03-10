@@ -21,10 +21,11 @@ class DungeonLoadDrawer extends Component {
 
 	handleToggle = () => this.setState({open: !this.state.open});
 
-  	handleClose = () => this.setState({open: false});
+  handleClose = () => this.setState({open: false});
 
 	handleChange(event, index, value){
 		this.onChooseDungeon(value);
+		this.setState({open: false});
 	}
 
 	render(){
@@ -48,9 +49,9 @@ class DungeonLoadDrawer extends Component {
 
 		      <SelectField onChange={this.handleChange} value={selectedDungeon} floatingLabelText="Saved Dungeon Grids" >
 	          {foundDungeonGrids.map( (grid, x) => {
-	          	let label = (grid.title) ? grid.title : grid.encounter_id;
+	          	let label = (grid.title) ? grid.title : grid._id;
 	          	return (
-	          		<MenuItem key={grid.encounter_id} value={grid.encounter_id} primaryText={label} />
+	          		<MenuItem key={grid._id} value={grid._id} primaryText={label} />
 	          	)
 	          })}
 	        </SelectField>

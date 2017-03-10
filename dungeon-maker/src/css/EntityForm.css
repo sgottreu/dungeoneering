@@ -2,6 +2,14 @@
 	margin: 15px;
 }
 
+.inset {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    background-color: #FCFCFC;
+    width: 50%;
+}
+
 .shortField {
 	width: 100px !important;
 }
@@ -61,6 +69,11 @@
 .icon {
   background-repeat: no-repeat !important;
   background-size: 40px ;
+}
+
+.icon_power_class {
+  background-repeat: no-repeat !important;
+  background-size: 20px ;
 }
 
 .icon.kobold {

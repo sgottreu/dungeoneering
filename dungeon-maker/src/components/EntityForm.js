@@ -62,6 +62,7 @@ class EntityForm extends Component {
     this.loadWeaponsField = this.loadWeaponsField.bind(this);
     this.handleSelectedEntity = this.handleSelectedEntity.bind(this);
     this.selectWeapon = this.selectWeapon.bind(this);
+    this.selectPower = this.selectPower.bind(this);
     
     let state = {};
 
@@ -82,7 +83,9 @@ class EntityForm extends Component {
   componentDidMount(){
     let state = this.calcRemainingPoints(this.state);
     this.setState( state );
-    //this.findPowers();
+    if(this.EntityType === 'character'){
+      this.findPowers();
+    }
     findEntity(this);
     findWeapons(this);
   }
@@ -224,13 +227,6 @@ class EntityForm extends Component {
         }
       }
     } 
-
-    // for(let c in EntityRace[index].defenseMod){
-    //   if(EntityRace[index].defenseMod.hasOwnProperty(c)){
-    //     state.entity.defense[ c ].classBonus = parseInt(EntityRace[index].defenseMod[c], 10);
-    //   }
-    // }
-
     this.setState( state );   
   }
 
@@ -414,21 +410,46 @@ class EntityForm extends Component {
     );
   }
 
+  selectPower = (power, event) => {
+    if(power._id === undefined){
+      return false;
+    }
+
+    let state = this.state;
+    if( state.entity.powers.includes(power._id) ){
+      let _i = state.entity.powers.findIndex(function(p) { return p === power._id})
+      state.entity.powers.splice(_i, 1);
+    } else {
+      state.entity.powers.push(power._id);  
+    }
+    this.setState( state ); 
+  }
+
   loadPowersField(){
     let _this = this;
     let listStyle = { height: '150px', width: '250px', overflowY: 'scroll' };
+
+    let _powers = (this.EntityType === 'character') ? this.state.existingPowers : this.state.entity.powers;
+
     return(
       <div className="container">
         <Subheader>Powers</Subheader>
         <List className="EntityPowers" style={listStyle}>
           
-          {this.state.entity.powers.map( (power, index) => {
-            let className = power.class;
-            console.log(power);
+          {_powers.map( (power, index) => {
+            if(!this.state.entity.class || EntityClass[this.state.entity.class].name !== power.class.name){
+              return false;
+            }
+
+            let _found = _this.state.entity.powers.findIndex(function(p) { 
+              return power._id === p
+            });
+            let className = (_found > -1) ? ' active' : '';
+
             return (
               <ListItem className={className} key={index} 
                 primaryText={<div >{power.name}</div>}  
-                leftAvatar={<Avatar className={'icon weapon_'+power.class} />}
+                leftAvatar={<Avatar className={'icon weapon_'+_Powers.powerType[power.type].class} onClick={this.selectPower.bind(this, power)}/>}
               />
             );
           })}
@@ -493,7 +514,7 @@ class EntityForm extends Component {
     let selectedStyle = Variables.getSelectListStyle(this.state.selectedEntity, saveEntities, true);
     // selectedStyle.top = selectedStyle.top+15;
 		return (
-			<div className="EntityForm">
+			<div className="EntityForm inset">
         <EntityChooser onHandleSelectedEntity={this.handleSelectedEntity.bind(this)} saveEntities={saveEntities} EntityType={this.EntityType} selectedStyle={selectedStyle} selectedEntity={this.state.selectedEntity} />
         
 				<TextField  floatingLabelText="Name" value={this.state.entity.name} name="name" onChange={this.handleChange} />
@@ -552,6 +573,7 @@ class EntityForm extends Component {
           {this.loadWeaponsField()}
         </div>
         {(this.EntityType === 'monster') ? this.loadPowersForm() : ''}   
+        <br/><br/>
         <RaisedButton primary={true}
           label={(this.EntityType === 'character') ? 'Save Character' : 'Save Monster'}
           onTouchTap={this.handleEntitySave}

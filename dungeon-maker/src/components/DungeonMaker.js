@@ -4,6 +4,7 @@ import DungeonGrid from './DungeonGrid';
 import TileOptions from './TileOptions';
 import DungeonLoadDrawer from './DungeonLoadDrawer';
 import TileDrawer from './TileDrawer';
+import EntityTooltip from './EntityTooltip';
 import Snackbar from 'material-ui/Snackbar';
 import EntityDrawer from './EntityDrawer';
 import axios from 'axios';
@@ -26,6 +27,7 @@ class DungeonMaker extends Component {
     this.setTile = this.setTile.bind(this);
     this.setEntity = this.setEntity.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
+    this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -38,9 +40,14 @@ class DungeonMaker extends Component {
       selectedDungeon: false,
       availableMonsters: [],
       availableCharacters: [],
-      encounter_id: false,
+      _id: false,
       snackbarOpen: false,
-      snackbarMsg: ''
+      snackbarMsg: '',
+      hoverEntity: false,
+      mouse: {
+        clientX: false,
+        clientY: false
+      }
     };
   }
 
@@ -69,10 +76,18 @@ class DungeonMaker extends Component {
     window.removeEventListener("click", this.handleMyEvent);
   }
 
+  handleEntityMouseOver = (entity, eve) => {
+    let state = this.state;
+    state.hoverEntity = entity;
+    state.mouse.clientX = eve.clientX;
+    state.mouse.clientY = eve.clientY;
+    this.setState(state);
+  }
+
   saveDungeonGrid(){
-    let {slots, title, encounter_id} = this.state;
+    let {slots, title, _id} = this.state;
     let _this = this;
-    axios.post(`${Variables.host}/saveDungeonGrids`, {slots: slots, title: title, encounter_id: encounter_id})
+    axios.post(`${Variables.host}/saveDungeonGrids`, {slots: slots, title: title, _id: _id})
       .then(res => {
         _this.setState( {snackbarOpen: true, snackbarMsg: 'Encounter successfully saved'});
       });
@@ -80,11 +95,11 @@ class DungeonMaker extends Component {
 
   setDungeon(selectedDungeon){
     let _this = this;
-    axios.get(`${Variables.host}/findDungeonGrid?encounter_id=${selectedDungeon}`)
+    axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
       .then(res => {
         let state = _this.state;
         state.slots = res.data.slots;
-        state.encounter_id = res.data.encounter_id;
+        state._id = res.data._id;
         state.title = res.data.title;
         _this.setState(state);
       });
@@ -95,8 +110,6 @@ class DungeonMaker extends Component {
     state.selectedDungeon = id;
     state.snackbarOpen = false;
     this.setState( state );
-
-
   }
 
   setTile(e, state, slot){
@@ -108,22 +121,20 @@ class DungeonMaker extends Component {
 
     state.tileType = (state.tileType === tileType.label) ? '' : tileType.label;
 
-    // if(tileType.size !== undefined){
-    //   state = this.setDoors(state, e, slot);          
-    // } 
     this.setState( state );
   }
 
   setEntity(e, state, slot){
     let slotEntity = state.slots[ slot - 1 ].overlays.entity;
 
-    if(slotEntity.entity_id === state.selectedEntity.entity_id){
+    if(slotEntity !== false && slotEntity._id === state.selectedEntity._id){
       state.slots[ slot - 1 ].overlays.entity = false;
       state.slots[ slot - 1 ].occupied = false;
     } else {
       state.slots[ slot - 1 ].overlays.entity = state.selectedEntity;
       state.slots[ slot - 1 ].occupied = true;
     }
+
     this.setState( state );
   }
 
@@ -181,13 +192,10 @@ class DungeonMaker extends Component {
 
   addTile(slot, e) {
     let state = this.state;
-console.log(slot);
-// console.log(e.target);
+
     let selectedTile = state.selectedTile;
     let tileType = TileOptions.find( function(val) { return val.id === selectedTile });
- // console.log('selectedTile:'+selectedTile)   ;
- // console.log(state.selectedEntity);
- // console.log(tileType)   ;
+
     if(tileType === undefined || tileType.overlay){
       return false;
     }
@@ -213,18 +221,19 @@ console.log(slot);
   }
 
   selectEntity(id) {
-    let selectedEntity = this.state.availableMonsters.find(function(val){ return val.entity_id === id});
+    let selectedEntity = this.state.availableMonsters.find(function(val){ return val._id === id});
     this.setState( { selectedEntity: selectedEntity, selectedTile: '' });
   }
 
   render() {
     let {slots, selectedTile, foundDungeonGrids, selectedDungeon, selectedEntity, availableMonsters} = this.state;
-//console.log(this.state);
+
     return (    	
 	      <div className="DungeonMaker">
-          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon}/>
+          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleEntityMouseOver={this.handleEntityMouseOver}/>
           <TileDrawer tiles={TileOptions} onSelectTile={this.selectTile} selectedTile={selectedTile} />
           <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
+          <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
           <DungeonLoadDrawer onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
 
           <Snackbar

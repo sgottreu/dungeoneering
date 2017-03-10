@@ -42,16 +42,16 @@ class EntityDrawer extends Component {
         <List className="EntityIcons">
             {availableMonsters.map((monster, index) => {
               let m = monster;
-              let entity_id = (selectedEntity === undefined) ? false : selectedEntity.entity_id;
-              let className = '';//(entity_id === m.entity_id ) ? ' active' : '';
+              let _id = (selectedEntity === undefined) ? false : selectedEntity._id;
+              let className = '';
 
               return (
-                <Paper key={index} className="EntityPaper" zDepth={(entity_id === m.entity_id ) ? 4 : 1 } >
+                <Paper key={index} className="EntityPaper" zDepth={(_id === m._id ) ? 4 : 1 } >
 
                   <ListItem 
                     className={className}
                     key={index}
-                    onTouchTap={onSelectEntity.bind(this, m.entity_id)}
+                    onTouchTap={onSelectEntity.bind(this, m._id)}
                     primaryText={m.name}
                     secondaryText={<span>HP: {m.hp}, XP: {m.xp}, Lvl: {m.level}</span>}
                     leftAvatar={<Avatar data-icon={m.iconClass} className={`${m.iconClass} icon`} />}
