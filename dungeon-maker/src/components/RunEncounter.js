@@ -18,6 +18,7 @@ class RunEncounter extends Component {
     this.setDungeon = this.setDungeon.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
+    this.setSlotDimensions = this.setSlotDimensions.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -97,12 +98,21 @@ class RunEncounter extends Component {
     this.setState( { selectedTile: (selectedTile === id) ? '' : id });
   }
 
+  setSlotDimensions = (slot) => {
+    let state = this.state;
+      state.slots[ slot.dataset.slot - 1].left = slot.offsetLeft;
+      state.slots[ slot.dataset.slot - 1].top = slot.offsetTop;
+    this.setState(state);
+  }
+
   render() {
     let {slots, foundDungeonGrids, selectedDungeon} = this.state;
 
     return (    	
 	      <div className="RunEncounter">
-          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleEntityMouseOver={this.handleEntityMouseOver}/>
+          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} 
+            onHandleEntityMouseOver={this.handleEntityMouseOver}
+            onSetSlotDimensions={this.setSlotDimensions} />
           <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
           <DungeonLoadDrawer onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids}/>
 	      </div>

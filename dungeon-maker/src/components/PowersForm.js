@@ -209,11 +209,12 @@ class PowersForm extends Component {
   loadPowerChooser(){
     let _power = this.state.power;
     let existingPowers = this.props.existingPowers;
+
       return (
         <SelectField floatingLabelText="Choose Power" value={this.state.current_power} onChange={this.handleChoosePower} >
           <MenuItem key={0} value={0} primaryText="Add New Power" />
           {existingPowers.map( (power, index) => (
-            <MenuItem leftIcon={<div className={'icon icon_power_class '+power.class.name.toLowerCase()} />} key={index+1} value={index+1} primaryText={power.name} />
+            <MenuItem leftIcon={<div className={'icon icon_power_class '+(power.class.name === undefined? power.class : power.class.name.toLowerCase())} />} key={index+1} value={index+1} primaryText={power.name} />
           ))}
         </SelectField>
       );

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+
 import Slots from './Slots.js';
 import DungeonGrid from './DungeonGrid';
 import TileOptions from './TileOptions';
@@ -6,6 +8,7 @@ import DungeonLoadDrawer from './DungeonLoadDrawer';
 import TileDrawer from './TileDrawer';
 import EntityTooltip from './EntityTooltip';
 import Snackbar from 'material-ui/Snackbar';
+import RaisedButton from 'material-ui/RaisedButton';
 import EntityDrawer from './EntityDrawer';
 import axios from 'axios';
 import {Variables} from './Variables';
@@ -28,6 +31,9 @@ class DungeonMaker extends Component {
     this.setEntity = this.setEntity.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
+    this.showDupeButton = this.showDupeButton.bind(this);
+    this.duplicateDungeon = this.duplicateDungeon.bind(this);
+    this.setSlotDimensions = this.setSlotDimensions.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -77,10 +83,21 @@ class DungeonMaker extends Component {
   }
 
   handleEntityMouseOver = (entity, eve) => {
+    // if(entity === false){
+    //   return false;
+    // }
     let state = this.state;
     state.hoverEntity = entity;
     state.mouse.clientX = eve.clientX;
     state.mouse.clientY = eve.clientY;
+
+    this.setState(state);
+  }
+
+  setSlotDimensions = (slot) => {
+    let state = this.state;
+      state.slots[ slot.dataset.slot - 1].left = slot.offsetLeft;
+      state.slots[ slot.dataset.slot - 1].top = slot.offsetTop;
     this.setState(state);
   }
 
@@ -94,6 +111,9 @@ class DungeonMaker extends Component {
   }
 
   setDungeon(selectedDungeon){
+    if(selectedDungeon === false){
+      return false;
+    }
     let _this = this;
     axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
       .then(res => {
@@ -127,9 +147,10 @@ class DungeonMaker extends Component {
   setEntity(e, state, slot){
     let slotEntity = state.slots[ slot - 1 ].overlays.entity;
 
-    if(slotEntity !== false && slotEntity._id === state.selectedEntity._id){
+    if(state.slots[ slot - 1 ].occupied === true && state.selectedEntity._id){
       state.slots[ slot - 1 ].overlays.entity = false;
       state.slots[ slot - 1 ].occupied = false;
+      state.hoverEntity = false;
     } else {
       state.slots[ slot - 1 ].overlays.entity = state.selectedEntity;
       state.slots[ slot - 1 ].occupied = true;
@@ -159,36 +180,6 @@ class DungeonMaker extends Component {
   handleTitleChange = (e) => {
     this.setState( { title: e.target.value } );
   }
-
-  // setDoors(state, e, slot){
-  //   if(typeof state.connectedDoor === "object" ){
-  //     let startSlot = state.connectedDoor.side1;
-
-  //     //Update Original 
-
-  //     let i = state.slots[ startSlot - 1 ].overlays.doors.findIndex( function(val) { return val.side1.slot === startSlot} );
-  //     state.slots[ startSlot - 1 ].overlays.doors[ i ].side2 = {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot };
-  //     let startSlotSide1 = state.slots[ startSlot - 1 ].overlays.doors[ i ].side1;
-
-  //     if(startSlot !== slot){
-  //       state.slots[ slot - 1 ].overlays.doors.push( 
-  //         { side1: {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot },
-  //           side2: startSlotSide1 } 
-  //       );      
-  //     }
-  //     state.connectedDoor = false;
-  //   } else {
-  //     state.slots[ slot - 1 ].overlays.doors.push( 
-  //       {
-  //         side1: {x: e.target.offsetLeft, y: e.target.offsetTop, slot: slot },
-  //         side2: false 
-  //       } 
-  //     );
-  //     state.connectedDoor = { side1: slot, side2: false };
-  //   }
-
-  //   return state;
-  // }
 
   addTile(slot, e) {
     let state = this.state;
@@ -225,17 +216,35 @@ class DungeonMaker extends Component {
     this.setState( { selectedEntity: selectedEntity, selectedTile: '' });
   }
 
+  showDupeButton = () => {
+    return (
+      <RaisedButton
+          label="Duplicate Dungeon"
+          onTouchTap={this.duplicateDungeon}
+        />
+
+    );
+  }
+
+  duplicateDungeon = () => {
+    let state = this.state;
+    state.selectedDungeon = false;
+    state._id = false;
+    state.title = 'Copy of '+state.title;
+    this.setState(state);
+  }
+
   render() {
     let {slots, selectedTile, foundDungeonGrids, selectedDungeon, selectedEntity, availableMonsters} = this.state;
 
     return (    	
 	      <div className="DungeonMaker">
-          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleEntityMouseOver={this.handleEntityMouseOver}/>
+          <DungeonGrid slots={slots} onSetSlotDimensions={this.setSlotDimensions} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleEntityMouseOver={this.handleEntityMouseOver}/>
           <TileDrawer tiles={TileOptions} onSelectTile={this.selectTile} selectedTile={selectedTile} />
           <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
           <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
-          <DungeonLoadDrawer onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
-
+          <DungeonLoadDrawer showSave={true} onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
+          {selectedDungeon !== false ? this.showDupeButton() : ''}
           <Snackbar
             open={this.state.snackbarOpen}
             message={this.state.snackbarMsg}

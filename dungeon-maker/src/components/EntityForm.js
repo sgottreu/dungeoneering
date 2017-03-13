@@ -400,7 +400,7 @@ class EntityForm extends Component {
               <ListItem className={className} key={index} data-icon={icon.class} 
                 onTouchTap={this.changeIcon}
                 primaryText={<div data-icon={icon.class}>{icon.label}</div>}  
-                leftAvatar={<Avatar data-icon={icon.class} className={'icon '+icon.class} />}
+                leftAvatar={<Avatar data-icon={icon.class} style={ {backgroundSize: '40px !important'} } className={'icon '+icon.class} />}
                 
               />
             );
@@ -437,21 +437,31 @@ class EntityForm extends Component {
         <List className="EntityPowers" style={listStyle}>
           
           {_powers.map( (power, index) => {
-            if(!this.state.entity.class || EntityClass[this.state.entity.class].name !== power.class.name){
-              return false;
+            if(!this.state.entity.class){
+              return (
+                <ListItem  key={index} 
+                  primaryText={<div >{power.name}</div>}  
+                  leftAvatar={<Avatar className={'icon weapon_'+power.class} />}
+                />
+              );
+            } else {
+              if(EntityClass[this.state.entity.class].name !== power.class.name){
+                return false;
+              }
+
+              let _found = _this.state.entity.powers.findIndex(function(p) { 
+                return power._id === p
+              });
+              let className = (_found > -1) ? ' active' : '';
+
+              return (
+                <ListItem className={className} key={index} 
+                  primaryText={<div >{power.name}</div>}  
+                  leftAvatar={<Avatar className={'icon weapon_'+_Powers.powerType[power.type].class} onClick={this.selectPower.bind(this, power)}/>}
+                />
+              );
             }
-
-            let _found = _this.state.entity.powers.findIndex(function(p) { 
-              return power._id === p
-            });
-            let className = (_found > -1) ? ' active' : '';
-
-            return (
-              <ListItem className={className} key={index} 
-                primaryText={<div >{power.name}</div>}  
-                leftAvatar={<Avatar className={'icon weapon_'+_Powers.powerType[power.type].class} onClick={this.selectPower.bind(this, power)}/>}
-              />
-            );
+            
           })}
         </List>
       </div>

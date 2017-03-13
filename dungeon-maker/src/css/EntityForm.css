@@ -129,6 +129,10 @@
 	background-image: url(../img/wizard.png);
 }
 
+.icon.fighter {
+	background-image: url(../img/fighter.png);
+}
+
 .icon.weapon_melee {
 	background-image: url(../img/weapon_melee.png);
 }

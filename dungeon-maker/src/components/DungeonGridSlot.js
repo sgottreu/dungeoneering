@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-// import Door from './Door';
-
+import ReactDOM from 'react-dom';
 import '../css/DungeonGridSlot.css';
 
 class DungeonGridSlot extends Component {
@@ -14,8 +13,11 @@ class DungeonGridSlot extends Component {
   }
 
   handleMouseOver = (entity, eve) => {
-    console.log(this.props);
     this.props.onHandleEntityMouseOver(entity, eve);
+  }
+
+  componentDidMount(){
+    this.props.onSetSlotDimensions(ReactDOM.findDOMNode(this));
   }
 
   loadEntityTile(slot){
@@ -28,7 +30,7 @@ class DungeonGridSlot extends Component {
       width: (75 * entity.size),
       height: (75 * entity.size),
       position: 'absolute',
-      top: slot.top,
+      top: `${slot.top}px`,
       left: slot.left,
       backgroundSize: (75 * entity.size)
     }
@@ -50,7 +52,8 @@ class DungeonGridSlot extends Component {
     }
 
     return (
-      <div className={className} data-slot={id} onClick={onAddTile.bind(this, id)}>&nbsp;
+      <div ref={'tile'+slot.id}
+        className={className} data-slot={id} onClick={onAddTile.bind(this, id)}>&nbsp;
         {this.loadEntityTile(slot)}
       </div>
     );

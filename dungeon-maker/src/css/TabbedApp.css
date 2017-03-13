@@ -1,0 +1,10 @@
+.hide {
+    display: none !important;
+}
+
+
+.AppBarMenu {
+    position: absolute;
+    z-index: 999;
+    background: #fff;
+}

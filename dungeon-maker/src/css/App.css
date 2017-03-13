@@ -1,11 +1,22 @@
-.App {
-  text-align: center;
-}
+
 
 .active {
 	border: 3px solid #00bcd4 !important;
 }
 
+.hide {
+    display: none !important;
+}
+
+.AppBar {
+	text-align: center;
+}
+
+.AppBarMenu {
+    position: absolute;
+    z-index: 999;
+    background: #fff;
+}
 
 .characters {
 	background-size: 75px;

@@ -253,5 +253,6 @@ export var EntityIcons = [
   { label: 'Cleric', class: 'cleric', type: 'character' },
   { label: 'Ranger', class: 'ranger', type: 'character' },
   { label: 'Wizard', class: 'wizard', type: 'character' },
-  { label: 'Warlock', class: 'warlock', type: 'character' }
+  { label: 'Warlock', class: 'warlock', type: 'character' },
+  { label: 'Fighter', class: 'fighter', type: 'character' }
 ];

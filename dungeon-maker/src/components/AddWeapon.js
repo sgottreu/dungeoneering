@@ -20,7 +20,7 @@ class AddWeapon extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleWeaponSave = this.handleWeaponSave.bind(this);
     this.handleDieChange = this.handleDieChange.bind(this);
-    this.handleNumChange = this.handleNumChange.bind(this);
+    this.handleDieNumChange = this.handleDieNumChange.bind(this);
     this.handleProfChange = this.handleProfChange.bind(this);
     this.handleCategoryChange = this.handleCategoryChange.bind(this);
     this.handleTypeChange = this.handleTypeChange.bind(this);

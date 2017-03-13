@@ -14,6 +14,7 @@ class DungeonLoadDrawer extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.handleClose = this.handleClose.bind(this);
+		this.loadSaveMenu = this.loadSaveMenu.bind(this);
     
     this.state = {open: false};
 
@@ -28,8 +29,20 @@ class DungeonLoadDrawer extends Component {
 		this.setState({open: false});
 	}
 
+	loadSaveMenu(){
+		let {onSaveDungeonGrid, onHandleTitleChange, dungeonTitle} = this.props;
+		return(
+			<div>
+
+				<br/>
+				<TextField hintText="Encounter Name" value={dungeonTitle} onChange={onHandleTitleChange.bind(this)} />
+				<RaisedButton label="Save Encounter" primary={true}  onClick={onSaveDungeonGrid.bind(this)} />
+			</div>
+		)
+	}
+
 	render(){
-		let {onSaveDungeonGrid, foundDungeonGrids, selectedDungeon, onHandleTitleChange, dungeonTitle} = this.props;
+		let {foundDungeonGrids, selectedDungeon, showSave} = this.props;
 
 
 		return (
@@ -44,17 +57,16 @@ class DungeonLoadDrawer extends Component {
           open={this.state.open}
           onRequestChange={(open) => this.setState({open})}
         >
-					<TextField hintText="Encounter Name" value={dungeonTitle} onChange={onHandleTitleChange.bind(this)} />
-		      <RaisedButton label="Save Encounter" primary={true}  onClick={onSaveDungeonGrid.bind(this)} />
+					<SelectField onChange={this.handleChange} value={selectedDungeon} floatingLabelText="Saved Dungeon Grids" >
+						{foundDungeonGrids.map( (grid, x) => {
+							let label = (grid.title) ? grid.title : grid._id;
+							return (
+								<MenuItem key={grid._id} value={grid._id} primaryText={label} />
+							)
+						})}
+					</SelectField>
+					{(showSave===true) ? this.loadSaveMenu(selectedDungeon, foundDungeonGrids) : ''}
 
-		      <SelectField onChange={this.handleChange} value={selectedDungeon} floatingLabelText="Saved Dungeon Grids" >
-	          {foundDungeonGrids.map( (grid, x) => {
-	          	let label = (grid.title) ? grid.title : grid._id;
-	          	return (
-	          		<MenuItem key={grid._id} value={grid._id} primaryText={label} />
-	          	)
-	          })}
-	        </SelectField>
 	      </Drawer>
 	    </div>
 	  )
