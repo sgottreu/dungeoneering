@@ -23,7 +23,10 @@ class DungeonGrid extends Component {
 	    return (
 	      <div className="DungeonGrid">
 	        {slots.map(slot => (	          
-	          <DungeonGridSlot key={slot.id} id={slot.id} slot={slot} overlays={slot.overlays} onAddTile={onAddTile} onHandleEntityMouseOver={this.props.onHandleEntityMouseOver}/>
+	          <DungeonGridSlot key={slot.id} id={slot.id} slot={slot} overlays={slot.overlays} onAddTile={onAddTile} 
+							onHandleEntityMouseOver={this.props.onHandleEntityMouseOver}
+							onSetSlotDimensions={this.props.onSetSlotDimensions}
+						/>
 	        ))}
 	      </div>
 	    );

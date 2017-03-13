@@ -6,6 +6,11 @@ import AddMonster from './AddMonster';
 import CreateCharacter from './CreateCharacter';
 import AddWeapon from './AddWeapon';
 import AddPowers from './AddPowers';
+import AppBar from 'material-ui/AppBar';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+
+import '../css/TabbedApp.css';
 
 class TabbedApp extends Component {
   constructor(props){
@@ -19,9 +24,18 @@ class TabbedApp extends Component {
     this.loadAddWeapon = this.loadAddWeapon.bind(this);
     this.loadAddPowers = this.loadAddPowers.bind(this);
 
+    this.activateMenu = this.activateMenu.bind(this);
+
     this.state = {
+      activeMenu: false,
       selectedTab: 'AddPowers',
     };
+  }
+
+  activateMenu = () => {
+    this.setState({
+      activeMenu: !this.state.activeMenu,
+    });
   }
 
   handleChange = (value) => {
@@ -73,7 +87,23 @@ class TabbedApp extends Component {
   render() {
     return (    	
       <div className="TabbedApp">
-        <Tabs value={this.state.selectedTab} onChange={this.handleChange}>
+       <AppBar
+        title="Dungeon Maker"
+        onLeftIconButtonTouchTap={this.activateMenu}
+        /> 
+
+      <Menu 
+        className={'AppBarMenu '+(this.state.activeMenu ? 'active' : 'hide')}
+        onEscKeyDown={this.activateMenu}
+        >
+        <MenuItem primaryText="Run Encounter" />
+        <MenuItem primaryText="Create Encounter" />
+        <MenuItem primaryText="Dungeon Maker" />
+        <MenuItem primaryText="Create Character" />
+        <MenuItem primaryText="Add Monster" />
+        <MenuItem primaryText="Add Powers" />
+      </Menu>
+        {/*<Tabs value={this.state.selectedTab} onChange={this.handleChange}>
           <Tab label="Run Encounter" value="runEncounter">
             {this.loadRunEncounter()}
           </Tab>
@@ -90,7 +120,7 @@ class TabbedApp extends Component {
             {this.loadAddPowers()}
           </Tab>
 
-        </Tabs>
+        </Tabs>*/}
       	
         
       </div>
