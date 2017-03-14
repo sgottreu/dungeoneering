@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {List, ListItem} from 'material-ui/List';
 import Slots from './Slots.js';
 import DungeonGrid from './DungeonGrid';
 import DungeonLoadDrawer from './DungeonLoadDrawer';
@@ -103,11 +104,17 @@ class CreateEncounter extends Component {
 
     return (    	
       <div className="CreateEncounter">
-        <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} 
-          onHandleEntityMouseOver={this.handleEntityMouseOver}
-          onSetSlotDimensions={this.setSlotDimensions} />
-        <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
-        <DungeonLoadDrawer onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids}/>
+        <List >
+          {this.state.foundDungeonGrids.map( (grid, index) => {
+           
+            return (
+              <ListItem  key={index}  
+                
+                primaryText={<div >{grid.title}</div>}  />
+              
+            );
+          })}
+        </List>
       </div>
     );
   }
