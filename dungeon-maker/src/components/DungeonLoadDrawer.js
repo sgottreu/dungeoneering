@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
 import Drawer from 'material-ui/Drawer';
+
+import '../css/DungeonLoadDrawer.css';
 
 class DungeonLoadDrawer extends Component {
 	
@@ -14,10 +15,24 @@ class DungeonLoadDrawer extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.handleClose = this.handleClose.bind(this);
-		this.loadSaveMenu = this.loadSaveMenu.bind(this);
-    
+    this.toggleWithKey = this.toggleWithKey.bind(this);
+
     this.state = {open: false};
 
+  }
+
+  componentDidMount() {
+      window.addEventListener("keyup", this.toggleWithKey);
+  }
+
+  toggleWithKey = (e) => {
+    if(e.keyCode === 71 && e.altKey){
+      this.handleToggle();
+    } else {
+			if((e.keyCode === 77 || e.keyCode === 71 || e.keyCode === 84) && e.altKey){
+			  this.setState({open: false});
+      }
+		}
   }
 
 	handleToggle = () => this.setState({open: !this.state.open});
@@ -29,27 +44,19 @@ class DungeonLoadDrawer extends Component {
 		this.setState({open: false});
 	}
 
-	loadSaveMenu(){
-		let {onSaveDungeonGrid, onHandleTitleChange, dungeonTitle} = this.props;
-		return(
-			<div>
-
-				<br/>
-				<TextField hintText="Encounter Name" value={dungeonTitle} onChange={onHandleTitleChange.bind(this)} />
-				<RaisedButton label="Save Encounter" primary={true}  onClick={onSaveDungeonGrid.bind(this)} />
-			</div>
-		)
-	}
+	
 
 	render(){
-		let {foundDungeonGrids, selectedDungeon, showSave} = this.props;
+		let {foundDungeonGrids, selectedDungeon} = this.props;
 
 
 		return (
 			<div className="DungeonLoadDrawer">
 			 <RaisedButton
           label="Find Dungeon"
+					secondary={true} 
           onTouchTap={this.handleToggle}
+					className="button"
         />
         <Drawer
           docked={false}
@@ -65,8 +72,7 @@ class DungeonLoadDrawer extends Component {
 							)
 						})}
 					</SelectField>
-					{(showSave===true) ? this.loadSaveMenu(selectedDungeon, foundDungeonGrids) : ''}
-
+					
 	      </Drawer>
 	    </div>
 	  )

@@ -18,6 +18,10 @@
     background: #fff;
 }
 
+.AppBarMenu a {
+	text-decoration: none;
+}
+
 .characters {
 	background-size: 75px;
  	border: 1px solid #000;

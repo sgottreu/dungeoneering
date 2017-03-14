@@ -20,12 +20,34 @@ class EntityTooltip extends Component {
     let AbilityMap = new Map(Object.entries(entity.abilities));
 
     return (
-      <List>
+      <List className="stats">
         <ListItem primaryText={entity.name} leftIcon={<div className={'tooltip_icon icon '+entity.iconClass} />}  />
-        <ListItem primaryText={entity.level} leftIcon={<i className="fa fa-line-chart" aria-hidden="true"></i>}  />
+        {/*<ListItem primaryText={entity.level} leftIcon={<i className="fa fa-line-chart" aria-hidden="true"></i>}  />
         <ListItem primaryText={entity.xp} leftIcon={<i className="fa fa-trophy" aria-hidden="true"></i>}  />
-        <ListItem primaryText={entity.hp} leftIcon={<i className="fa fa-heart" aria-hidden="true"></i>}  />
-        <ListItem primaryText={<div className="flex">
+        <ListItem primaryText={entity.hp} leftIcon={<i className="fa fa-heart" aria-hidden="true"></i>}  />*/}
+        <ListItem primaryText={
+          <div className="flex-horiz">
+            <Chip key="a">
+              <Avatar size={32}><i className="fa fa-line-chart" aria-hidden="true"></i></Avatar>
+              {entity.level}
+            </Chip>
+            <Chip key="b">
+              <Avatar size={32}><i className="fa fa-trophy" aria-hidden="true"></i></Avatar>
+              {entity.xp}
+            </Chip>
+            <Chip key="c">
+              <Avatar size={32}><i className="fa fa-heart" aria-hidden="true"></i></Avatar>
+              {entity.hp}
+            </Chip>
+            <Chip key="d">
+              <Avatar size={32}><i className="fa fa-rocket" aria-hidden="true"></i></Avatar>
+              {entity.speed}
+            </Chip>
+          </div>
+        }   />
+        
+        
+        <ListItem primaryText={<div className="flex-vert">
           {[...AbilityMap.entries()].map((a, i) => {
           return (
             <Chip key={i}>

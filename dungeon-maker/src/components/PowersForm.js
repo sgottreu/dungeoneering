@@ -177,7 +177,7 @@ class PowersForm extends Component {
 
   loadPowerLevel(_power) {
   	return(
-  		<TextField className="shortField" floatingLabelText="Level" type="number" value={parseInt(_power.level)} name="level" onChange={this.handleChange} />
+  		<TextField className="shortField" floatingLabelText="Level" type="number" value={parseInt(_power.level,10)} name="level" onChange={this.handleChange} />
   	);
   }
 

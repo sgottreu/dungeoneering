@@ -5,19 +5,31 @@ import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import Paper from 'material-ui/Paper';
 
+import '../css/EntityDrawer.css';
+
 class EntityDrawer extends Component {
 	
 	constructor(props){
     super(props);
     this.handleToggle = this.handleToggle.bind(this);
     this.handleClose = this.handleClose.bind(this);
-
+    this.toggleWithKey = this.toggleWithKey.bind(this);
     this.state = {open: false, availableMonsters: []};
 
   }
 
   componentDidMount() {
-    let _this = this;
+      window.addEventListener("keyup", this.toggleWithKey);
+  }
+
+  toggleWithKey = (e) => {
+    if(e.keyCode === 77 && e.altKey){
+      this.handleToggle();
+    } else {
+      if((e.keyCode === 77 || e.keyCode === 71 || e.keyCode === 84) && e.altKey){
+			  this.setState({open: false});
+      }
+		}
   }
 
 	handleToggle = () => this.setState({open: !this.state.open});
@@ -30,8 +42,10 @@ class EntityDrawer extends Component {
 		return (
 			<div className="EntityDrawer">
 			 <RaisedButton
-          label={'Show '+entityType}
+          label={'Show '+entityType} 
+          secondary={true} 
           onTouchTap={this.handleToggle}
+          className="button"
         />
         <Drawer
           docked={false}
