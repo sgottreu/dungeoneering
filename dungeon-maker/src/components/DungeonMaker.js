@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-
 import Slots from './Slots.js';
 import DungeonGrid from './DungeonGrid';
 import TileOptions from './TileOptions';
@@ -9,11 +8,13 @@ import TileDrawer from './TileDrawer';
 import EntityTooltip from './EntityTooltip';
 import Snackbar from 'material-ui/Snackbar';
 import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 import EntityDrawer from './EntityDrawer';
 import axios from 'axios';
 import {Variables} from './Variables';
+import {_Dungeon} from './_Dungeon';
 
-
+import '../css/DungeonMaker.css';
 
 class DungeonMaker extends Component {
   constructor(props){
@@ -34,6 +35,10 @@ class DungeonMaker extends Component {
     this.showDupeButton = this.showDupeButton.bind(this);
     this.duplicateDungeon = this.duplicateDungeon.bind(this);
     this.setSlotDimensions = this.setSlotDimensions.bind(this);
+    this.loadSaveMenu = this.loadSaveMenu.bind(this);
+    this.convertImageToCanvas = this.convertImageToCanvas.bind(this);
+
+    this.convert
 
     this.state = { 
       slots: Slots,
@@ -62,12 +67,7 @@ class DungeonMaker extends Component {
 
     let _this = this;
 
-    axios.get(`${Variables.host}/findDungeonGrids`)
-    .then(res => {
-      let state = _this.state;
-      state.foundDungeonGrids = res.data;
-      _this.setState( state );
-    });    
+    _Dungeon.findDungeonGrids(_this);
 
     axios.get(`${Variables.host}/findEntities`)
     .then(res => {
@@ -82,23 +82,37 @@ class DungeonMaker extends Component {
     window.removeEventListener("click", this.handleMyEvent);
   }
 
+  convertImageToCanvas() {
+    // var canvas = document.createElement("canvas");
+    // var image = document.createElement('img');
+    // canvas.width = 76*20;
+    // canvas.height = 76*10;
+
+    // this.state.slots.map(function(slot, i){
+    //   if(slot.tileType){
+    //     console.log(_Dungeon.images[ slot.tileType ]);
+    //     image.src = "url(../img/"+_Dungeon.images[ slot.tileType ]+")";
+    //     canvas.getContext("2d").drawImage(image, slot.top, slot.left);
+    //   }
+    // });
+
+  }
+
+
   handleEntityMouseOver = (entity, eve) => {
-    // if(entity === false){
-    //   return false;
-    // }
     let state = this.state;
     state.hoverEntity = entity;
     state.mouse.clientX = eve.clientX;
     state.mouse.clientY = eve.clientY;
-
     this.setState(state);
   }
 
   setSlotDimensions = (slot) => {
-    let state = this.state;
-      state.slots[ slot.dataset.slot - 1].left = slot.offsetLeft;
-      state.slots[ slot.dataset.slot - 1].top = slot.offsetTop;
-    this.setState(state);
+    // let state = this.state;
+    
+    //   state.slots[ slot.dataset.slot - 1].left = slot.offsetLeft;
+    //   state.slots[ slot.dataset.slot - 1].top = slot.offsetTop;
+    // this.setState(state);
   }
 
   saveDungeonGrid(){
@@ -106,6 +120,13 @@ class DungeonMaker extends Component {
     let _this = this;
     axios.post(`${Variables.host}/saveDungeonGrids`, {slots: slots, title: title, _id: _id})
       .then(res => {
+        let fDG = _this.state.foundDungeonGrids;
+        if(!_id){
+          fDG.push({ _id: res.data._id, title: title });
+        } else {
+          fDG.map( function(grid, i){ if(grid._id === _id){ grid.title = title; }});
+        }
+
         _this.setState( {snackbarOpen: true, snackbarMsg: 'Encounter successfully saved'});
       });
   }
@@ -122,6 +143,7 @@ class DungeonMaker extends Component {
         state._id = res.data._id;
         state.title = res.data.title;
         _this.setState(state);
+        this.convertImageToCanvas();
       });
   }
 
@@ -145,8 +167,6 @@ class DungeonMaker extends Component {
   }
 
   setEntity(e, state, slot){
-    let slotEntity = state.slots[ slot - 1 ].overlays.entity;
-
     if(state.slots[ slot - 1 ].occupied === true && state.selectedEntity._id){
       state.slots[ slot - 1 ].overlays.entity = false;
       state.slots[ slot - 1 ].occupied = false;
@@ -219,7 +239,8 @@ class DungeonMaker extends Component {
   showDupeButton = () => {
     return (
       <RaisedButton
-          label="Duplicate Dungeon"
+          label="Duplicate Dungeon"secondary={true} 
+					className="button"
           onTouchTap={this.duplicateDungeon}
         />
 
@@ -234,6 +255,17 @@ class DungeonMaker extends Component {
     this.setState(state);
   }
 
+  loadSaveMenu = () => {
+		return(
+			<div>
+
+				<br/>
+				<TextField hintText="Dungeon Name" value={this.state.title} onChange={this.handleTitleChange} />
+				<RaisedButton label="Save Dungeon" primary={true}  onClick={this.saveDungeonGrid} />
+			</div>
+		)
+	}
+
   render() {
     let {slots, selectedTile, foundDungeonGrids, selectedDungeon, selectedEntity, availableMonsters} = this.state;
 
@@ -245,6 +277,7 @@ class DungeonMaker extends Component {
           <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
           <DungeonLoadDrawer showSave={true} onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
           {selectedDungeon !== false ? this.showDupeButton() : ''}
+          {this.loadSaveMenu()}
           <Snackbar
             open={this.state.snackbarOpen}
             message={this.state.snackbarMsg}

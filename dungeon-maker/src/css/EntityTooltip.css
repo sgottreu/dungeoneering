@@ -17,7 +17,7 @@
     left: 0px !important;
 }
 
-.flex {
+.flex-vert {
     top: -10px;
     display: flex;
     flex-wrap: wrap;
@@ -26,3 +26,14 @@
     justify-content: space-around;
     position: relative;
 }
+
+.flex-horiz {
+    top: -10px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    width: 300px;
+    justify-content: space-around;
+    position: relative;
+}
+

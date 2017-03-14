@@ -82,7 +82,8 @@ app.get('/findDungeonGrid', function (req, res) {
 app.get('/findDungeonGrids', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 	console.log('Finding grids');
-	dungeon_grid.find({ _type: 'encounter' }).then(function(docs) {
+
+	dungeon_grid.find({ _type: 'dungeon' }).then(function(docs) {
 	  console.log(`Found ${docs.length} grids`);
     let grids = [];
     docs.map( (grid, i) => { grids.push({_id: docs[i]._id, title: docs[i].title }) });
@@ -97,7 +98,7 @@ app.post('/saveDungeonGrids', function (req, res) {
 	var dungeon_grid = db.get('dungeoneering');
 
 	let payload = {
-		_type: 'encounter',
+		_type: 'dungeon',
 		title: req.body.title,
 		slots: req.body.slots
 	};

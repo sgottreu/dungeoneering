@@ -20,8 +20,7 @@
 	display: block;
 	z-index: 5;
     position: relative;
-    top: -80px;
-    left: 10px;
+    top: -95px;
 }
 
 .DungeonGridSlot:before {
@@ -44,9 +43,6 @@
     background-size: cover;
 }
 
-.DungeonGridSlot.floor:before {
-    background-image: url(../img/brick-wall.png);
-}
 
 .DungeonGridSlot.floor:before {
     background-image: url(../img/brick-wall.png);

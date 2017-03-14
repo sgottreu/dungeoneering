@@ -7,7 +7,7 @@ import axios from 'axios';
 import {Variables} from './Variables';
 import {_Dungeon} from './_Dungeon';
 
-class RunEncounter extends Component {
+class CreateEncounter extends Component {
   constructor(props){
     super(props);
 
@@ -102,16 +102,16 @@ class RunEncounter extends Component {
     let {slots, foundDungeonGrids, selectedDungeon} = this.state;
 
     return (    	
-	      <div className="RunEncounter">
-          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} 
-            onHandleEntityMouseOver={this.handleEntityMouseOver}
-            onSetSlotDimensions={this.setSlotDimensions} />
-          <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
-          <DungeonLoadDrawer onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids}/>
-	      </div>
+      <div className="CreateEncounter">
+        <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} 
+          onHandleEntityMouseOver={this.handleEntityMouseOver}
+          onSetSlotDimensions={this.setSlotDimensions} />
+        <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
+        <DungeonLoadDrawer onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids}/>
+      </div>
     );
   }
 }
 
-export default RunEncounter;
+export default CreateEncounter;
 

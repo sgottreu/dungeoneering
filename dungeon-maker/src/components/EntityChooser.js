@@ -19,6 +19,15 @@ class EntityChooser extends Component {
 
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if(nextProps.selectedEntity !== this.props.selectedEntity){
+      let state = this.state;
+      state.hoverEntity = false;
+      this.setState(state);
+    }
+    return true;
+  }
+
   handleMouseOver = (entity, eve) => {
     let state = this.state;
     state.hoverEntity = entity;
