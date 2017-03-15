@@ -9,7 +9,8 @@ var TileOptions = [
 
   {label: 'portcullus_ew', id:'t10', overlay: false, entrance: false, exit: false, size: {width:1, height: 1} },
   {label: 'portcullus_ns', id:'t11', overlay: false, entrance: false, exit: false, size: {width:1, height: 1} },
-  {label: 'chest', id: 't9', overlay: false, entrance: false, exit: false},
+  {label: 'chest_brick', id: 't9', overlay: false, entrance: false, exit: false, chest: true},
+  {label: 'chest_gravel', id: 't9a', overlay: false, entrance: false, exit: false, chest: true},
   {label: 'door_ew', id:'t12', overlay: false, entrance: false, exit: false},
   {label: 'door_ns', id:'t13', overlay: false, entrance: false, exit: false},
 ];

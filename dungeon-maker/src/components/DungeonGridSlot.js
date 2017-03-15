@@ -12,17 +12,12 @@ class DungeonGridSlot extends Component {
   }
 
   handleMouseOver = (entity, eve) => {
-    // if(entity === false){
-    //   return false;
-    // }
     this.props.onHandleEntityMouseOver(entity, eve);
   }
 
   componentDidMount(){
     
   }
-
-
 
   loadEntityTile(slot){
     if(!slot.overlays.entity){

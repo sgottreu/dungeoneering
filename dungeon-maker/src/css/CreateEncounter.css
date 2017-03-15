@@ -3,13 +3,22 @@
     height: 300px;
     overflow-y: scroll;
     overflow-x: hidden;
+    margin: 15px 0px;
+}
+
+.encounterDungeons {
+    margin: 15px 0px;
+    width: 300px;
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .moveItem {
     flex-direction: column;
     width: 15px;
     float: right;
-
+    margin-right: 20px;
 }
 
 .moveItem i {
@@ -27,6 +36,8 @@
 
 .selectedDungeons .listItem {
     float:left;
+    width: 80%;
+    text-align: left !important;
 }
 
 

@@ -26,6 +26,7 @@ app.use(logErrors);
 app.use(clientErrorHandler);
 app.use(errorHandler);
 
+const dungeon_grid = db.get('dungeoneering');
 
 function logErrors (err, req, res, next) {
   console.error(err.stack)
@@ -69,18 +70,46 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/dungeon-maker/build/index.html');
 });
 
+// ************* Encounters ******************//
+
+app.post('/saveEncounter', function (req, res) {
+	console.log('Saving encounter');
+
+	let payload = {
+		_type: 'encounter',
+		title: req.body.title,
+		encounterDungeons: req.body.encounterDungeons
+	};
+	 _Save(req, res, payload);		
+});
+
+app.get('/findEncounters', function (req, res) {
+	console.log('Finding encounters');
+
+	dungeon_grid.find({ _type: 'encounter' }).then(function(docs) {
+	  console.log(`Found ${docs.length} grids`);
+    sendJSON(res, docs);
+  }).catch(function(err){ 
+    console.log(err);
+  });
+});
+
+app.get('/findEncounter', function (req, res) {
+	dungeon_grid.findOne({ "_id" : monk.id(req.query._id) }).then(function(docs) {
+    console.log('Found encounter');
+    sendJSON(res, docs);
+  });
+});
+
 // ************* Dungeons ******************//
 app.get('/findDungeonGrid', function (req, res) {
-	var dungeon_grid = db.get('dungeoneering');
 	dungeon_grid.findOne({ "_id" : monk.id(req.query._id) }).then(function(docs) {
     console.log('Found grid');
-    res.writeHead(200, {"Content-Type": "application/json"});
-    res.end( JSON.stringify( docs ) );
+    sendJSON(res, docs);
   });
 });
 
 app.get('/findDungeonGrids', function (req, res) {
-	var dungeon_grid = db.get('dungeoneering');
 	console.log('Finding grids');
 
 	dungeon_grid.find({ _type: 'dungeon' }).then(function(docs) {
@@ -95,24 +124,13 @@ app.get('/findDungeonGrids', function (req, res) {
 
 app.post('/saveDungeonGrids', function (req, res) {
 	console.log('Saving grid');
-	var dungeon_grid = db.get('dungeoneering');
 
 	let payload = {
 		_type: 'dungeon',
 		title: req.body.title,
 		slots: req.body.slots
 	};
-	if(req.body._id) {
-		dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
-			res.writeHead(200, {"Content-Type": "application/json"});
-	    	res.end( JSON.stringify( data ) );
-		});	
-	} else {
-		dungeon_grid.insert( payload ).then(function (data) {
-			res.writeHead(200, {"Content-Type": "application/json"});
-	    	res.end( JSON.stringify( data ) );
-		});
-	}
+	 _Save(req, res, payload);
 		
 });
 
@@ -120,44 +138,27 @@ app.post('/saveDungeonGrids', function (req, res) {
 
 app.post('/saveEntity', function (req, res) {
 	console.log('Saving Entity');
-	var dungeon_grid = db.get('dungeoneering');
 
   let payload = JSON.parse(JSON.stringify(req.body));
-  delete payload._id;
-
-	if(req.body._id) {
-		dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload )
-		.then(function (data) {
-			sendJSON(res, data);
-		});	
-	} else {
-		dungeon_grid.insert( payload ).then(function (data) {
-			sendJSON(res, data);
-		});
-	}
+  _Save(req, res, payload);
 
 });
 
 app.get('/findEntities', function (req, res) {
-	var dungeon_grid = db.get('dungeoneering');
 	console.log('Finding Entities');
 	dungeon_grid.find({ _type: {"$in": ["monster","character"] }}).then(function(docs) {
     let entities = { "monster": [], "character": [] };
 
     for(var x=0,len = docs.length;x<len;x++){
-
     	entities[ docs[x]._type ].push(docs[x]);
     }
 
     console.log(`Found ${docs.length} entities`);
-    res.writeHead(200, {"Content-Type": "application/json"});
-    res.end( JSON.stringify( entities ) );
+    sendJSON(res, entities);
   });
 });
 
 app.get('/findEntity', function (req, res) {
-	var dungeon_grid = db.get('dungeoneering');
-
 	dungeon_grid.findOne({ "_id" : monk.id(req.body._id) }).then(function(docs) {
     	sendJSON(res, docs);
   });
@@ -166,8 +167,6 @@ app.get('/findEntity', function (req, res) {
 // ************* Powers ******************//
 
 app.get('/findPowers', function (req, res) {
-	var dungeon_grid = db.get('dungeoneering');
-
 	dungeon_grid.find({ _type: 'power' }).then(function(docs) {
     sendJSON(res, docs);
   });
@@ -175,27 +174,14 @@ app.get('/findPowers', function (req, res) {
 
 app.post('/savePower', function (req, res) {
 	console.log('Saving Power');
-	var dungeon_grid = db.get('dungeoneering');
-
   let payload = JSON.parse(JSON.stringify(req.body));
-  delete payload._id;
-
-  if(req.body._id) {
-    dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload )
-    .then(function (data) {
-      sendJSON(res, data);
-    }); 
-  } else {
-    dungeon_grid.insert( payload ).then(function (data) {
-      sendJSON(res, data);
-    });
-  }
+  payload._type = "power";
+  _Save(req, res, payload);
 });
 
 // ************* Weapons ******************//
 
 app.get('/findWeapons', function (req, res) {
-  var dungeon_grid = db.get('dungeoneering');
   console.log('Finding Weapons');
   dungeon_grid.find({ _type: 'weapon' }, 
     { sort : { name : 1 } }).then(function(docs) {
@@ -206,29 +192,29 @@ app.get('/findWeapons', function (req, res) {
 
 app.post('/saveWeapon', function (req, res) {
   console.log('Saving Weapon');
-  var dungeon_grid = db.get('dungeoneering');
-
+  
   let payload = JSON.parse(JSON.stringify(req.body));
   payload._type = 'weapon';
-  delete payload._id;
-
-  if(req.body._id) {
-    dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload )
-    .then(function (data) {
-     console.log('findOneAndUpdate');
-      sendJSON(res, data);
-    }); 
-  } else {
-    dungeon_grid.insert( payload ).then(function (data) {
-      console.log('insert');
-      sendJSON(res, data);
-    });
-  }
+  _Save(req, res, payload);
 });
 
 function sendJSON(res, data){
 	res.writeHead(200, {"Content-Type": "application/json"});
   res.end( JSON.stringify( data ) );
+}
+
+function _Save(req, res, payload){
+  if(req.body._id) {
+		dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
+			console.log(`${payload._type} saved!`);
+      sendJSON(res, data)
+		});	
+	} else {
+		dungeon_grid.insert( payload ).then(function (data) {
+			console.log(`${payload._type} saved!`);
+      sendJSON(res, data);
+		});
+	}
 }
 
 app.listen(port, function () {

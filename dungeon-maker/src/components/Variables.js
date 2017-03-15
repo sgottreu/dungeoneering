@@ -12,14 +12,18 @@ export var Variables = {
 	  let _Map = new Map(Object.entries(obj));
 	  return [..._Map.entries()].map(function(obj, i) { return obj[0]; });
 	},
+  toProperCase: function (txt) {
+      return txt.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+  },
+  moveArray: function(arr, fromIndex, toIndex) {
+    var element = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, element);
+    return arr;
+  },
   getSelectListStyle: (value, arr, isObj=false) => {
     let selectListStyle = { position: 'relative' };
     let selected = false;
-    // if(isObj) {
-    //   selected = arr.find(function(v, index) { return index === value });
-    // } else {
-    //   selected = arr.includes(value);
-    // }
     
     if(value){
       selected = true;
