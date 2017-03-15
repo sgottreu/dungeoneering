@@ -5,10 +5,17 @@ import { Link } from 'react-router-dom';
 import AppBar from 'material-ui/AppBar';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import { Route } from 'react-router-dom';
 
-// import '../css/TabbedApp.css';
+import Home from './components/Home';
+import DungeonMaker from './components/DungeonMaker';
+import RunEncounter from './components/RunEncounter';
+import CreateEncounter from './components/CreateEncounter';
+import AddMonster from './components/AddMonster';
+import CreateCharacter from './components/CreateCharacter';
+import AddWeapon from './components/AddWeapon';
+import AddPowers from './components/AddPowers';
 
-// import TabbedApp from './components/TabbedApp';
 import './css/App.css';
 
 injectTapEventPlugin();
@@ -18,10 +25,11 @@ class App extends Component {
     super(props);
 
     this.activateMenu = this.activateMenu.bind(this);
+    this.setEncounter = this.setEncounter.bind(this);
 
     this.state = {
       activeMenu: false,
-      selectedTab: 'AddPowers',
+      currentEncounter: false
     };
   }
 
@@ -32,33 +40,50 @@ class App extends Component {
     });
   }
 
+  setEncounter = (encounter) => {
+    let state = this.state;
+console.log(encounter);
+    state.currentEncounter = encounter;
+    console.log(state);
+    this.setState(state);
+  }
+
   render() {
     return (    	
       <div className="App">
        <AppBar className="AppBar"
-        title="Dungeon Maker"
+        title={"Dungeon Maker"+((this.state.currentEncounter) ? '<br/>'+this.state.currentEncounter.title : '')}
         onLeftIconButtonTouchTap={this.activateMenu}
         /> 
 
-      <Menu 
-        className={'AppBarMenu '+(this.state.activeMenu ? 'active' : 'hide')}
-        onEscKeyDown={this.activateMenu}
-        >
-        <Link to="/runEncounter"><MenuItem onTouchTap={this.activateMenu} primaryText="Run Encounter" /></Link>
+        <Menu 
+          className={'AppBarMenu '+(this.state.activeMenu ? 'active' : 'hide')}
+          onEscKeyDown={this.activateMenu}
+          >
+          <Link to="/runEncounter"><MenuItem onTouchTap={this.activateMenu} primaryText="Run Encounter" /></Link>
 
-        <Link to="/createEncounter"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Create Encounter" /></Link>
-        <Link to="/dungeonMaker"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Dungeon Maker" /></Link>
-        <Link to="/createCharacter" ><MenuItem onTouchTap={this.activateMenu} primaryText="Create Character" /></Link>
-        <Link to="/addMonster"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Monster" /></Link>
-        <Link to="/addWeapon" ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Weapons" /></Link>
-        <Link to="/addPowers" ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Powers" /></Link>
-      
+          <Link to="/createEncounter"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Create Encounter" /></Link>
+          <Link to="/dungeonMaker"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Dungeon Maker" /></Link>
+          <Link to="/createCharacter" ><MenuItem onTouchTap={this.activateMenu} primaryText="Create Character" /></Link>
+          <Link to="/addMonster"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Monster" /></Link>
+          <Link to="/addWeapon" ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Weapons" /></Link>
+          <Link to="/addPowers" ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Powers" /></Link>
         
-      </Menu>
+          
+        </Menu>
         {this.props.children}
       	
-        
+        <Route exact path="/" component={Home} />
+        <Route path="/runEncounter" component={() => (<RunEncounter  onSetEncounter={this.setEncounter} />)}/>
+        <Route path="/createEncounter" component={CreateEncounter}/>
+        <Route path="/dungeonMaker" component={DungeonMaker}/>
+        <Route path="/createCharacter" component={CreateCharacter}/>
+        <Route path="/addMonster" component={AddMonster}/>
+        <Route path="/addWeapon" component={AddWeapon}/>
+        <Route path="/addPowers" component={AddPowers}/>
       </div>
+
+       
     );
   }
 }

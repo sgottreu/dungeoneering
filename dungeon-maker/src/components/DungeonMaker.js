@@ -33,7 +33,6 @@ class DungeonMaker extends Component {
     this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
     this.showDupeButton = this.showDupeButton.bind(this);
     this.duplicateDungeon = this.duplicateDungeon.bind(this);
-    this.setSlotDimensions = this.setSlotDimensions.bind(this);
     this.loadSaveMenu = this.loadSaveMenu.bind(this);
 
     this.state = { 
@@ -86,14 +85,6 @@ class DungeonMaker extends Component {
     this.setState(state);
   }
 
-  setSlotDimensions = (slot) => {
-    // let state = this.state;
-    
-    //   state.slots[ slot.dataset.slot - 1].left = slot.offsetLeft;
-    //   state.slots[ slot.dataset.slot - 1].top = slot.offsetTop;
-    // this.setState(state);
-  }
-
   saveDungeonGrid(){
     let {slots, title, _id} = this.state;
     let _this = this;
@@ -122,7 +113,6 @@ class DungeonMaker extends Component {
         state._id = res.data._id;
         state.title = res.data.title;
         _this.setState(state);
-        this.convertImageToCanvas();
       });
   }
 
@@ -250,7 +240,7 @@ class DungeonMaker extends Component {
 
     return (    	
 	      <div className="DungeonMaker">
-          <DungeonGrid slots={slots} onSetSlotDimensions={this.setSlotDimensions} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleEntityMouseOver={this.handleEntityMouseOver}/>
+          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleEntityMouseOver={this.handleEntityMouseOver}/>
           <TileDrawer tiles={TileOptions} onSelectTile={this.selectTile} selectedTile={selectedTile} />
           <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
           <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />

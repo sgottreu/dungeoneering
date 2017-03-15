@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {List, ListItem} from 'material-ui/List';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
-
+import {Variables} from './Variables';
 import '../css/EntityTooltip.css';
 
 class EntityTooltip extends Component {
@@ -52,7 +52,7 @@ class EntityTooltip extends Component {
           return (
             <Chip key={i}>
               <Avatar size={32}>{a[1].score}</Avatar>
-              {a[0].slice(0,3).toProperCase()}
+              {Variables.toProperCase(a[0].slice(0,3))}
             </Chip>
           )
         })}</div>} leftIcon={<div>Abilities</div>}  />

@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import {List} from 'material-ui/List';
 import Slots from './Slots';
 import DungeonGrid from './DungeonGrid';
-// import EntityTooltip from './EntityTooltip';
+import EntityTooltip from './EntityTooltip';
 import DroppableList from './DroppableList';
 import DraggableListItem from './DraggableListItem';
 import axios from 'axios';
 import {Variables} from './Variables';
 import {_Dungeon} from './_Dungeon';
-
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import Snackbar from 'material-ui/Snackbar';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
@@ -25,10 +27,10 @@ class CreateEncounter extends Component {
     this.setDungeon = this.setDungeon.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
-    this.setSlotDimensions = this.setSlotDimensions.bind(this);
     this.handleDungeonChoice = this.handleDungeonChoice.bind(this);
     this.getDroppedItem = this.getDroppedItem.bind(this);
     this.moveItem = this.moveItem.bind(this);
+    this.saveEncounter = this.saveEncounter.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -38,12 +40,20 @@ class CreateEncounter extends Component {
     	choosingExit: false,
       foundDungeonGrids: [],
       selectedDungeon: false,
+      availableEncounters: [],
+      snackbarOpen: false,
+      snackbarMsg: '',
       hoverEntity: false,
       mouse: {
         clientX: false,
         clientY: false
       },
-      encounterDungeons: []
+      encounter: {
+        _id: false,
+        title: '',
+        encounterDungeons: []
+      }
+     
     };
   }
 
@@ -53,6 +63,13 @@ class CreateEncounter extends Component {
     let _this = this;
     
     _Dungeon.findDungeonGrids(_this); 
+
+    axios.get(`${Variables.host}/findEncounters`)
+      .then(res => {
+        let state = _this.state;
+        state.availableEncounters = res.data;
+        _this.setState(state);
+      });
 
   }
   componentWillUnmount() {
@@ -76,7 +93,7 @@ class CreateEncounter extends Component {
     let to = (dir === 'up') ? index-1 : index+1;
 
     let state = this.state;
-    state.encounterDungeons.move(from, to);
+    state.encounter.encounterDungeons = Variables.moveArray(state.encounter.encounterDungeons, from, to);
     this.setState(state);
   }
 
@@ -84,6 +101,9 @@ class CreateEncounter extends Component {
   }
 
   handleTitleChange = (e) => {
+    let state = this.state;
+    state.encounter.title = e.target.value;
+    this.setState(state);
   }
 
   saveDungeonGrid() {
@@ -115,39 +135,59 @@ class CreateEncounter extends Component {
     this.setState( { selectedTile: (selectedTile === id) ? '' : id });
   }
 
-  setSlotDimensions = (slot) => {
+  getDroppedItem = (item) => {
     let state = this.state;
-    state.slots[ slot.dataset.slot - 1].left = slot.offsetLeft;
-    state.slots[ slot.dataset.slot - 1].top = slot.offsetTop;
+    state.encounter.encounterDungeons.push( { _id: item._id, title: item.name } );
     this.setState(state);
   }
 
-  getDroppedItem = (item) => {
-    let state = this.state;
-    state.encounterDungeons.push( { _id: item._id, title: item.name } );
-    console.log(state);
-    this.setState(state);
+  saveEncounter(){
+    let {encounter} = this.state;
+    let _this = this;
+    axios.post(`${Variables.host}/saveEncounter`, encounter)
+      .then(res => {
+        let fDG = _this.state.availableEncounters;
+        if(!encounter._id){
+          fDG.push({ _id: res.data._id, title: encounter.title, encounterDungeons: encounter.encounterDungeons });
+        } else {
+          fDG.map( function(enc, i){ 
+            if(enc._id === encounter._id){ 
+              enc.title = encounter.title; 
+              enc.encounterDungeons = encounter.encounterDungeons;
+            } 
+            return enc;
+          });
+        }
+
+        _this.setState( {availableEncounters: fDG, snackbarOpen: true, snackbarMsg: 'Encounter successfully saved'});
+      });
   }
 
   render() {
     let {slots, selectedDungeon} = this.state;
 
-
     return (    	
       <div className="CreateEncounter">
         <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} 
             onHandleEntityMouseOver={this.handleEntityMouseOver}
-            onSetSlotDimensions={this.setSlotDimensions} />
-        
-            <List className="AvailableDungeons">
-              {this.state.foundDungeonGrids.map( (grid, index) => {
-                return (
-                  <DraggableListItem key={index} onGetDroppedItem={this.getDroppedItem} onHandleDungeonChoice={this.handleDungeonChoice} name={grid.title} _id={grid._id}/>
-                );
-              })}
-            </List>
-            <DroppableList onMoveItem={this.moveItem} encounterDungeons={this.state.encounterDungeons} onHandleDungeonChoice={this.handleDungeonChoice}/>
-
+            />
+        <List className="AvailableDungeons">
+          {this.state.foundDungeonGrids.map( (grid, index) => {
+            return (
+              <DraggableListItem key={index} onGetDroppedItem={this.getDroppedItem} onHandleDungeonChoice={this.handleDungeonChoice} name={grid.title} _id={grid._id}/>
+            );
+          })}
+        </List>
+        <DroppableList onMoveItem={this.moveItem} encounterDungeons={this.state.encounter.encounterDungeons} onHandleDungeonChoice={this.handleDungeonChoice}/>
+        <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
+        <br/>
+				<TextField hintText="Encounter Name" value={this.state.encounter.title} onChange={this.handleTitleChange} />
+				<RaisedButton label="Save Encounter" primary={true}  onClick={this.saveEncounter} />
+         <Snackbar
+            open={this.state.snackbarOpen}
+            message={this.state.snackbarMsg}
+            autoHideDuration={4000}            
+          />
       </div>
     );
   }

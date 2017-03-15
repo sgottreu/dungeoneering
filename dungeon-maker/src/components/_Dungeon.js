@@ -25,21 +25,4 @@ _Dungeon.findDungeonGrids = function(_this) {
     });
 }
 
-_Dungeon.images = {
-  floor: 'brick-wall.png',
-  stairs: 'stairs.png',   
-  gloop: 'gloop.png',   
-  "spiky-pit": 'spiky-pit.png',
-  entry: 'entry.png',    
-  exit: 'exit.png',    
-  gravel: 'gravel.png',
-  chest: 'chest.png',
-  door_ew: 'door_ew.png',
-  door_ns: 'door_ns.png',    
-  portcullus_ew: 'portcullus_ew.png',
-  portcullus_ns: 'portcullus_ns.png' 
-
-
-}
-
 export {_Dungeon};

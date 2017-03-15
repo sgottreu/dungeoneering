@@ -71,8 +71,13 @@
 	background-size: 75px;
 }
 
-.chest {
-	background-image: url(../img/chest.png);
+.chest_brick {
+	background-image: url(../img/chest_brick.png);
+	background-size: 75px;
+}
+
+.chest_gravel {
+	background-image: url(../img/chest_gravel.png);
 	background-size: 75px;
 }
 
@@ -88,12 +93,12 @@
 
 .portcullus_ew {
   background-image: url(../img/portcullus_ew.png);
-  background-size:  75px 150px;
+  background-size:  75px;
 }
 
 .portcullus_ns {
   background-image: url(../img/portcullus_ns.png);
-  background-size: 150px 75px;
+  background-size: 75px;
 }
 
 .EntityPaper{

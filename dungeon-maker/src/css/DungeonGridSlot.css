@@ -73,10 +73,12 @@
 .DungeonGridSlot.gravel:before {
     background-image: url(../img/gravel.png);
 }
-.DungeonGridSlot.chest:before {
-    background-image: url(../img/chest.png);
+.DungeonGridSlot.chest_brick:before {
+    background-image: url(../img/chest_brick.png);
 }
-
+.DungeonGridSlot.chest_gravel:before {
+    background-image: url(../img/chest_gravel.png);
+}
 .DungeonGridSlot.door_ew:before {
     background-image: url(../img/door_ew.png);
     
