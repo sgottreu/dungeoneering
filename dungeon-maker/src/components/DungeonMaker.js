@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import Slots from './Slots.js';
 import DungeonGrid from './DungeonGrid';
 import TileOptions from './TileOptions';
@@ -36,9 +35,6 @@ class DungeonMaker extends Component {
     this.duplicateDungeon = this.duplicateDungeon.bind(this);
     this.setSlotDimensions = this.setSlotDimensions.bind(this);
     this.loadSaveMenu = this.loadSaveMenu.bind(this);
-    this.convertImageToCanvas = this.convertImageToCanvas.bind(this);
-
-    this.convert
 
     this.state = { 
       slots: Slots,
@@ -82,23 +78,6 @@ class DungeonMaker extends Component {
     window.removeEventListener("click", this.handleMyEvent);
   }
 
-  convertImageToCanvas() {
-    // var canvas = document.createElement("canvas");
-    // var image = document.createElement('img');
-    // canvas.width = 76*20;
-    // canvas.height = 76*10;
-
-    // this.state.slots.map(function(slot, i){
-    //   if(slot.tileType){
-    //     console.log(_Dungeon.images[ slot.tileType ]);
-    //     image.src = "url(../img/"+_Dungeon.images[ slot.tileType ]+")";
-    //     canvas.getContext("2d").drawImage(image, slot.top, slot.left);
-    //   }
-    // });
-
-  }
-
-
   handleEntityMouseOver = (entity, eve) => {
     let state = this.state;
     state.hoverEntity = entity;
@@ -124,7 +103,7 @@ class DungeonMaker extends Component {
         if(!_id){
           fDG.push({ _id: res.data._id, title: title });
         } else {
-          fDG.map( function(grid, i){ if(grid._id === _id){ grid.title = title; }});
+          fDG.map( function(grid, i){ if(grid._id === _id){ grid.title = title; } return grid;});
         }
 
         _this.setState( {snackbarOpen: true, snackbarMsg: 'Encounter successfully saved'});
