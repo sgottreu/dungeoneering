@@ -15,8 +15,12 @@ export var EntityTemplate = {
     hp: 0,
     bloodied: 0,
     speed: 0,
+    coin_purse: 0,
+    inventory: [],
+    encumbered: 0,
     resistances: [],
     armor: false,
+    shield: false,
     abilities: {
       strength: { score: 12, abilityMod: 0, AttackModifier: 0 },
       constitution: { score: 12, abilityMod: 0, AttackModifier: 0 },
@@ -146,13 +150,18 @@ export var EntityRace = [
 ];
 
 export var EntityArmor = [
-  { name: 'None', score: 0 },
-  { name: 'Cloth', score: 0 },
-  { name: 'Leather', score: 2 },
-  { name: 'Hide', score: 3 },
-  { name: 'Chainmail', score: 6 },
-  { name: 'Scale', score: 7 },
-  { name: 'Plate', score: 8 }
+  { name: 'None', score: 0, check: 0, speed: 0, price: 0, weight: 0 },
+  { name: 'Cloth', score: 0, check: 0, speed: 0, price: 1, weight: 4 },
+  { name: 'Leather', score: 2, check: 0, speed: 0, price: 25, weight: 15 },
+  { name: 'Hide', score: 3, check: -1, speed: 0, price: 30, weight: 25 },
+  { name: 'Chainmail', score: 6, check: -1, speed: -1, price: 40, weight: 40 },
+  { name: 'Scale', score: 7, check: 0, speed: -1, price: 45, weight: 45 },
+  { name: 'Plate', score: 8, check: -2, speed: -1, price: 50, weight: 50 }
+];
+
+export var EntityShield = [
+  { key: "light", name: 'Light Shield', score: 1, check: 0, speed: 0, price: 5, weight: 6 },
+  { key: "heavy", name: 'Heavy Shield', score: 2, check: -2, speed: 0, price: 10, weight: 15 }
 ];
 
 export var calculateArmorClass = function(state, value=false){
@@ -204,6 +213,19 @@ function getDefenseModifier(state, defense)
   }
   
   return score;
+}
+
+export var calcWeightPrice = (state, stateCheck, purchasedItem, removeOnly=false) => {
+  if(stateCheck){
+    state.entity.encumbered -= parseInt(purchasedItem.weight, 10);
+    state.entity.coin_purse += parseInt(purchasedItem.price, 10);
+  }
+
+  if(!removeOnly){
+    state.entity.encumbered += parseInt(purchasedItem.weight, 10);
+    state.entity.coin_purse -= parseInt(purchasedItem.price, 10);
+  }
+  return state;
 }
 
 export var findEntity = function(_this){

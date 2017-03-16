@@ -61,7 +61,13 @@ class EntityTooltip extends Component {
   }
 
 	render() {
-    let entity = this.props.hoverEntity;
+    let { hoverObj } = this.props;
+
+    if(hoverObj === undefined){
+      return false;
+    }
+
+    let entity = hoverObj.obj;
     let mouse = this.props.mouse;
     let className = 'EntityTooltip'+(entity === false ? ' hide' : '');
 

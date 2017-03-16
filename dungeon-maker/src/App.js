@@ -7,6 +7,7 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import { Route } from 'react-router-dom';
 
+import HTMLProp from './components/HTMLProp';
 import Home from './components/Home';
 import DungeonMaker from './components/DungeonMaker';
 import RunEncounter from './components/RunEncounter';
@@ -25,7 +26,7 @@ class App extends Component {
     super(props);
 
     this.activateMenu = this.activateMenu.bind(this);
-    this.setEncounter = this.setEncounter.bind(this);
+    this.setEncounterTitle = this.setEncounterTitle.bind(this);
 
     this.state = {
       activeMenu: false,
@@ -40,21 +41,22 @@ class App extends Component {
     });
   }
 
-  setEncounter = (encounter) => {
+  setEncounterTitle = (encounter) => {
     let state = this.state;
-console.log(encounter);
     state.currentEncounter = encounter;
-    console.log(state);
     this.setState(state);
   }
 
   render() {
+    let html = ((this.state.currentEncounter) ? "DM - "+this.state.currentEncounter.title : 'Dungeon Maker');
     return (    	
       <div className="App">
        <AppBar className="AppBar"
-        title={"Dungeon Maker"+((this.state.currentEncounter) ? '<br/>'+this.state.currentEncounter.title : '')}
+        title={html}
         onLeftIconButtonTouchTap={this.activateMenu}
-        /> 
+        > 
+        
+        </AppBar>
 
         <Menu 
           className={'AppBarMenu '+(this.state.activeMenu ? 'active' : 'hide')}
@@ -74,9 +76,10 @@ console.log(encounter);
         {this.props.children}
       	
         <Route exact path="/" component={Home} />
-        <Route path="/runEncounter" component={() => (<RunEncounter  onSetEncounter={this.setEncounter} />)}/>
+        <Route path="/runEncounter" component={() => (<RunEncounter  onSetEncounterTitle={this.setEncounterTitle} />)}/>
         <Route path="/createEncounter" component={CreateEncounter}/>
-        <Route path="/dungeonMaker" component={DungeonMaker}/>
+        <Route path="/dungeonMaker" component={() => (
+          <DungeonMaker />)} />
         <Route path="/createCharacter" component={CreateCharacter}/>
         <Route path="/addMonster" component={AddMonster}/>
         <Route path="/addWeapon" component={AddWeapon}/>

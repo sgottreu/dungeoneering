@@ -30,10 +30,10 @@ class DungeonMaker extends Component {
     this.setTile = this.setTile.bind(this);
     this.setEntity = this.setEntity.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
-    this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
     this.showDupeButton = this.showDupeButton.bind(this);
     this.duplicateDungeon = this.duplicateDungeon.bind(this);
     this.loadSaveMenu = this.loadSaveMenu.bind(this);
+    this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -49,7 +49,10 @@ class DungeonMaker extends Component {
       _id: false,
       snackbarOpen: false,
       snackbarMsg: '',
-      hoverEntity: false,
+      hoverObj: {
+        obj: false,
+        type: false
+      },
       mouse: {
         clientX: false,
         clientY: false
@@ -77,9 +80,12 @@ class DungeonMaker extends Component {
     window.removeEventListener("click", this.handleMyEvent);
   }
 
-  handleEntityMouseOver = (entity, eve) => {
+  handleObjMouseOver = (obj, _type, eve) => {
     let state = this.state;
-    state.hoverEntity = entity;
+    state.hoverObj = {
+      obj: obj,
+      type: _type
+    };
     state.mouse.clientX = eve.clientX;
     state.mouse.clientY = eve.clientY;
     this.setState(state);
@@ -240,10 +246,10 @@ class DungeonMaker extends Component {
 
     return (    	
 	      <div className="DungeonMaker">
-          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleEntityMouseOver={this.handleEntityMouseOver}/>
+          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleObjMouseOver={this.handleObjMouseOver}/>
           <TileDrawer tiles={TileOptions} onSelectTile={this.selectTile} selectedTile={selectedTile} />
           <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
-          <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
+          <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
           <DungeonLoadDrawer showSave={true} onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
           {selectedDungeon !== false ? this.showDupeButton() : ''}
           {this.loadSaveMenu()}
