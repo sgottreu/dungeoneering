@@ -93,10 +93,8 @@ class RunEncounter extends Component {
         let state = _this.state;
         state.selectedEncounter = selectedEncounter;
         state.encounter = res.data;
-console.log('findEncounter');
-console.log(state.encounter);
         _this.setState(state);
-        this.props.onSetEncounter(state.encounter);
+        this.props.onSetEncounterTitle(state.encounter);
       });
   }
 

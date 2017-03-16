@@ -11,8 +11,8 @@ class DungeonGridSlot extends Component {
 
   }
 
-  handleMouseOver = (entity, eve) => {
-    this.props.onHandleEntityMouseOver(entity, eve);
+  handleMouseOver = (entity, type, eve) => {
+    this.props.onHandleObjMouseOver(entity, type, eve);
   }
 
   componentDidMount(){
@@ -32,7 +32,7 @@ class DungeonGridSlot extends Component {
     }
 
     return (
-      <div onMouseEnter={this.handleMouseOver.bind(this, entity)} onMouseLeave={this.handleMouseOver.bind(this, false)} 
+      <div onMouseEnter={this.handleMouseOver.bind(this, entity, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
         style={style} data-slot={slot.id} key={slot.overlays.entity._id} className={slot.overlays.entity.iconClass+' Entity icon'} />
     );
   }

@@ -21,6 +21,9 @@ export var Variables = {
     arr.splice(toIndex, 0, element);
     return arr;
   },
+  multiLineHtml: function(arrHtml){
+    return arrHtml.join('<br/>');
+  },
   getSelectListStyle: (value, arr, isObj=false) => {
     let selectListStyle = { position: 'relative' };
     let selected = false;

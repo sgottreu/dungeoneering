@@ -224,13 +224,13 @@ class PowersForm extends Component {
 
     return (
       <div className="damage">
-        <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_power.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
+        <TextField className="mediumField" floatingLabelText="Num of Damage Die"      type="number" value={_power.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
         <SelectField style={ { position: 'relative', top: 15 } } floatingLabelText="Damage" name="damage_die" value={_power.damage.die}  onChange={this.handleDieChange} >
           {Die.map( (die, index) => (
             <MenuItem key={index} value={`${die.label}`} primaryText={`${die.label}`} />
           ))}
         </SelectField>
-        <TextField className="" floatingLabelText="Damage Modifier"      type="number" value={_power.damage.modifier}      name="damage_mod"      onChange={this.handleDieModChange} />
+        <TextField className="mediumField" floatingLabelText="Damage Modifier"      type="number" value={_power.damage.modifier}      name="damage_mod"      onChange={this.handleDieModChange} />
       </div>
     );
   }
@@ -239,7 +239,7 @@ class PowersForm extends Component {
 
     return (
       <div className="damage">
-        <TextField className="" floatingLabelText="Weapon Modifier"  
+        <TextField className="mediumField" floatingLabelText="Weapon Modifier"  
           type="number" value={_power.weapon_modifier}      name="weapon_modifier"      onChange={this.handleChange} />
         <SelectField floatingLabelText="Ability Modifier" value={this.abilities.findIndex( (val) => { return val === _power.ability_modifier })} onChange={this.handleAbilityModifierChange} >
           <MenuItem key={-1} value={false} primaryText="None" />

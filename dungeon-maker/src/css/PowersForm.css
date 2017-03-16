@@ -10,6 +10,10 @@
     width: 50%;
 }
 
+.AddMonster .PowersForm.inset {
+    width: 90% !important;
+}
+
 .shortField {
 	width: 100px !important;
 }
