@@ -153,12 +153,11 @@ class EntityForm extends Component {
     if( state.entity.weapons.includes(id) ){
       let _i = state.entity.weapons.findIndex(function(w) { return w === id});
       let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state = calcWeightPrice(state, true, weapon, true);
-
+      state = calcWeightPrice(state, weapon, 'weapons', 'item', false);
       state.entity.weapons.splice(_i, 1);
     } else {
       let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state = calcWeightPrice(state, false, weapon);
+      state = calcWeightPrice(state, weapon, 'weapons', 'item');
       state.entity.weapons.push(id);  
     }
     this.setState( state ); 
@@ -181,7 +180,7 @@ class EntityForm extends Component {
   handleArmorChange = (event, index) => {
     let state = this.state;
 
-    state = calcWeightPrice(state, state.entity.armor, EntityArmor[index]);
+    state = calcWeightPrice(state, EntityArmor[index], 'armor', 'category');
 
     state.entity.armor = index;
     state = calculateArmorClass(state);

@@ -7,7 +7,6 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import { Route } from 'react-router-dom';
 
-import HTMLProp from './components/HTMLProp';
 import Home from './components/Home';
 import DungeonMaker from './components/DungeonMaker';
 import RunEncounter from './components/RunEncounter';
