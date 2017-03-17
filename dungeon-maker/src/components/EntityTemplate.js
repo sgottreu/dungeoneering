@@ -16,6 +16,7 @@ export var EntityTemplate = {
     bloodied: 0,
     speed: 0,
     coin_purse: 0,
+    inventory_log:[],
     inventory: [],
     encumbered: 0,
     resistances: [],
@@ -215,16 +216,88 @@ function getDefenseModifier(state, defense)
   return score;
 }
 
-export var calcWeightPrice = (state, stateCheck, purchasedItem, removeOnly=false) => {
-  if(stateCheck){
-    state.entity.encumbered -= parseInt(purchasedItem.weight, 10);
-    state.entity.coin_purse += parseInt(purchasedItem.price, 10);
+export var calcWeightPrice = (state, purchasedItem, category, bolRemove=false, bolAddItem=true) => {
+  let inventory_key;
+
+  if(bolRemove){
+    let log = state.entity.inventory_log;
+    if(bolRemove === 'category'){      
+      let _i = log.findIndex((item, index) => { return item.category === category} );
+      if(_i !== -1){    
+        state = updateWeightPrice(state, log[_i].item, 'remove');
+        state = updateInventory(state, log[_i].item, category, 'removeCategory', _i);
+      }
+    }
+
+    if(bolRemove === 'item'){
+      inventory_key = window.btoa(JSON.stringify(purchasedItem));
+      state = updateWeightPrice(state, purchasedItem, 'remove');
+      state = updateInventory(state, purchasedItem, category, 'removeItem');
+    }
   }
 
-  if(!removeOnly){
-    state.entity.encumbered += parseInt(purchasedItem.weight, 10);
-    state.entity.coin_purse -= parseInt(purchasedItem.price, 10);
+  if(bolAddItem){
+    state = updateWeightPrice(state, purchasedItem, 'add');
+    state = updateInventory(state, purchasedItem, category, 'add');
   }
+  return state;
+}
+
+export var updateWeightPrice = (state, item, action) => {
+  if(action === 'add'){
+    state.entity.encumbered += parseInt(item.weight, 10);
+    state.entity.coin_purse -= parseInt(item.price, 10);
+  } else {
+    state.entity.encumbered -= parseInt(item.weight, 10);
+    state.entity.coin_purse += parseInt(item.price, 10);
+  }
+  return state;
+}
+
+export var updateInventory = (state, item, category, action, index=false) => {
+  let inventory_key = window.btoa(JSON.stringify(item));
+  let inventory = state.entity.inventory;
+  let inventory_log = state.entity.inventory_log;
+  let _i;
+
+  if(action === 'add'){
+    _i = inventory.findIndex((inventory, i) => { return inventory.key === inventory_key});
+    item.quantity = (item.quantity === undefined) ? 1 : item.quantity;
+    if(_i === -1){
+      inventory.push( { key: inventory_key, category: category, item: item } );
+    } else {
+      inventory[_i].item.quantity += (item.quantity === undefined) ? 1 : item.quantity;
+    }
+    inventory_log.splice(0, 0, { key: inventory_key, category: category, item: item } );
+  }
+
+  if(action === 'removeCategory'){
+    _i = inventory.findIndex((inventory, i) => { return inventory.key === inventory_key});
+    if(_i !== -1){
+      inventory[_i].splice(_i, 1);
+    }
+    _i = (index) ? index : inventory_log.findIndex((inventory, i) => { return inventory.key === inventory_key});
+    inventory_log.splice(_i, 1);
+  }
+
+  if(action === 'removeItem'){
+    _i = inventory.findIndex((inventory, i) => { return inventory.key === inventory_key});
+    if(_i !== -1){
+      inventory[_i].item.quantity -= (item.quantity === undefined) ? 1 : item.quantity;
+    }
+    _i = inventory_log.findIndex((inventory, i) => { return inventory.key === inventory_key});
+    inventory_log.splice(_i, 1);
+  }
+
+  
+
+  
+  state.entity.inventory = inventory;
+  state.entity.inventory_log = inventory_log;
+console.log('=======');
+console.log(state.entity.inventory);
+console.log(state.entity.inventory_log);
+console.log('=======');
   return state;
 }
 
