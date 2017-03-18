@@ -217,8 +217,6 @@ function getDefenseModifier(state, defense)
 }
 
 export var calcWeightPrice = (state, purchasedItem, category, bolRemove=false, bolAddItem=true) => {
-  let inventory_key;
-
   if(bolRemove){
     let log = state.entity.inventory_log;
     if(bolRemove === 'category'){      
@@ -230,7 +228,6 @@ export var calcWeightPrice = (state, purchasedItem, category, bolRemove=false, b
     }
 
     if(bolRemove === 'item'){
-      inventory_key = window.btoa(JSON.stringify(purchasedItem));
       state = updateWeightPrice(state, purchasedItem, 'remove');
       state = updateInventory(state, purchasedItem, category, 'removeItem');
     }
@@ -255,14 +252,16 @@ export var updateWeightPrice = (state, item, action) => {
 }
 
 export var updateInventory = (state, item, category, action, index=false) => {
+  item.quantity = (item.quantity === undefined) ? 1 : item.quantity;
+
   let inventory_key = window.btoa(JSON.stringify(item));
   let inventory = state.entity.inventory;
   let inventory_log = state.entity.inventory_log;
   let _i;
 
   if(action === 'add'){
-    _i = inventory.findIndex((inventory, i) => { return inventory.key === inventory_key});
-    item.quantity = (item.quantity === undefined) ? 1 : item.quantity;
+    _i = inventory.findIndex((inv, i) => { return inv.key === inventory_key});
+    
     if(_i === -1){
       inventory.push( { key: inventory_key, category: category, item: item } );
     } else {
@@ -272,21 +271,24 @@ export var updateInventory = (state, item, category, action, index=false) => {
   }
 
   if(action === 'removeCategory'){
-    _i = inventory.findIndex((inventory, i) => { return inventory.key === inventory_key});
+    _i = inventory.findIndex((inv, i) => { return inv.category === category});
     if(_i !== -1){
-      inventory[_i].splice(_i, 1);
+      inventory.splice(_i, 1);
     }
-    _i = (index) ? index : inventory_log.findIndex((inventory, i) => { return inventory.key === inventory_key});
-    inventory_log.splice(_i, 1);
+    // _i = (index) ? index : inventory_log.findIndex((inv, i) => { return inv.key === inventory_key});
+    inventory_log.splice(index, 1);
   }
 
   if(action === 'removeItem'){
-    _i = inventory.findIndex((inventory, i) => { return inventory.key === inventory_key});
+    _i = inventory.findIndex((inv, i) => { return inv.key === inventory_key});
     if(_i !== -1){
-      inventory[_i].item.quantity -= (item.quantity === undefined) ? 1 : item.quantity;
+      inventory[_i].item.quantity -= item.quantity;
+      // if(inventory[_i].item.quantity === 0){
+      //   inventory.splice(_i, 1);
+      // }
     }
-    _i = inventory_log.findIndex((inventory, i) => { return inventory.key === inventory_key});
-    inventory_log.splice(_i, 1);
+    //_i = inventory_log.findIndex((inv, i) => { return inv.key === inventory_key});
+    //inventory_log.splice(_i, 1);
   }
 
   
