@@ -157,7 +157,7 @@ class EntityForm extends Component {
       state.entity.weapons.splice(_i, 1);
     } else {
       let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state = calcWeightPrice(state, weapon, 'weapons', 'item');
+      state = calcWeightPrice(state, weapon, 'weapons');
       state.entity.weapons.push(id);  
     }
     this.setState( state ); 
@@ -192,6 +192,9 @@ class EntityForm extends Component {
     let shield = (isInputChecked === true && state.entity.shield !== event.target.dataset.shield) ? parseInt(event.target.dataset.shield, 10) : false;
 
     state.entity.shield = shield;
+    let _i = EntityShield.findIndex((shd, s) => { return shd.score === shield});
+    state = calcWeightPrice(state, EntityShield[_i], 'shield', 'category', (shield === false) ? false : true);
+
     state.entity.defense.armorClass.shield = (!shield) ? 0 : shield;
     state = calculateArmorClass(state);
     this.setState( state );
