@@ -25,6 +25,7 @@ class CreateParty extends Component{
 
     this.state = { 
       selectedParty: false,
+      selectedMember: false,
       availableCharacters: [],
       availableParties: [],
       availableGear: _Gear,
@@ -65,7 +66,9 @@ class CreateParty extends Component{
 
   handleMemberBuyer = (e, value) =>
   {
-
+    let state = this.state;
+    state.selectedMember = value;
+    this.setState(state);
   }
 
   selectMember = (character, e) => {
@@ -81,6 +84,8 @@ class CreateParty extends Component{
   }
 
   render() {
+    let { party, selectedMember } = this.state;
+    let spm = party.members.findIndex( (p) => { return p._id === selectedMember} );
     return (
       <div className="CreateParty">
         <SelectField  floatingLabelText={`Choose Party`} value={this.state.selectedParty} onChange={this.handlePartyChange} >
@@ -123,19 +128,31 @@ class CreateParty extends Component{
           
         </div>
         <List className="AvailableGear">
-              {this.state.availableGear.map( (gear, index) => {
-                return (
-                  <div key={index}
-                    onTouchTap={this.selectMember.bind(this, gear)}
-                    >
-                    <TextField className="miniField"  type="number" 
-                      value={ this.state.party.members[this.state.selectedMember] }  />
-                    <span className="price">${gear.price}</span><span className="name">{gear.item}</span>
-                  </div>
-                    
-                );
-              })}
-            </List>
+          {party.members[spm].inventory.map( (gear, index) => {
+              return (
+                <div key={index}
+                  onTouchTap={this.selectMember.bind(this, gear)}
+                  >
+                  <TextField className="miniField"  type="number" 
+                    value={ this.state.party.members[this.state.selectedMember] }  />
+                  <span className="price">${gear.price}</span><span className="name">{gear.item}</span>
+                </div>
+                  
+              );
+            })}
+            {this.state.availableGear.map( (gear, index) => {
+              return (
+                <div key={index}
+                  onTouchTap={this.selectMember.bind(this, gear)}
+                  >
+                  <TextField className="miniField"  type="number" 
+                    value={ this.state.party.members[this.state.selectedMember] }  />
+                  <span className="price">${gear.price}</span><span className="name">{gear.item}</span>
+                </div>
+                  
+              );
+            })}
+          </List>
       </div>
     );
   }
