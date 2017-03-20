@@ -134,6 +134,25 @@ app.post('/saveDungeonGrids', function (req, res) {
 		
 });
 
+// ************* Parties ******************//
+
+app.post('/saveParty', function (req, res) {
+	console.log('Saving Party');
+
+  let payload = JSON.parse(JSON.stringify(req.body));
+  _Save(req, res, payload);
+
+});
+
+app.get('/findParties', function (req, res) {
+	console.log('Finding Parties');
+  dungeon_grid.find( { _type: "party"} ).then(function(docs) {
+    console.log(`Found ${docs.length} Parties`);
+    sendJSON(res, docs);
+  });
+});
+
+
 // ************* Entities ******************//
 
 app.post('/saveEntity', function (req, res) {
@@ -146,7 +165,8 @@ app.post('/saveEntity', function (req, res) {
 
 app.get('/findEntities', function (req, res) {
 	console.log('Finding Entities');
-	dungeon_grid.find({ _type: {"$in": ["monster","character"] }}).then(function(docs) {
+  let query = (req.query.type !== undefined) ? { _type: {"$in": [req.query.type] }} : { _type: {"$in": ["monster","character"] }};
+	dungeon_grid.find(query).then(function(docs) {
     let entities = { "monster": [], "character": [] };
 
     for(var x=0,len = docs.length;x<len;x++){
@@ -206,12 +226,13 @@ function sendJSON(res, data){
 function _Save(req, res, payload){
   if(req.body._id) {
 		dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
-			console.log(`${payload._type} saved!`);
+			console.log(`${payload._type} updated!`);
       sendJSON(res, data)
 		});	
 	} else {
+    delete payload._id;
 		dungeon_grid.insert( payload ).then(function (data) {
-			console.log(`${payload._type} saved!`);
+			console.log(`${payload._type} inserted!`);
       sendJSON(res, data);
 		});
 	}

@@ -15,6 +15,7 @@ import AddMonster from './components/AddMonster';
 import CreateCharacter from './components/CreateCharacter';
 import AddWeapon from './components/AddWeapon';
 import AddPowers from './components/AddPowers';
+import CreateParty from './components/CreateParty';
 
 import './css/App.css';
 
@@ -65,6 +66,7 @@ class App extends Component {
 
           <Link to="/createEncounter"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Create Encounter" /></Link>
           <Link to="/dungeonMaker"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Dungeon Maker" /></Link>
+          <Link to="/createParty" ><MenuItem onTouchTap={this.activateMenu} primaryText="Create Party" /></Link>
           <Link to="/createCharacter" ><MenuItem onTouchTap={this.activateMenu} primaryText="Create Character" /></Link>
           <Link to="/addMonster"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Monster" /></Link>
           <Link to="/addWeapon" ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Weapons" /></Link>
@@ -79,6 +81,7 @@ class App extends Component {
         <Route path="/createEncounter" component={CreateEncounter}/>
         <Route path="/dungeonMaker" component={() => (
           <DungeonMaker />)} />
+        <Route path="/createParty" component={CreateParty}/>
         <Route path="/createCharacter" component={CreateCharacter}/>
         <Route path="/addMonster" component={AddMonster}/>
         <Route path="/addWeapon" component={AddWeapon}/>
