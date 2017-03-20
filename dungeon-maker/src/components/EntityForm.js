@@ -213,6 +213,8 @@ class EntityForm extends Component {
 
     state.entity.surgesPerDay = parseInt(EntityClass[index].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
 
+    state.entity.iconClass = EntityClass[ index ].name.toLowerCase();
+
     for(let c in EntityClass[index].defenseMod){
       if(EntityClass[index].defenseMod.hasOwnProperty(c)){
         state.entity.defense[ c ].classBonus = parseInt(EntityClass[index].defenseMod[c], 10);
@@ -590,13 +592,14 @@ class EntityForm extends Component {
           label="Reset"
           onTouchTap={this.resetForm}
         />
-        <span className="coin_purse">
-          <label>Coin Purse</label>{this.state.entity.coin_purse}</span>
         <br/>
 				{(this.EntityType === 'character') ? this.loadRaceField() : ''}
         {(this.EntityType === 'character') ? this.loadClassField() : ''}
         {(this.EntityType === 'monster') ? this.loadRoleField() : ''}
-        <SelectField style={Variables.getSelectListStyle(this.state.entity.size, EntitySize.map( (size, index) => {return index}) )} floatingLabelText="Size" value={this.state.entity.size} onChange={this.handleSizeChange} >
+        <SelectField style={Variables.getSelectListStyle(this.state.entity.size, EntitySize.map( (size, index) => {return index}) )} 
+          floatingLabelText="Size" 
+          value={ EntitySize.findIndex( (size, i) => {return this.state.entity.size === size.label } ) }  
+          onChange={this.handleSizeChange} >
           {EntitySize.map( (size, index) => (
             <MenuItem key={index} value={index} primaryText={`${size.label}`} />
           ))}

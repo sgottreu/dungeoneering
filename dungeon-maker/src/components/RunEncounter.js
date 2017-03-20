@@ -131,7 +131,7 @@ class RunEncounter extends Component {
   }
 
   render() {
-    let {slots, foundDungeonGrids, selectedDungeon, selectedEncounter} = this.state;
+    let {slots, selectedDungeon, selectedEncounter} = this.state;
 
     return (    	
 	      <div className="RunEncounter">
