@@ -153,11 +153,11 @@ class EntityForm extends Component {
     if( state.entity.weapons.includes(id) ){
       let _i = state.entity.weapons.findIndex(function(w) { return w === id});
       let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state = calcWeightPrice(state, weapon, 'weapons', 'item', false);
+      state.entity = calcWeightPrice(state.entity, weapon, 'weapons', 'item', false);
       state.entity.weapons.splice(_i, 1);
     } else {
       let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state = calcWeightPrice(state, weapon, 'weapons');
+      state.entity = calcWeightPrice(state.entity, weapon, 'weapons');
       state.entity.weapons.push(id);  
     }
     this.setState( state ); 
@@ -180,7 +180,7 @@ class EntityForm extends Component {
   handleArmorChange = (event, index) => {
     let state = this.state;
 
-    state = calcWeightPrice(state, EntityArmor[index], 'armor', 'category');
+    state.entity = calcWeightPrice(state.entity, EntityArmor[index], 'armor', 'category');
 
     state.entity.armor = index;
     state = calculateArmorClass(state);
@@ -193,7 +193,7 @@ class EntityForm extends Component {
 
     state.entity.shield = shield;
     let _i = EntityShield.findIndex((shd, s) => { return shd.score === shield});
-    state = calcWeightPrice(state, EntityShield[_i], 'shield', 'category', (shield === false) ? false : true);
+    state.entity = calcWeightPrice(state.entity, EntityShield[_i], 'shield', 'category', (shield === false) ? false : true);
 
     state.entity.defense.armorClass.shield = (!shield) ? 0 : shield;
     state = calculateArmorClass(state);

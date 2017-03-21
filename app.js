@@ -59,7 +59,7 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   if ('OPTIONS' == req.method) {
     console.log('preflight');
-    res.send(200);
+   res.sendStatus(200);
   }
   else {
     next();
@@ -218,6 +218,39 @@ app.post('/saveWeapon', function (req, res) {
   _Save(req, res, payload);
 });
 
+// ************* Gear ******************//
+
+app.get('/findGear', function (req, res) {
+  console.log('Finding Gear');
+  dungeon_grid.find({ _type: 'gear' }, 
+    { sort : { name : 1 } }).then(function(docs) {
+    console.log(`Found ${docs.length} gear`);
+    sendJSON(res, docs);
+  });
+});
+
+app.post('/saveGear', function (req, res) {
+  console.log('Saving Gear');
+  
+  let payload = JSON.parse(JSON.stringify(req.body));
+  payload._type = 'gear';
+  _Save(req, res, payload);
+});
+
+
+// ************* Admin ******************//
+app.get('/admin', function (req, res) {
+  console.log('admin');
+   
+  EntityArmor.map(armor => {
+    armor._id = monk.id();
+    console.log(JSON.stringify(armor));
+  });
+  res.sendStatus(200);
+});
+
+/*********** Global  *************/
+
 function sendJSON(res, data){
 	res.writeHead(200, {"Content-Type": "application/json"});
   res.end( JSON.stringify( data ) );
@@ -225,12 +258,14 @@ function sendJSON(res, data){
 
 function _Save(req, res, payload){
   if(req.body._id) {
-		dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
-			console.log(`${payload._type} updated!`);
-      sendJSON(res, data)
-		});	
-	} else {
     delete payload._id;
+    dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
+      console.log(`${payload._type} updated!`);
+      sendJSON(res, data);
+    }).catch(function(err){ 
+      console.log(err);
+    });
+	} else {
 		dungeon_grid.insert( payload ).then(function (data) {
 			console.log(`${payload._type} inserted!`);
       sendJSON(res, data);
