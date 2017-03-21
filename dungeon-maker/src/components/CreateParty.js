@@ -10,6 +10,8 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Subheader from 'material-ui/Subheader';
+import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import { EntityClass, calcWeightPrice } from './EntityTemplate';
 // import { _Gear } from './_Gear';
@@ -24,13 +26,7 @@ class CreateParty extends Component{
   constructor(props){
     super(props);
 
-    this.handlePartyChange  = this.handlePartyChange.bind(this);
-    this.handleMemberBuyer  = this.handleMemberBuyer.bind(this);
-    this.selectMember       = this.selectMember.bind(this);
-    this.loadInventoryItem  = this.loadInventoryItem.bind(this);
-    this._updateInventory   = this._updateInventory.bind(this);
-
-    this.state = { 
+    this.initialState = { 
       selectedParty: false,
       selectedMember: false,
       availableCharacters: [],
@@ -40,11 +36,21 @@ class CreateParty extends Component{
       snackbarMsg: '',
       party: {
         _id: false,
-        title: '',
+        name: '',
+        _type: 'party',
         members: []
       }
-     
     };
+
+    this.handlePartyChange  = this.handlePartyChange.bind(this);
+    this.handleMemberBuyer  = this.handleMemberBuyer.bind(this);
+    this.selectMember       = this.selectMember.bind(this);
+    this.loadInventoryItem  = this.loadInventoryItem.bind(this);
+    this._updateInventory   = this._updateInventory.bind(this);
+    this.handlePartySave    = this.handlePartySave.bind(this);
+    this.handleNameChange   = this.handleNameChange.bind(this);
+
+    this.state = Variables.clone(this.initialState);
   }
 
   componentDidMount() {
@@ -74,8 +80,41 @@ class CreateParty extends Component{
     });
   }
 
-  handlePartyChange = (e) => {
+  handlePartySave = () => {
+    let state = this.state;
+    let _this = this;
 
+    axios.post(`${Variables.host}/saveParty`, state.party)
+    .then(res => {
+      let _id = res.data._id;
+      state.snackbarOpen = true;
+      state.snackbarMsg = 'Party successfully saved';
+      state.party = Variables.clone(this.initialState);
+      state.selectedParty = false;
+      state.selectedMember = false;
+
+      let _i = state.availableParties.find(p => { return p._id === res.data._id});
+      if(_i !== -1){
+         state.availableParties[_i] = res.data;
+      } else {
+        state.availableParties.push(res.data);
+      }
+     
+      _this.setState( state );
+    });
+  }
+
+  handlePartyChange = (e, index) => {
+    let state = this.state;
+
+    state.party = state.availableParties[ index ];
+    this.setState(state);
+  }
+
+  handleNameChange = (e) => {
+    let state = this.state;
+    state.party.name = e.target.value;
+    this.setState(state);
   }
 
   handleMemberBuyer = (e, value) =>
@@ -151,7 +190,7 @@ class CreateParty extends Component{
             })}
         </SelectField>
 
-        
+        <TextField  floatingLabelText="Party name" value={this.state.party.name} name="name" onChange={this.handleNameChange} />
         <div className="Lists">
           
             <RadioButtonGroup name="selectedMembers" className="SelectedPartyMembers list" onChange={this.handleMemberBuyer} >
@@ -226,6 +265,16 @@ class CreateParty extends Component{
             })}
           </TableBody>
         </Table>
+
+        <RaisedButton primary={true}
+          label={'Save Party'}
+          onTouchTap={this.handlePartySave}
+        />
+        <Snackbar
+          open={this.state.snackbarOpen}
+          message={this.state.snackbarMsg}
+          autoHideDuration={4000}    
+        />
       </div>
     );
   }
