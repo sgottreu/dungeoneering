@@ -140,6 +140,7 @@ app.post('/saveParty', function (req, res) {
 	console.log('Saving Party');
 
   let payload = JSON.parse(JSON.stringify(req.body));
+  
   _Save(req, res, payload);
 
 });
