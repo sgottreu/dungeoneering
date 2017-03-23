@@ -1,7 +1,17 @@
+.CreateParty {
+	margin: 15px;
+}
+
+.CreateParty.inset {
+  width: 55% !important;
+}
+
+
 .Lists .list {
     width: 400px;
     overflow-y: scroll;
     overflow-x: hidden;
+    height: 115px;
 }
 
 .listItem {
@@ -12,8 +22,20 @@
 
 .AvailableGear {
   width: 1000px !important;
+  float:none;
+  background: #FCFCFC !important;
 }
 
 .AvailableGear .button {
   margin: 0px 10px;
+}
+
+.coinPurse, .inventoryWeight {
+  float: left;
+}
+
+.coinPurse .value, .inventoryWeight .value {
+  text-align: center;
+  width: 100%;
+  display: inline-block;
 }

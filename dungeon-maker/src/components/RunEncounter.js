@@ -6,6 +6,7 @@ import EntityTooltip from './EntityTooltip';
 import axios from 'axios';
 import {Variables} from './Variables';
 import {_Dungeon} from './_Dungeon';
+import { EntitySize, EntityClass} from './EntityTemplate';
 
 class RunEncounter extends Component {
   constructor(props){
@@ -19,7 +20,10 @@ class RunEncounter extends Component {
     this.setEncounter = this.setEncounter.bind(this);
     this.setDungeon = this.setDungeon.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
-    this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
+    this.handlePartyChange = this.handlePartyChange.bind(this);
+    this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
+    this.handleMouseOver = this.handleMouseOver.bind(this);
+    this.loadCharacterTile = this.loadCharacterTile.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -30,7 +34,11 @@ class RunEncounter extends Component {
       foundDungeonGrids: [],
       availableEncounters: [],
       selectedDungeon: false,
+      selectedEncounter: false,
+      availableParties: [],
+      selectedParty: false,
       hoverEntity: false,
+      party: false,
       mouse: {
         clientX: false,
         clientY: false
@@ -49,6 +57,12 @@ class RunEncounter extends Component {
         state.availableEncounters = res.data;
         _this.setState(state);
     });
+    axios.get(`${Variables.host}/findParties`)
+    .then(res => {
+      let state = _this.state;
+      state.availableParties = res.data;
+      _this.setState( state );
+    }); 
 
   }
   componentWillUnmount() {
@@ -65,15 +79,25 @@ class RunEncounter extends Component {
   
   }
 
-  handleEntityMouseOver = (entity, eve) => {
+  handleObjMouseOver = (obj, _type, eve) => {
     let state = this.state;
-    state.hoverEntity = entity;
+    state.hoverObj = {
+      obj: obj,
+      type: _type
+    };
     state.mouse.clientX = eve.clientX;
     state.mouse.clientY = eve.clientY;
     this.setState(state);
   }
 
   addTile(slot) {
+  }
+
+  handlePartyChange = (e, index) => {
+    let state = this.state;
+    state.selectedParty = state.availableParties[ index ]._id;
+    state.party = state.availableParties[ index ];
+    this.setState(state);
   }
 
   handleTitleChange = (e) => {
@@ -93,8 +117,8 @@ class RunEncounter extends Component {
         let state = _this.state;
         state.selectedEncounter = selectedEncounter;
         state.encounter = res.data;
+
         _this.setState(state);
-        this.props.onSetEncounterTitle(state.encounter);
       });
   }
 
@@ -116,6 +140,7 @@ class RunEncounter extends Component {
   chooseEncounter(id){
     let state = this.state;
     state.selectedEncounter = id;
+
     this.setState( state );
   }
 
@@ -130,15 +155,54 @@ class RunEncounter extends Component {
     this.setState( { selectedTile: (selectedTile === id) ? '' : id });
   }
 
+  handleMouseOver = (entity, type, eve) => {
+    this.handleObjMouseOver(entity, type, eve);
+  }
+
+  loadCharacterTile(character){
+    let size = EntitySize.find(s => { return s.label === character.size});
+    let iconClass = EntityClass[character.class].name.toLowerCase();
+    let style = {
+      width: (75 * size.space),
+      height: (75 * size.space),
+      backgroundSize: (75 * size.space)
+    }
+
+    return (
+      <div onMouseEnter={this.handleMouseOver.bind(this, character, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
+        style={style} key={character._id} className={iconClass+' Entity icon'} />
+    );
+  }
+
   render() {
-    let {slots, selectedDungeon, selectedEncounter} = this.state;
+    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters} = this.state;
+    let party = availableParties.find(p => { return p._id === selectedParty} );
+    if(party === undefined) {
+      party = { members: [] };
+    }
 
     return (    	
 	      <div className="RunEncounter">
           <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} 
-            onHandleEntityMouseOver={this.handleEntityMouseOver} />
-          <EncounterLoadDrawer onSetEncounter={this.setEncounter} selectedEncounter={selectedEncounter} availableEncounters={this.state.availableEncounters} />
+            onHandleObjMouseOver={this.handleObjMouseOver} />
+          <EncounterLoadDrawer 
+            onHandlePartyChange={this.handlePartyChange}
+            onSetEncounter={this.setEncounter} 
+            onSetDungeon={this.setDungeon} 
+            selectedEncounter={selectedEncounter} 
+            selectedDungeon={selectedDungeon}
+            selectedParty={selectedParty}            
+            availableParties={availableParties}
+            availableEncounters={availableEncounters}
+             />
           <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
+          <div className="startingPartyArea">
+            	{party.members.map( (character, x) => {
+							return (
+								this.loadCharacterTile(character)
+							)
+						})}
+          </div>
         </div>
     );
   }
