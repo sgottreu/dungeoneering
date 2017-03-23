@@ -26,7 +26,6 @@ class App extends Component {
     super(props);
 
     this.activateMenu = this.activateMenu.bind(this);
-    this.setEncounterTitle = this.setEncounterTitle.bind(this);
 
     this.state = {
       activeMenu: false,
@@ -41,18 +40,11 @@ class App extends Component {
     });
   }
 
-  setEncounterTitle = (encounter) => {
-    let state = this.state;
-    state.currentEncounter = encounter;
-    this.setState(state);
-  }
-
   render() {
-    let html = ((this.state.currentEncounter) ? "DM - "+this.state.currentEncounter.title : 'Dungeon Maker');
     return (    	
       <div className="App">
        <AppBar className="AppBar"
-        title={html}
+        title='Dungeon Maker'
         onLeftIconButtonTouchTap={this.activateMenu}
         > 
         

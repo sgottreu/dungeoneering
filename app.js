@@ -140,7 +140,7 @@ app.post('/saveParty', function (req, res) {
 	console.log('Saving Party');
 
   let payload = JSON.parse(JSON.stringify(req.body));
-  
+
   _Save(req, res, payload);
 
 });
@@ -258,8 +258,10 @@ function sendJSON(res, data){
 }
 
 function _Save(req, res, payload){
+  delete payload._id;
+  
   if(req.body._id) {
-    delete payload._id;
+    console.log(payload);
     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
       console.log(`${payload._type} updated!`);
       sendJSON(res, data);

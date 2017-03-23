@@ -12,6 +12,7 @@ class EncounterLoadDrawer extends Component {
 	constructor(props){
     super(props);
     this.handleChange = this.handleChange.bind(this);
+		this.handleDungeonChange = this.handleDungeonChange.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.toggleWithKey = this.toggleWithKey.bind(this);
@@ -40,14 +41,19 @@ class EncounterLoadDrawer extends Component {
 
 	handleChange(event, index, value){
 		this.props.onSetEncounter(value);
-		this.setState({open: false});
+		// this.setState({open: false});
 	}
 
+	handleDungeonChange(event, index, value){
+		this.props.onSetDungeon(value);
+		this.setState({open: false});
+	}
 	
 
 	render(){
-		let {availableEncounters, selectedEncounter} = this.props;
-
+		let {availableEncounters, selectedEncounter, selectedDungeon, selectedParty, availableParties} = this.props;
+		let _encounter = availableEncounters.find(enc => { return enc._id === selectedEncounter});
+		let encounterDungeons = (!selectedEncounter) ? [] : _encounter.encounterDungeons; 
 
 		return (
 			<div className="EncounterLoadDrawer">
@@ -63,11 +69,29 @@ class EncounterLoadDrawer extends Component {
           open={this.state.open}
           onRequestChange={(open) => this.setState({open})}
         >
+					<SelectField  floatingLabelText={`Choose Party`} value={selectedParty} onChange={this.props.onHandlePartyChange} >
+							{availableParties.map( (party, index) => {
+									return (
+									<MenuItem 
+										key={index} value={party._id} primaryText={`${party.name}`} />
+									);
+							})}
+					</SelectField>
+					<br/>
 					<SelectField onChange={this.handleChange} value={selectedEncounter} floatingLabelText="Saved Encounters" >
 						{availableEncounters.map( (enc, x) => {
 							let label = (enc.title) ? enc.title : enc._id;
 							return (
 								<MenuItem key={enc._id} value={enc._id} primaryText={label} />
+							)
+						})}
+					</SelectField>
+					<br/>
+					<SelectField onChange={this.handleDungeonChange} value={selectedDungeon} floatingLabelText="Saved Dungeon Grids" >
+						{encounterDungeons.map( (grid, x) => {
+							let label = (grid.title) ? grid.title : grid._id;
+							return (
+								<MenuItem key={grid._id} value={grid._id} primaryText={label} />
 							)
 						})}
 					</SelectField>
