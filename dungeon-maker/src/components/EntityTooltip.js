@@ -19,6 +19,8 @@ class EntityTooltip extends Component {
     }
     let AbilityMap = new Map(Object.entries(entity.abilities));
 
+    entity.initiative.current = (entity.initiative.current === undefined) ? 0 : entity.initiative.current;
+
     return (
       <List className="stats">
         <ListItem primaryText={entity.name} leftIcon={<div className={'tooltip_icon icon '+entity.iconClass} />}  />
@@ -42,6 +44,10 @@ class EntityTooltip extends Component {
             <Chip key="d">
               <Avatar size={32}><i className="fa fa-rocket" aria-hidden="true"></i></Avatar>
               {entity.speed}
+            </Chip>
+            <Chip key="e">
+              <Avatar size={32}><i className="fa fa-bolt" aria-hidden="true"></i></Avatar>
+              {entity.initiative.current} ({entity.initiative.total})
             </Chip>
           </div>
         }   />

@@ -25,7 +25,7 @@ class DungeonGrid extends Component {
 	        {slots.map(slot => (	          
 	          <DungeonGridSlot key={slot.id} id={slot.id} slot={slot} overlays={slot.overlays} onAddTile={onAddTile} 
 							onHandleObjMouseOver={this.props.onHandleObjMouseOver}
-							
+							currentActor={this.props.currentActor}
 						/>
 	        ))}
 	      </div>
