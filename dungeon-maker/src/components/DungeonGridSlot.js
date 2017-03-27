@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import {EntitySize} from './EntityTemplate';
+
 import '../css/DungeonGridSlot.css';
 
 class DungeonGridSlot extends Component {
@@ -25,15 +27,36 @@ class DungeonGridSlot extends Component {
     }
     let entity = slot.overlays.entity;
 
-    let style = {
-      width: (75 * entity.size),
-      height: (75 * entity.size),
-      backgroundSize: (75 * entity.size)
+    let style;
+    
+    if(entity._type === 'character'){
+      let size = EntitySize.find(s => { return s.label === entity.size});
+      style = {
+        width: (75 * size.space),
+        height: (75 * size.space),
+        backgroundSize: (75 * size.space)
+      }
+    } else {
+      style = {
+        width: (75 * EntitySize[entity.size].space),
+        height: (75 * EntitySize[entity.size].space),
+        backgroundSize: (75 * EntitySize[entity.size].space)
+      }
     }
 
+    let bkGdDiv = function() { return false; };
+    if(entity._type === 'character'){
+      bkGdDiv = function() { return ( <div className='Entity character bkgd' />) };
+    }
+
+    let entitySize = (isNaN(entity.size)) ? entity.size : EntitySize[ entity.size ].label;
+
     return (
-      <div onMouseEnter={this.handleMouseOver.bind(this, entity, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
-        style={style} data-slot={slot.id} key={slot.overlays.entity._id} className={slot.overlays.entity.iconClass+' Entity icon'} />
+      <div className={'EntityHolder '+((this.props.currentActor.slot === slot.id) ? 'currentActor' : '')}>
+        <div onMouseEnter={this.handleMouseOver.bind(this, entity, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
+        style={style} data-slot={slot.id} key={entity._id} className={entity._type+' '+entitySize+' '+entity.iconClass+' Entity icon'} />
+         {bkGdDiv()}
+      </div>
     );
   }
 

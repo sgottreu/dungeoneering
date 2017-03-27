@@ -13,7 +13,7 @@ export var EntityTemplate = {
     class: false,
     size: false,
     xp: 0,
-    initiative: {total: 0, base: 0, modifier: 0},
+    initiative: {total: 0, base: 0, modifier: 0, current: 0},
     hp: 0,
     bloodied: 0,
     speed: 0,
@@ -94,7 +94,7 @@ export var EntityRole = [
 ];
 
 export var EntitySize = [
-  {label: 'Tiny', space: 0, reach: 0},
+  {label: 'Tiny', space: 1, reach: 0},
   {label: 'Small', space: 1, reach: 1},
   {label: 'Medium', space: 1, reach: 1},
   {label: 'Large', space: 2, reach: 1},
@@ -165,7 +165,8 @@ export var calculateInitiative = function(state, value=false){
   return {
     base: HalfLevelModifier(state.entity.level, state.entity._type) + state.entity.abilities.dexterity.abilityMod,
     modifier: mod,
-    total: base+mod
+    total: base+mod,
+    current: 0
   }
 };
 

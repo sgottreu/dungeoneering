@@ -1,0 +1,47 @@
+.startingPartyArea {
+    position: absolute;
+    top: 850px;
+}
+
+.startingPartyArea .Entity {
+    float: left !important;
+    display: inline-block;
+}
+
+.DungeonGridSlot .character.Entity{
+    width: 75px; 
+    height: 75px; 
+    background-size: 75px; 
+}
+.DungeonGridSlot .character.Entity.bkgd {
+
+    width: 75px; 
+    height: 75px; 
+    background: #FBFCCC;
+    display: block;
+    border-radius: 50%;
+    z-index: 4;
+    top: -168px;
+}
+
+
+.DungeonGridSlot .currentActor .Entity:before {
+    background: rgba(212,255,215, 0.6);
+    content: " ";
+    display: block;
+}
+
+.currentActor .Entity.Tiny:before, .currentActor .Entity.Small:before, .currentActor .Entity.Medium:before {
+    width: 75px;
+    height: 75px;
+}
+
+.currentActor .Entity.Large:before {
+    width: 150px;
+    height: 150px;
+}
+
+.currentActor .Entity.Huge:before {
+    width: 225px;
+    height: 225px;
+}
