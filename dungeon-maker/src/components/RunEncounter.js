@@ -51,6 +51,7 @@ class RunEncounter extends Component {
       selectedEntity : false,
       hoverObj: false,
       party: false,
+      
       currentActor: {slot: false, roll: false},
       mouse: {
         clientX: false,
@@ -190,13 +191,12 @@ class RunEncounter extends Component {
       state.slots[ slot - 1 ].occupied = false;
       state.hoverObj = false;
     } else {
-      // if(state.selectedEntity){
-        state.slots[ slot - 1 ].overlays.entity = state.selectedEntity;
-        state.slots[ slot - 1 ].occupied = true;
-      // }
+      state.slots[ slot - 1 ].overlays.entity = Variables.clone(state.selectedEntity);
+      state.slots[ slot - 1 ].occupied = true;
     }
     state.selectedEntity = false;
-    this.setState( state );
+    
+    return state;
   }
 
   handleMyEvent(e) {
@@ -207,31 +207,51 @@ class RunEncounter extends Component {
   
     let slot = e.target.dataset.slot;
 
-    if(state.moving){
-      this.selectEntity(state.slots[e].overlays.entity._id, state.slots[e].overlays.entity._type, state.slots[e].overlays.entity);
-      state.moving = false;
-    }
+    let entity = state.slots[slot-1].overlays.entity;
 
-    if(state.selectedEntity){
-      this.setEntity(e, state, slot);
-    }
-   
-  }
-
-  selectEntity(id, entityType='monster', saved=false) {
-    let selectedEntity;
-    
-    if(saved){
-      selectedEntity = saved;
-    } else {
-      if(entityType === 'monster'){
-        selectedEntity = this.state.availableMonsters.find(function(val){ return val._id === id});
+    if(state.moving !== false){
+      if(!state.selectedEntity){
+        state.moving = slot;
+        state = this.selectEntity(entity._id, entity._type, state, entity);
       } else {
-        selectedEntity = this.state.availableCharacters.find(function(val){ return val._id === id});
+        // Add Entity to new slot
+        state = this.setEntity(e, state, slot);
+        // Remove Entity from old slot
+        state = this.setEntity(e, state, state.moving);
+
+        state.moving = false;
+      }
+    } else {
+      if(state.selectedEntity){
+        state = this.setEntity(e, state, slot);
+      } else {
+        state = this.selectEntity(entity._id, entity._type, state);
       }
     }
 
-    this.setState( { selectedEntity: selectedEntity });
+    
+    this.setState( state );
+  }
+
+  selectEntity(id, entityType='monster', state, saved=false) {
+    if(state === false) {
+      state = this.state;
+    }
+    
+    if(saved){
+      state.selectedEntity = saved;
+    } else {
+      if(entityType === 'monster'){
+        state.selectedEntity = this.state.availableMonsters.find(function(val){ return val._id === id});
+      } else {
+        state.selectedEntity = this.state.availableCharacters.find(function(val){ return val._id === id});
+      }
+    }
+
+    if(saved){
+      return state;
+    }
+    this.setState( state );
   }
 
   loadCharacterTile(character){
@@ -244,7 +264,7 @@ class RunEncounter extends Component {
     }
 
     return (
-      <div onClick={this.selectEntity.bind(this, character._id, 'character')} onMouseEnter={this.handleMouseOver.bind(this, character, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
+      <div onClick={this.selectEntity.bind(this, character._id, 'character', false, false)} onMouseEnter={this.handleMouseOver.bind(this, character, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
         style={style} key={character._id} className={iconClass+' Entity icon'} />
     );
   }
