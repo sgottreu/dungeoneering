@@ -25,30 +25,26 @@ _Dungeon.findDungeonGrids = function(_this) {
     });
 }
 
+_Dungeon.setCurrentActor = (state, roll, slot) => {
+  if(!state.currentActor.roll || state.currentActor.roll <= roll){
+    state.currentActor = {slot: slot, roll: roll};
+  }
+  return state;
+}
+
 _Dungeon.rollInitiative = function(_this){
   let state = _this.state;
   state.currentActor = {slot: false, roll: false};
 
-  for(var x=0,len=state.slots.length;x<len;x++){
-    if(state.slots[x].occupied){
-      let roll = (Math.floor(Math.random() * (20 - 1)) + 1) + state.slots[x].overlays.entity.initiative.total;
-      state.slots[x].overlays.entity.initiative.current = roll;
+  state.slots.map((slot, x) => {
+    if(slot.occupied){
+      let roll = (Math.floor(Math.random() * (20 - 1)) + 1) + slot.overlays.entity.initiative.total;
+      slot.overlays.entity.initiative.current = roll;
 
-      if(!state.currentActor.roll || state.currentActor.roll <= roll){
-        state.currentActor = {slot: x+1, roll: roll};
-      }
+      state = this.setCurrentActor(state, roll, x+1);
     }
-  }
-
-  state.party.members.map((member,x) => {
-    let roll = (Math.floor(Math.random() * (20 - 1)) + 1) + member.initiative.total;
-    state.party.members[x].initiative.current = roll;
-
-    if(!state.currentActor.roll || state.currentActor.roll <= roll){
-      state.currentActor = {slot: x+1, roll: roll};
-    }
-    
-  })
+    return slot;
+  });
 
   _this.setState( state );
 }

@@ -27,20 +27,19 @@ class DungeonGridSlot extends Component {
     }
     let entity = slot.overlays.entity;
 
-    let style;
+    let style, size;
     
     if(entity._type === 'character'){
-      let size = EntitySize.find(s => { return s.label === entity.size});
+      size = EntitySize.find(s => { return s.label === entity.size});
+    } else {
+      size = (EntitySize[entity.size] === undefined) ? false : EntitySize[entity.size];
+    }
+
+    if(size !== undefined && size !== false){
       style = {
         width: (75 * size.space),
         height: (75 * size.space),
         backgroundSize: (75 * size.space)
-      }
-    } else {
-      style = {
-        width: (75 * EntitySize[entity.size].space),
-        height: (75 * EntitySize[entity.size].space),
-        backgroundSize: (75 * EntitySize[entity.size].space)
       }
     }
 
