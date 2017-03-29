@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {Variables} from './Variables';
+import uuidV4  from 'uuid/v4';
 
 class _Dungeon {};
 
@@ -32,21 +33,41 @@ _Dungeon.setCurrentActor = (state, roll, slot) => {
   return state;
 }
 
-_Dungeon.rollInitiative = function(_this){
+_Dungeon.rollInitiative = (_this) => {
   let state = _this.state;
   state.currentActor = {slot: false, roll: false};
 
-  state.slots.map((slot, x) => {
-    if(slot.occupied){
-      let roll = (Math.floor(Math.random() * (20 - 1)) + 1) + slot.overlays.entity.initiative.total;
-      slot.overlays.entity.initiative.current = roll;
+  state.combatList.map((item, x) => {
+    let roll = (Math.floor(Math.random() * (20 - 1)) + 1) + item.initiative.total;
+    item.initiative.current = roll;
 
-      state = this.setCurrentActor(state, roll, x+1);
-    }
-    return slot;
+    state = _Dungeon.setCurrentActor(state, roll, item.slot);
+    return item;
   });
 
   _this.setState( state );
+}
+
+_Dungeon.setCombatList = (state) => {
+  let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties} = state;
+  let party = availableParties.find(p => { return p._id === selectedParty} );
+
+  slots.map((slot, x) => {
+    if(slot.occupied){
+      let uuid = uuidV4();
+      slot.overlays.entity.uuid = uuid;
+      let entity = Variables.clone(slot.overlays.entity);
+      entity.slot = slot.id;
+      state.combatList.push( entity );
+      slot.overlays.entity = uuid;
+    }
+    return slot;
+  });
+  party.members.map((p, x) => {
+    state.combatList.push( Variables.clone(p) ); 
+    return p;
+  });
+  return state;
 }
 
 export {_Dungeon};
