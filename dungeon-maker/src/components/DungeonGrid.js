@@ -19,15 +19,29 @@ class DungeonGrid extends Component {
 	}
 
    render() {
-   		let {slots, onAddTile} = this.props;
+   		let {slots, onAddTile, combatList} = this.props;
+
+			
+
 	    return (
 	      <div className="DungeonGrid">
-	        {slots.map(slot => (	          
-	          <DungeonGridSlot key={slot.id} id={slot.id} slot={slot} overlays={slot.overlays} onAddTile={onAddTile} 
-							onHandleObjMouseOver={this.props.onHandleObjMouseOver}
-							currentActor={this.props.currentActor}
-						/>
-	        ))}
+	        {slots.map(slot => {
+						let entity;
+						if(slot.occupied){
+							entity = combatList.find(item => { return item.uuid === slot.overlays.entity} );
+						} 
+						return (	          
+							<DungeonGridSlot key={slot.id} 
+								id={slot.id} 
+								slot={slot} 
+								entity={entity}
+								overlays={slot.overlays} 
+								onAddTile={onAddTile} 
+								onHandleObjMouseOver={this.props.onHandleObjMouseOver}
+								currentActor={this.props.currentActor}
+							/>
+	        	)
+					})}
 	      </div>
 	    );
    }

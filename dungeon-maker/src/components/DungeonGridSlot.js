@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {EntitySize} from './EntityTemplate';
-
+import uuidV4  from 'uuid/v4';
 import '../css/DungeonGridSlot.css';
 
 class DungeonGridSlot extends Component {
@@ -21,12 +21,14 @@ class DungeonGridSlot extends Component {
     
   }
 
-  loadEntityTile(slot){
+  loadEntityTile(slot, entity=false){
     if(!slot.overlays.entity){
       return false;
     }
-    let entity = slot.overlays.entity;
-
+    if(!entity) {
+      entity = slot.overlays.entity;
+    }
+    
     let style, size;
     
     if(entity._type === 'character'){
@@ -50,10 +52,12 @@ class DungeonGridSlot extends Component {
 
     let entitySize = (isNaN(entity.size)) ? entity.size : EntitySize[ entity.size ].label;
 
+    let uuid = (entity.uuid === undefined) ? uuidV4() : entity.uuid
+
     return (
       <div className={'EntityHolder '+((this.props.currentActor.slot === slot.id) ? 'currentActor' : '')}>
         <div onMouseEnter={this.handleMouseOver.bind(this, entity, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
-        style={style} data-slot={slot.id} key={entity._id} className={entity._type+' '+entitySize+' '+entity.iconClass+' Entity icon'} />
+        style={style} data-slot={slot.id} key={uuid} className={entity._type+' '+entitySize+' '+entity.iconClass+' Entity icon'} />
          {bkGdDiv()}
       </div>
     );
@@ -61,7 +65,7 @@ class DungeonGridSlot extends Component {
 
 
   render() {
-    let {id, slot, onAddTile} = this.props;
+    let {id, slot, onAddTile, entity} = this.props;
     let className = 'DungeonGridSlot ';
     className += (slot.tileType === undefined || slot.tileType === '') ? '' : slot.tileType;
 
@@ -72,7 +76,7 @@ class DungeonGridSlot extends Component {
     return (
       <div ref={'tile'+slot.id} id={'_slot'+slot.id}
         className={className} data-slot={id} onClick={onAddTile.bind(this, id)}>&nbsp;
-        {this.loadEntityTile(slot)}
+        {this.loadEntityTile(slot, entity)}
       </div>
     );
   }
