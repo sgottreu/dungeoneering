@@ -39,6 +39,7 @@ class RunEncounter extends Component {
       combatList: [],
       moving: false,
     	selectedTile: '',
+      setup: true,
     	connectedDoor: true,
     	choosingEntrance: false,
     	choosingExit: false,
@@ -169,7 +170,7 @@ class RunEncounter extends Component {
       state.title = res.data.title;
 
       state = _Dungeon.setCombatList(state);
-
+      state = _Dungeon.addCharToMap(state);
       state.selectedDungeon = selectedDungeon;
 
       _this.setState(state);
@@ -208,9 +209,7 @@ class RunEncounter extends Component {
       state.slots[ slot - 1 ].occupied = true;
 
       state.combatList.map(function(val){ if(val.uuid === state.selectedEntity.uuid) {val.slot = slot} return val; });
-    }
-    state.selectedEntity = false;
-    
+    }    
     return state;
   }
 
@@ -235,15 +234,20 @@ class RunEncounter extends Component {
       } else {
         // Add Entity to new slot
         state = this.setEntity(e, state, slot);
-        state.currentActor.slot = slot;
+        if(state.currentActor.uuid === state.selectedEntity.uuid){
+          state.currentActor.slot = slot;
+        }
+        
         // Remove Entity from old slot
         state = this.setEntity(e, state, state.moving);
-
+        state.selectedEntity = false;
         state.moving = false;
       }
-    } else {
+    } 
+    if(state.setup) {
       if(state.selectedEntity){
         state = this.setEntity(e, state, slot);
+        state.selectedEntity = false;
       } else {
         entity = state.combatList.find(function(val){  return val.slot === slot; });
         if(entity !== undefined){
@@ -290,11 +294,12 @@ class RunEncounter extends Component {
   }
 
   render() {
-    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters, combatList} = this.state;
+    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters, combatList, currentActor} = this.state;
     let party = availableParties.find(p => { return p._id === selectedParty} );
     if(party === undefined) {
       party = { members: [] };
     }
+    let state = this.state;
 
     return (    	
 	      <div className="RunEncounter">
@@ -302,8 +307,8 @@ class RunEncounter extends Component {
             onAddTile={this.addTile} 
             selectedDungeon={selectedDungeon} 
             onSetDungeon={this.setDungeon} 
-            combatList={this.state.combatList}
-            currentActor={this.state.currentActor}
+            combatList={combatList}
+            currentActor={currentActor}
             onHandleObjMouseOver={this.handleObjMouseOver} />
           <EncounterLoadDrawer 
             onHandlePartyChange={this.handlePartyChange}
@@ -332,11 +337,15 @@ class RunEncounter extends Component {
             />
           </div>
           <div className="startingPartyArea">
-            	{party.members.map( (character, x) => {
-							return (
-								this.loadCharacterTile(character)
-							)
-						})}
+            	{/*{party.members.map( (character, x) => {
+                if(state.setup){
+                  return (
+                    this.loadCharacterTile(character)
+                  )
+                } else {
+                  return false;
+                }
+						})}*/}
           </div>
         </div>
     );

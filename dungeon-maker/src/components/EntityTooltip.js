@@ -14,7 +14,7 @@ class EntityTooltip extends Component {
   }
 
   loadData = (entity) => {
-    if(!entity){
+    if(entity === undefined || !entity){
       return false;
     }
     let AbilityMap = new Map(Object.entries(entity.abilities));

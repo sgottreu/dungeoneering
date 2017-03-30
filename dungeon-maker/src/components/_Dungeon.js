@@ -26,29 +26,6 @@ _Dungeon.findDungeonGrids = function(_this) {
     });
 }
 
-_Dungeon.setCurrentActor = (state, roll, slot) => {
-  if(!state.currentActor.roll || state.currentActor.roll <= roll){
-    state.currentActor = {slot: slot, roll: roll};
-  }
-  return state;
-}
-
-_Dungeon.rollInitiative = (_this) => {
-  let state = _this.state;
-  state.currentActor = {slot: false, roll: false};
-
-  state.combatList.map((item, x) => {
-    let roll = (Math.floor(Math.random() * (20 - 1)) + 1) + item.initiative.total;
-    item.initiative.current = roll;
-
-    state = _Dungeon.setCurrentActor(state, roll, item.slot);
-    return item;
-  });
-
-  state.combatList.sort( sortInitiative );
-  _this.setState( state );
-}
-
 var sortInitiative = (a, b) => {
   var aa = parseInt(a.initiative.current, 10), bb = parseInt(b.initiative.current, 10);
   var a2 = parseInt(a.initiative.total, 10), b2 = parseInt(b.initiative.total, 10);
@@ -71,8 +48,52 @@ var sortInitiative = (a, b) => {
   }
 }
 
+_Dungeon.setCurrentActor = (state, roll, slot, uuid) => {
+  if(!state.currentActor.roll || state.currentActor.roll <= roll){
+    state.currentActor = {slot: slot, roll: roll, uuid: uuid};
+  }
+  return state;
+}
+
+_Dungeon.addCharToMap = (state) => {
+  let party = state.party.members;
+
+  party.map( (character, x) => {
+    let _slot = state.slots.find( slot => {
+      return !slot.occupied && slot.tileType === undefined;
+    });
+
+    if(_slot){
+      state.slots[ _slot.id -1 ].overlays.entity = character.uuid;
+      state.slots[ _slot.id -1 ].occupied = true;
+      
+      let _i = state.combatList.findIndex(cmb => { return cmb.uuid === character.uuid});
+      state.combatList[ _i ].slot = _slot.id;
+    }
+  });
+
+  return state;
+}
+
+_Dungeon.rollInitiative = (_this) => {
+  let state = _this.state;
+  state.currentActor = {slot: false, roll: false, uuid: false};
+
+  state.combatList.map((item, x) => {
+    let roll = (Math.floor(Math.random() * (20 - 1)) + 1) + item.initiative.total;
+    item.initiative.current = roll;
+
+    state = _Dungeon.setCurrentActor(state, roll, item.slot, item.uuid);
+    return item;
+  });
+
+  state.combatList.sort( sortInitiative );
+  state.setup = false;
+  _this.setState( state );
+}
+
 _Dungeon.setCombatList = (state) => {
-  let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties} = state;
+  let {slots, selectedParty, availableParties} = state;
   let party = availableParties.find(p => { return p._id === selectedParty} );
 
   slots.map((slot, x) => {

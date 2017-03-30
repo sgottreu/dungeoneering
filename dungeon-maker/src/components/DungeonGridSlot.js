@@ -22,13 +22,13 @@ class DungeonGridSlot extends Component {
   }
 
   loadEntityTile(slot, entity=false){
-    if(!slot.overlays.entity){
-      return false;
-    }
     if(!entity) {
       entity = slot.overlays.entity;
     }
-    
+
+    if(!entity){
+      return false;
+    }    
     let style, size;
     
     if(entity._type === 'character'){
@@ -55,7 +55,7 @@ class DungeonGridSlot extends Component {
     let uuid = (entity.uuid === undefined) ? uuidV4() : entity.uuid
     let ActorSlot = parseInt(this.props.currentActor.slot, 10);
     return (
-      <div className={'EntityHolder '+((ActorSlot === parseInt(slot.id)) ? 'currentActor' : '')}>
+      <div className={'EntityHolder '+((ActorSlot === parseInt(slot.id, 10)) ? 'currentActor' : '')}>
         <div onMouseEnter={this.handleMouseOver.bind(this, entity, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
         style={style} data-slot={slot.id} key={uuid} className={entity._type+' '+entitySize+' '+entity.iconClass+' Entity icon'} />
          {bkGdDiv()}
