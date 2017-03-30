@@ -45,7 +45,30 @@ _Dungeon.rollInitiative = (_this) => {
     return item;
   });
 
+  state.combatList.sort( sortInitiative );
   _this.setState( state );
+}
+
+var sortInitiative = (a, b) => {
+  var aa = parseInt(a.initiative.current, 10), bb = parseInt(b.initiative.current, 10);
+  var a2 = parseInt(a.initiative.total, 10), b2 = parseInt(b.initiative.total, 10);
+  if (aa < bb) {
+    return 1;
+  } else {
+    if (aa > bb) {
+      return -1;
+    } else {
+      if (a2 < b2) {
+        return 1;
+      } else {
+        if (a2 > b2) {
+          return -1;
+        } else {
+          return 0;
+        }
+      }
+    }
+  }
 }
 
 _Dungeon.setCombatList = (state) => {

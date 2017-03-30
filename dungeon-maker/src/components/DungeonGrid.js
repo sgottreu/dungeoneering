@@ -13,9 +13,7 @@ class DungeonGrid extends Component {
 	}
 
 	componentWillReceiveProps(nextProps){
-		if(nextProps.selectedDungeon !== this.props.selectedDungeon){
-			this.setDungeon(nextProps.selectedDungeon);
-		}
+
 	}
 
    render() {
