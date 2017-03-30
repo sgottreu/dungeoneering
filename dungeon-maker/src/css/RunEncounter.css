@@ -45,3 +45,7 @@
     width: 225px;
     height: 225px;
 }
+
+.RunEncounter .actions .button {
+    margin: 10px 5px !important;
+}

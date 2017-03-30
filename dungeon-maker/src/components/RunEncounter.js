@@ -316,18 +316,21 @@ class RunEncounter extends Component {
             availableEncounters={availableEncounters}
              />
           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
-          <RaisedButton
-            label={'Roll Initiative'} 
-            secondary={true} 
-            onTouchTap={this.rollInitiative}
-            className="button"
-          />
-          <RaisedButton
-            label={'Move'} 
-            secondary={true} 
-            onTouchTap={this.setToMove}
-            className="button"
-          />
+          <div className="actions">
+            <RaisedButton
+              label={'Roll Initiative'} 
+              secondary={true} 
+              onTouchTap={this.rollInitiative}
+              className="button"
+            />
+            <br/>
+            <RaisedButton
+              label={'Move'} 
+              secondary={true} 
+              onTouchTap={this.setToMove}
+              className="button"
+            />
+          </div>
           <div className="startingPartyArea">
             	{party.members.map( (character, x) => {
 							return (
