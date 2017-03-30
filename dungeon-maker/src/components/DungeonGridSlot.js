@@ -53,9 +53,9 @@ class DungeonGridSlot extends Component {
     let entitySize = (isNaN(entity.size)) ? entity.size : EntitySize[ entity.size ].label;
 
     let uuid = (entity.uuid === undefined) ? uuidV4() : entity.uuid
-
+    let ActorSlot = parseInt(this.props.currentActor.slot, 10);
     return (
-      <div className={'EntityHolder '+((this.props.currentActor.slot === slot.id) ? 'currentActor' : '')}>
+      <div className={'EntityHolder '+((ActorSlot === parseInt(slot.id)) ? 'currentActor' : '')}>
         <div onMouseEnter={this.handleMouseOver.bind(this, entity, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
         style={style} data-slot={slot.id} key={uuid} className={entity._type+' '+entitySize+' '+entity.iconClass+' Entity icon'} />
          {bkGdDiv()}

@@ -170,6 +170,8 @@ class RunEncounter extends Component {
 
       state = _Dungeon.setCombatList(state);
 
+      state.selectedDungeon = selectedDungeon;
+
       _this.setState(state);
     });
   }
@@ -244,7 +246,9 @@ class RunEncounter extends Component {
         state = this.setEntity(e, state, slot);
       } else {
         entity = state.combatList.find(function(val){  return val.slot === slot; });
-        state = this.selectEntity(entity.uuid, entity._type, state);
+        if(entity !== undefined){
+          state = this.selectEntity(entity.uuid, entity._type, state);
+        }
       }
     }
     if(state !== undefined){
