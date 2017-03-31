@@ -34,6 +34,8 @@ class RunEncounter extends Component {
     this.rollInitiative = this.rollInitiative.bind(this);
     this.setToMove = this.setToMove.bind(this);
     this.endTurn = this.endTurn.bind(this);
+    this.setToAttack = this.setToAttack.bind(this);
+    this.setAttackerStatus = this.setAttackerStatus.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -47,8 +49,10 @@ class RunEncounter extends Component {
       availableEncounters: [],
       availableMonsters: [],
       availableCharacters: [],
+      attacking: false,
       selectedDungeon: false,
       selectedEncounter: false,
+      selectedAttackers: [],
       availableParties: [],
       selectedParty: false,
       selectedEntity : false,
@@ -114,6 +118,12 @@ class RunEncounter extends Component {
   setToMove = () => {
     let state = this.state;
     state.moving = true;
+    this.setState(state);
+  }
+
+  setToAttack = () => {
+    let state = this.state;
+    state.attacking = true;
     this.setState(state);
   }
 
@@ -246,10 +256,7 @@ class RunEncounter extends Component {
     if(state.moving !== false){
       if(!state.selectedEntity){
         state.moving = slot;
-        entity = state.combatList.find(function(val){ 
-           return parseInt(val.slot, 10) === parseInt(slot, 10); 
-          });
-
+        entity = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
         state = this.selectEntity(entity.uuid, entity._type, state, entity);
       } else {
         // Add Entity to new slot
@@ -264,17 +271,10 @@ class RunEncounter extends Component {
         state.moving = false;
       }
     } 
-    // if(state.setup) {
-    //   if(state.selectedEntity){
-    //     state = this.setEntity(e, state, slot);
-    //     state.selectedEntity = false;
-    //   } else {
-    //     entity = state.combatList.find(function(val){  return val.slot === slot; });
-    //     if(entity !== undefined){
-    //       state = this.selectEntity(entity.uuid, entity._type, state);
-    //     }
-    //   }
-    // }
+    if(state.attacking){
+        entity = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
+        state.selectedAttackers.push( {uuid: entity.uuid, status: false});
+    } 
     if(state !== undefined){
       this.setState( state );
     }
@@ -298,6 +298,10 @@ class RunEncounter extends Component {
     this.setState( state );
   }
 
+  setAttackerStatus = (uuid, status) => {
+
+  }
+
   loadCharacterTile(character){
     let size = EntitySize.find(s => { return s.label === character.size});
     let iconClass = EntityClass[character.class].name.toLowerCase();
@@ -314,7 +318,7 @@ class RunEncounter extends Component {
   }
 
   render() {
-    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters, combatList, currentActor} = this.state;
+    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters, combatList, currentActor, selectedAttackers} = this.state;
     let party = availableParties.find(p => { return p._id === selectedParty} );
     if(party === undefined) {
       party = { members: [] };
@@ -329,7 +333,10 @@ class RunEncounter extends Component {
             onSetDungeon={this.setDungeon} 
             combatList={combatList}
             currentActor={currentActor}
-            onHandleObjMouseOver={this.handleObjMouseOver} />
+            onHandleObjMouseOver={this.handleObjMouseOver}
+            selectedAttackers={selectedAttackers} 
+            onSetAttackerStatus={this.setAttackerStatus}
+            />
           <EncounterLoadDrawer 
             onHandlePartyChange={this.handlePartyChange}
             onSetEncounter={this.setEncounter} 
@@ -354,6 +361,14 @@ class RunEncounter extends Component {
               secondary={true} 
               onTouchTap={this.setToMove}
               disabled={(this.state.moving) ? true : false}
+              className="button"
+            />
+            <br/>
+            <RaisedButton
+              label={'Attack'} 
+              secondary={true} 
+              onTouchTap={this.setToAttack}
+              disabled={(this.state.attacking) ? true : false}
               className="button"
             />
             <br/>

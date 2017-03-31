@@ -23,6 +23,16 @@
     top: -95px;
 }
 
+.attackDialog {
+    top: -168px;
+    position: relative;
+    background: #fff;
+    z-index: 999;
+    width: 200px;
+    height: 100px;
+
+}
+
 .DungeonGridSlot:before {
     content: ' ';
     display: block;
