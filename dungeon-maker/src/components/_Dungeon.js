@@ -48,8 +48,11 @@ var sortInitiative = (a, b) => {
   }
 }
 
-_Dungeon.setCurrentActor = (state, roll, slot, uuid) => {
-  if(!state.currentActor.roll || state.currentActor.roll <= roll){
+_Dungeon.setCurrentActor = (state, roll, slot, uuid, reset=false) => {
+  if(!reset && (!state.currentActor.roll || state.currentActor.roll <= roll)){
+    state.currentActor = {slot: slot, roll: roll, uuid: uuid};
+  }
+  if(reset){ 
     state.currentActor = {slot: slot, roll: roll, uuid: uuid};
   }
   return state;

@@ -33,6 +33,7 @@ class RunEncounter extends Component {
     this.setEntity = this.setEntity.bind(this);
     this.rollInitiative = this.rollInitiative.bind(this);
     this.setToMove = this.setToMove.bind(this);
+    this.endTurn = this.endTurn.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -52,8 +53,7 @@ class RunEncounter extends Component {
       selectedParty: false,
       selectedEntity : false,
       hoverObj: false,
-      party: false,
-      
+      party: false,      
       currentActor: {slot: false, roll: false},
       mouse: {
         clientX: false,
@@ -115,6 +115,27 @@ class RunEncounter extends Component {
     let state = this.state;
     state.moving = true;
     this.setState(state);
+  }
+
+  endTurn = () => {
+    let state = this.state;
+ 
+    let index = state.combatList.findIndex( (cmb) => {
+      return cmb.uuid === state.currentActor.uuid; 
+    });
+
+    if(index > -1){
+      index++;
+      if(index === state.combatList.length){
+        index = 0;
+      }
+
+      let roll = state.combatList[ index ].initiative.current;
+      let {slot, uuid} = state.combatList[ index ];
+      state = _Dungeon.setCurrentActor(state, roll, slot, uuid, true);
+
+      this.setState(state);
+    }    
   }
 
   handlePartyChange = (e, index) => {
@@ -333,6 +354,13 @@ class RunEncounter extends Component {
               secondary={true} 
               onTouchTap={this.setToMove}
               disabled={(this.state.moving) ? true : false}
+              className="button"
+            />
+            <br/>
+            <RaisedButton
+              label={'End Turn'} 
+              secondary={true} 
+              onTouchTap={this.endTurn}
               className="button"
             />
           </div>
