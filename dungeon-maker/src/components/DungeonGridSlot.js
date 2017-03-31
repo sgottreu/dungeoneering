@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import {EntitySize} from './EntityTemplate';
+import Toggle from 'material-ui/Toggle';
+import RaisedButton from 'material-ui/RaisedButton';
 import uuidV4  from 'uuid/v4';
 import '../css/DungeonGridSlot.css';
 
@@ -8,8 +10,9 @@ class DungeonGridSlot extends Component {
   constructor(props){
     super(props);
     this.loadEntityTile = this.loadEntityTile.bind(this);
-
+    this.loadAttackDialog = this.loadAttackDialog.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
+    this.setAttackStatus = this.setAttackStatus.bind(this);
 
   }
 
@@ -19,6 +22,35 @@ class DungeonGridSlot extends Component {
 
   componentDidMount(){
     
+  }
+
+  setAttackStatus(e){
+    this.props.onSetAttackerStatus(e.props['data-uuid'], e.state.switched);
+  }
+
+  loadAttackDialog(slot, entity=false) {
+    if(!entity) {
+      entity = slot.overlays.entity;
+    }
+
+    if(!entity){
+      return false;
+    }  
+
+    return (
+      <div className={'attackDialog '}>
+        <Toggle ref={'attackToggle'}
+          label="Attacker"
+          data-uuid={entity.uuid}
+        />
+         <RaisedButton
+              label={'Save'} 
+              secondary={true} 
+              onTouchTap={this.setAttackStatus}
+              className="button"
+            />
+      </div>
+    );
   }
 
   loadEntityTile(slot, entity=false){
@@ -65,7 +97,7 @@ class DungeonGridSlot extends Component {
 
 
   render() {
-    let {id, slot, onAddTile, entity} = this.props;
+    let {id, slot, onAddTile, entity, selectedAttackers} = this.props;
     let className = 'DungeonGridSlot ';
     className += (slot.tileType === undefined || slot.tileType === '') ? '' : slot.tileType;
 
@@ -73,10 +105,16 @@ class DungeonGridSlot extends Component {
       onAddTile = function() { return false };
     }
 
+    let bolShowDialog = false;
+    if(entity !== undefined){
+      bolShowDialog = selectedAttackers.find(att => { 
+        return att.uuid === entity.uuid});
+    }
     return (
       <div ref={'tile'+slot.id} id={'_slot'+slot.id}
         className={className} data-slot={id} onClick={onAddTile.bind(this, id)}>&nbsp;
         {this.loadEntityTile(slot, entity)}
+        {(bolShowDialog) ? this.loadAttackDialog(slot, entity) : ''}
       </div>
     );
   }

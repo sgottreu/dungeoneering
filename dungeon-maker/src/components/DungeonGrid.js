@@ -17,7 +17,7 @@ class DungeonGrid extends Component {
 	}
 
    render() {
-   		let {slots, onAddTile, combatList} = this.props;
+   		let {slots, onAddTile, combatList, selectedAttackers} = this.props;
 
 			
 
@@ -37,6 +37,8 @@ class DungeonGrid extends Component {
 								onAddTile={onAddTile} 
 								onHandleObjMouseOver={this.props.onHandleObjMouseOver}
 								currentActor={this.props.currentActor}
+								selectedAttackers={selectedAttackers}
+								onSetAttackerStatus={this.props.onSetAttackerStatus}
 							/>
 	        	)
 					})}
