@@ -88,7 +88,6 @@ _Dungeon.rollInitiative = (_this) => {
   });
 
   state.combatList.sort( sortInitiative );
-  state.setup = false;
   _this.setState( state );
 }
 

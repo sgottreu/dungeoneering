@@ -39,7 +39,6 @@ class RunEncounter extends Component {
       combatList: [],
       moving: false,
     	selectedTile: '',
-      setup: true,
     	connectedDoor: true,
     	choosingEntrance: false,
     	choosingExit: false,
@@ -244,17 +243,17 @@ class RunEncounter extends Component {
         state.moving = false;
       }
     } 
-    if(state.setup) {
-      if(state.selectedEntity){
-        state = this.setEntity(e, state, slot);
-        state.selectedEntity = false;
-      } else {
-        entity = state.combatList.find(function(val){  return val.slot === slot; });
-        if(entity !== undefined){
-          state = this.selectEntity(entity.uuid, entity._type, state);
-        }
-      }
-    }
+    // if(state.setup) {
+    //   if(state.selectedEntity){
+    //     state = this.setEntity(e, state, slot);
+    //     state.selectedEntity = false;
+    //   } else {
+    //     entity = state.combatList.find(function(val){  return val.slot === slot; });
+    //     if(entity !== undefined){
+    //       state = this.selectEntity(entity.uuid, entity._type, state);
+    //     }
+    //   }
+    // }
     if(state !== undefined){
       this.setState( state );
     }
@@ -333,19 +332,9 @@ class RunEncounter extends Component {
               label={'Move'} 
               secondary={true} 
               onTouchTap={this.setToMove}
+              disabled={(this.state.moving) ? true : false}
               className="button"
             />
-          </div>
-          <div className="startingPartyArea">
-            	{/*{party.members.map( (character, x) => {
-                if(state.setup){
-                  return (
-                    this.loadCharacterTile(character)
-                  )
-                } else {
-                  return false;
-                }
-						})}*/}
           </div>
         </div>
     );
