@@ -1,11 +1,6 @@
-.startingPartyArea {
-    position: absolute;
-    top: 850px;
-}
-
-.startingPartyArea .Entity {
-    float: left !important;
-    display: inline-block;
+.RunEncounter {
+    justify-content: center;
+    display: flex;
 }
 
 .DungeonGridSlot .character.Entity{

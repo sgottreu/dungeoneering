@@ -25,7 +25,7 @@ class DungeonGridSlot extends Component {
   }
 
   setAttackStatus(e){
-    this.props.onSetAttackerStatus(e.props['data-uuid'], e.state.switched);
+    this.props.onSetAttackerStatus(this.refs.attackToggle.props['data-uuid'], this.refs.attackToggle.state.switched);
   }
 
   loadAttackDialog(slot, entity=false) {
@@ -108,7 +108,11 @@ class DungeonGridSlot extends Component {
     let bolShowDialog = false;
     if(entity !== undefined){
       bolShowDialog = selectedAttackers.find(att => { 
-        return att.uuid === entity.uuid});
+        if(att.status === false){
+          return att.uuid === entity.uuid;
+        }
+        return false;
+       });
     }
     return (
       <div ref={'tile'+slot.id} id={'_slot'+slot.id}

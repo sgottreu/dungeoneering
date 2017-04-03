@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Slots from './Slots.js';
 import DungeonGrid from './DungeonGrid';
+import AttackDialog from './AttackDialog';
 import EncounterLoadDrawer from './EncounterLoadDrawer';
 import EntityTooltip from './EntityTooltip';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -27,7 +28,6 @@ class RunEncounter extends Component {
     this.handlePartyChange = this.handlePartyChange.bind(this);
     this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
-    this.loadCharacterTile = this.loadCharacterTile.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.selectEntity = this.selectEntity.bind(this);
     this.setEntity = this.setEntity.bind(this);
@@ -36,6 +36,8 @@ class RunEncounter extends Component {
     this.endTurn = this.endTurn.bind(this);
     this.setToAttack = this.setToAttack.bind(this);
     this.setAttackerStatus = this.setAttackerStatus.bind(this);
+    this.loadAttackDialog = this.loadAttackDialog.bind(this);
+    this.rollAttack = this.rollAttack.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -45,6 +47,7 @@ class RunEncounter extends Component {
     	connectedDoor: true,
     	choosingEntrance: false,
     	choosingExit: false,
+      showAttackDialog: false,
       foundDungeonGrids: [],
       availableEncounters: [],
       availableMonsters: [],
@@ -124,7 +127,33 @@ class RunEncounter extends Component {
   setToAttack = () => {
     let state = this.state;
     state.attacking = true;
+    state.selectedAttackers = [];
     this.setState(state);
+  }
+
+  rollAttack = () => {
+    let state = this.state;
+
+    let [ att, trg ] = state.selectedAttackers;
+    let attacker = combatList.find(cb => { return cb.uuid === att.uuid } );
+    let target = combatList.find(cb => { return cb.uuid === trg.uuid } );
+
+    //Get weapon from dropdown then search through entity's weapons.
+
+    // let _weapon = this.props.availableWeapons.find(function(w, i){ return w._id === weapons[index] });
+
+    // if(_weapon.damage.die === undefined) {
+    //   let damage = _weapon.damage.split('d');
+    //   state.power.damage.die = `d${damage[1]}`;
+    //   state.power.damage.num = damage[0];
+    // } else {
+    //   state.power.damage.die = _weapon.damage.die;
+    //   state.power.damage.num = _weapon.damage.num;
+    // }
+
+    let attackRoll = (Math.floor(Math.random() * (20 - 1)) + 1) + attacker.abilities.strength.AttackModifier;
+
+    let defense = defense.armorClass.total;
   }
 
   endTurn = () => {
@@ -299,22 +328,25 @@ class RunEncounter extends Component {
   }
 
   setAttackerStatus = (uuid, status) => {
+    let state = this.state;
+    let _status = (status) ? 'Attacker' : 'Target';
 
-  }
+    state.selectedAttackers.map((sa, i) => {
+      if(sa.uuid === uuid){
+        state.selectedAttackers[i].status = _status;
+      }
+    });
 
-  loadCharacterTile(character){
-    let size = EntitySize.find(s => { return s.label === character.size});
-    let iconClass = EntityClass[character.class].name.toLowerCase();
-    let style = {
-      width: (75 * size.space),
-      height: (75 * size.space),
-      backgroundSize: (75 * size.space)
+    if(_status === 'Target'){
+      state.attacking = false;
+      state.showAttackDialog = true;
     }
 
-    return (
-      <div onClick={this.selectEntity.bind(this, character.uuid, 'character', false, false)} onMouseEnter={this.handleMouseOver.bind(this, character, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
-        style={style} key={character.uuid} className={iconClass+' Entity icon'} />
-    );
+    this.setState( state );
+  }
+
+  loadAttackDialog = () => {
+    return (<AttackDialog attackers={ this.state.selectedAttackers} combatList={ this.state.combatList} onRollAttack={this.rollAttack} />);
   }
 
   render() {
@@ -336,7 +368,7 @@ class RunEncounter extends Component {
             onHandleObjMouseOver={this.handleObjMouseOver}
             selectedAttackers={selectedAttackers} 
             onSetAttackerStatus={this.setAttackerStatus}
-            />
+          />
           <EncounterLoadDrawer 
             onHandlePartyChange={this.handlePartyChange}
             onSetEncounter={this.setEncounter} 
@@ -348,6 +380,7 @@ class RunEncounter extends Component {
             availableEncounters={availableEncounters}
              />
           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
+          {this.state.showAttackDialog ? this.loadAttackDialog() : '' }
           <div className="actions">
             <RaisedButton
               label={'Roll Initiative'} 

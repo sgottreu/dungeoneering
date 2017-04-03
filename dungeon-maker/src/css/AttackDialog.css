@@ -1,0 +1,24 @@
+
+.AttackDialog {
+    top: 50%;
+    position: absolute;
+    background: #fff;
+    z-index: 999;
+    width: 500px;
+    height: 400px;
+    padding: 30px;
+    border-radius: 25px;
+    border: 3px solid #00bcd4;
+    align-self: center;
+
+}
+
+.Attacker {
+    float:left;
+    width: 250px;
+}
+
+.Target {
+    float:left;
+    width: 250px;
+}
