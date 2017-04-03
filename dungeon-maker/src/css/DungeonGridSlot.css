@@ -30,7 +30,8 @@
     z-index: 999;
     width: 200px;
     height: 100px;
-
+    padding: 30px;
+    border-radius: 15px;
 }
 
 .DungeonGridSlot:before {
