@@ -109,9 +109,20 @@ _Dungeon.setCombatList = (state) => {
     }
     return slot;
   });
-  party.members.map((p, x) => {
+  party.members.map((p, i) => {
     state.combatList.push( Variables.clone(p) ); 
     return p;
+  });
+  return state;
+}
+
+_Dungeon.setAttackAttributes = (state) => {
+  state.combatList.forEach( (cb, i) => {
+    state.combatList[i].currentPower = false;
+    state.combatList[i].currentWeapon = false;
+    cb.powers.forEach( (pp, j) => {
+      state.combatList[i].powers[j].uuid = uuidV4();
+    });
   });
   return state;
 }
