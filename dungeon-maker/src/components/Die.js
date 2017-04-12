@@ -6,3 +6,7 @@ export var Die = [
   { label : 'd12', num: 12},
   { label : 'd20', num: 20}
 ];
+
+export var DieRoll = (uBound) => {
+  return (Math.floor(Math.random() * (uBound - 1)) + 1);
+}

@@ -151,20 +151,22 @@ class AttackDialog extends Component {
             </Chip>
             
           </div>
-          <div className="Attacker">
-            {(att.attackRoll) ? this.loadAttackChip(attackIcon, att.attackRoll, `${att.natAttackRoll} + ${att.attackMod}`) : ''}
-          </div>
-          <div className="Target">
-            {(att.attackRoll) ? this.loadAttackChip(defenseIcon, trg.defense) : ''}
-          </div>
-          <div style={{clear :'both',float: 'none'}}>
-              <RaisedButton
+          
+          <div style={{clear :'both',float: 'none', paddingTop: '5px'}}>
+              <RaisedButton 
+              style={{ display: 'block', width: '200px', margin: '5px auto 30px' }}
               label="Roll Attack"
                icon={<img src={d20} style={{width :'30px',height: '30px'}} />}
               secondary={true} 
               onTouchTap={this.props.onRollAttack}
               className="button"
             />
+          </div>
+          <div className="Attacker">
+            {(att.attackRoll) ? this.loadAttackChip(attackIcon, att.attackRoll, `${att.natAttackRoll} + ${att.attackMod}`) : ''}
+          </div>
+          <div className="Target">
+            {(att.attackRoll) ? this.loadAttackChip(defenseIcon, trg.defense) : ''}
           </div>
 	      </div>
 	    );
