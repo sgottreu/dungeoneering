@@ -8,6 +8,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
 import {Variables} from './Variables';
 import {_Dungeon} from './_Dungeon';
+import {DieRoll} from './Die';
+import {calcWeaponDamage} from './Weapons';
 import {_Powers} from './_Powers';
 import { EntitySize, EntityClass} from './EntityTemplate';
 import uuidV4  from 'uuid/v4';
@@ -58,6 +60,7 @@ class RunEncounter extends Component {
       selectedDungeon: false,
       selectedEncounter: false,
       selectedAttackers: [],
+      attackStatus: false,
       availableParties: [],
       selectedParty: false,
       selectedEntity : false,
@@ -141,7 +144,7 @@ class RunEncounter extends Component {
     let attacker = state.combatList.find(cb => { return cb.uuid === att.uuid } );
     let target = state.combatList.find(cb => { return cb.uuid === trg.uuid } );
 
-    let natAttackRoll = (Math.floor(Math.random() * (20 - 1)) + 1);
+    let natAttackRoll = DieRoll(20);
     let AttackMod = attacker.abilities.strength.AttackModifier;
     let attackRoll = natAttackRoll + AttackMod;
 
@@ -151,18 +154,38 @@ class RunEncounter extends Component {
 
     let defense = target.defense.armorClass.total;
     state.selectedAttackers[1].defense = defense;
-    //Get weapon from dropdown then search through entity's weapons.
 
-    // let _weapon = this.props.availableWeapons.find(function(w, i){ return w._id === weapons[index] });
+    if(natAttackRoll === 20 || attackRoll > defense){
+      state.attackStatus = 'hit';
+ 
+      //Get weapon from dropdown then search through entity's weapons.
 
-    // if(_weapon.damage.die === undefined) {
-    //   let damage = _weapon.damage.split('d');
-    //   state.power.damage.die = `d${damage[1]}`;
-    //   state.power.damage.num = damage[0];
-    // } else {
-    //   state.power.damage.die = _weapon.damage.die;
-    //   state.power.damage.num = _weapon.damage.num;
-    // }
+      let _weapon = attacker.inventory.find(function(w, i){ return w.item._id === attacker.currentWeapon });
+      _weapon = _weapon.item;
+      let die, num;
+      if(_weapon.damage.die === undefined) {
+        let damage = _weapon.damage.split('d');
+        die = parseInt(damage[1], 10);
+        num = damage[0];
+      } else {
+        let damage = _weapon.damage.split('d');
+        die = parseInt(damage[1], 10);
+        num = _weapon.damage.num;
+      }
+
+      //let damageMod = calcWeaponDamage(attacker,)
+
+      let totalDamage = 0;
+
+      for(var i=1;i<=num;i++){
+        totalDamage += DieRoll(die);
+      }
+      state.selectedAttackers[1].damage = totalDamage;
+   } else {
+      state.attackStatus = 'miss';
+    }
+
+
     this.setState(state);
   }
 
@@ -182,6 +205,7 @@ class RunEncounter extends Component {
       let roll = state.combatList[ index ].initiative.current;
       let {slot, uuid} = state.combatList[ index ];
       state = _Dungeon.setCurrentActor(state, roll, slot, uuid, true);
+      state.showAttackDialog = false;
 
       this.setState(state);
     }    
