@@ -1,5 +1,3 @@
 ## TODO
 
-* Add form to add shields
-* Add Inventory tracking & buying
-* https://react-dnd.github.io/react-dnd/
+* Add ability to update existing parties when updating character's powers & weapons.
