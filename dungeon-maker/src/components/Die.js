@@ -8,5 +8,27 @@ export var Die = [
 ];
 
 export var DieRoll = (uBound) => {
-  return (Math.floor(Math.random() * (uBound - 1)) + 1);
+  let rolls = [];
+  
+  for( var x=0;x<3;x++){
+    rolls.push( (Math.floor(Math.random() * (uBound - 1)) + 1) );
+  }
+  let median = Math.floor(findMedian(rolls));
+
+  return median;
+}
+
+function findMedian(data) {
+
+    // extract the .values field and sort the resulting array
+    data.sort(function(a, b) {
+        return a - b;
+    });
+
+    var middle = Math.floor((data.length - 1) / 2); // NB: operator precedence
+    if (data.length % 2) {
+        return data[middle];
+    } else {
+        return (data[middle] + data[middle + 1]) / 2.0;
+    }
 }

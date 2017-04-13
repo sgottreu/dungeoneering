@@ -11,6 +11,7 @@ import SelectField from 'material-ui/SelectField';
 import d20 from '../img/d20.png';
 import attackIcon from '../img/attack.png';
 import defenseIcon from '../img/defense.png';
+import damageIcon from '../img/pierced-heart.png';
 import '../css/AttackDialog.css';
 
 class AttackDialog extends Component {
@@ -74,7 +75,7 @@ class AttackDialog extends Component {
   loadAttackChip(icon, total, mod){
     let modstring = (mod !== undefined) ? ` (${mod}` : '';
     return (
-      <Chip key="a">
+      <Chip className="chip" key={`${total}_${modstring}`}>
         <Avatar size={32}><img src={icon} style={{width :'30px',height: '30px'}} /></Avatar>
         <span style={{fontWeight: 'bold'}}>{total}</span>
         {modstring}
@@ -104,7 +105,7 @@ class AttackDialog extends Component {
 
 
    render() {
-   		let {combatList, attackers} = this.props;
+   		let {combatList, attackers, attackStatus} = this.props;
 
       if(attackers.length === 0){
         return false;
@@ -147,7 +148,7 @@ class AttackDialog extends Component {
             <br/>
             <Chip key="c">
               <Avatar size={32}><i className="fa fa-heart" aria-hidden="true"></i></Avatar>
-              {target.hp}
+              {target.hp + ((attackStatus === 'hit') ? ' ( -'+trg.damage+' )' : '')}
             </Chip>
             
           </div>
@@ -164,6 +165,7 @@ class AttackDialog extends Component {
           </div>
           <div className="Attacker">
             {(att.attackRoll) ? this.loadAttackChip(attackIcon, att.attackRoll, `${att.natAttackRoll} + ${att.attackMod}`) : ''}
+            {(attackStatus === 'hit') ? this.loadAttackChip(damageIcon, '-'+trg.damage) : ''}
           </div>
           <div className="Target">
             {(att.attackRoll) ? this.loadAttackChip(defenseIcon, trg.defense) : ''}
