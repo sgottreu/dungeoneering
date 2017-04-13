@@ -144,15 +144,19 @@ class RunEncounter extends Component {
     let attacker = state.combatList.find(cb => { return cb.uuid === att.uuid } );
     let target = state.combatList.find(cb => { return cb.uuid === trg.uuid } );
 
+    let _power = attacker.powers.find(function(p, i){ return p.uuid === attacker.currentPower });
+    //attack  { against, for, modifier}
     let natAttackRoll = DieRoll(20);
-    let AttackMod = attacker.abilities.strength.AttackModifier;
-    let attackRoll = natAttackRoll + AttackMod;
+    let AttackMod = attacker.abilities[ _power.attack.for ].AttackModifier;
+    let PowerMod = parseInt(_power.attack.modifier, 10);
+    let attackRoll = natAttackRoll + AttackMod + PowerMod;
 
     state.selectedAttackers[0].natAttackRoll = natAttackRoll;
     state.selectedAttackers[0].attackMod = AttackMod;
+    state.selectedAttackers[0].powerMod = PowerMod;
     state.selectedAttackers[0].attackRoll = attackRoll;
 
-    let defense = target.defense.armorClass.total;
+    let defense = target.defense[ _power.attack.against ].total;
     state.selectedAttackers[1].defense = defense;
 
     if(natAttackRoll === 20 || attackRoll > defense){
@@ -166,21 +170,27 @@ class RunEncounter extends Component {
       if(_weapon.damage.die === undefined) {
         let damage = _weapon.damage.split('d');
         die = parseInt(damage[1], 10);
-        num = damage[0];
+        num = parseInt(damage[0], 10);
       } else {
         let damage = _weapon.damage.split('d');
         die = parseInt(damage[1], 10);
-        num = _weapon.damage.num;
+        num = parseInt(_weapon.damage.num, 10);
       }
 
-      //let damageMod = calcWeaponDamage(attacker,)
+      let damageMod = calcWeaponDamage(attacker, AttackMod, _weapon);
 
       let totalDamage = 0;
 
       for(var i=1;i<=num;i++){
         totalDamage += DieRoll(die);
       }
+      totalDamage += damageMod;
       state.selectedAttackers[1].damage = totalDamage;
+
+
+      let _i = state.combatList.findIndex(cb => { return cb.uuid === trg.uuid } );
+      state.combatList[ _i ].hp -= totalDamage;
+
    } else {
       state.attackStatus = 'miss';
     }
@@ -411,6 +421,7 @@ class RunEncounter extends Component {
               combatList={ this.state.combatList} 
               onRollAttack={this.rollAttack} 
               onHandleWeaponSelect={this.handleWeaponSelect}
+              attackStatus={this.state.attackStatus}
               />);
   }
 

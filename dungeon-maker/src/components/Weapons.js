@@ -39,11 +39,9 @@ export var findWeapons = (_this) => {
   });  
 };
 
-export var calcWeaponDamage = (player, ability, weapon) => {
+export var calcWeaponDamage = (player, AttackModifier, weapon) => {
 	let half = HalfLevelModifier(player.level, player._type);
-	let abilityAttackMod = ability.AttackModifier;
-	
-	let damageMod = half + abilityAttackMod + weapon.prof;
+	let damageMod = half + AttackModifier + weapon.prof;
 
 	return damageMod;
 }

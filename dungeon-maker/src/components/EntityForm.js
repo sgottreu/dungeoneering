@@ -508,7 +508,7 @@ class EntityForm extends Component {
               return (
                 <ListItem className={className} key={index} 
                   primaryText={<div >{power.name}</div>}  
-                  leftAvatar={<Avatar className={'icon weapon_'+_Powers.powerType[power.type].class} onClick={this.selectPower.bind(this, power)}/>}
+                  leftAvatar={<Avatar className={'icon weapon_'+_Powers.powerType[power.type].class} onTouchTap={this.selectPower.bind(this, power)}/>}
                 />
               );
             }
