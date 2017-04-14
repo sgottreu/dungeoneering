@@ -162,6 +162,50 @@ app.post('/saveEntity', function (req, res) {
   let payload = JSON.parse(JSON.stringify(req.body));
   _Save(req, res, payload);
 
+  if(payload._type == 'monster'){
+    dungeon_grid.find({ _type: 'dungeon' }).then(function(docs) {
+      for(var z=0,len=docs.length;z<len;z++){
+        updated = false;
+        console.log('Looking at Dungeon: '+docs[z].title);
+        for(var x=0,len2=docs[z].slots.length;x<len2;x++){
+          if(docs[z].slots[x].overlays.entity && docs[z].slots[x].overlays.entity._id == req.body._id){
+            docs[z].slots[x].overlays.entity = JSON.parse(JSON.stringify(payload));
+            updated = true;
+          }
+        }
+        if(updated){
+          var _id = JSON.parse(JSON.stringify(docs[z]._id));
+          delete docs[z]._id;
+          dungeon_grid.findOneAndUpdate( { "_id" : monk.id(_id) }, docs[z] ).then(function (data) {
+            console.log('Dungeon Updated');
+          });
+        }
+      };
+    });
+  }
+
+  if(payload._type == 'character'){
+    dungeon_grid.find({ _type: 'party' }).then(function(docs) {
+      for(var z=0,len=docs.length;z<len;z++){
+        updated = false;
+        console.log('Looking at Party: '+docs[z].name);
+        for(var x=0,len2=docs[z].members.length;x<len2;x++){
+          if(docs[z].members[x] && docs[z].members[x]._id == req.body._id){
+            docs[z].members[x] = JSON.parse(JSON.stringify(payload));
+            updated = true;
+          }
+        }
+        if(updated){
+          var _id = JSON.parse(JSON.stringify(docs[z]._id));
+          delete docs[z]._id;
+          dungeon_grid.findOneAndUpdate( { "_id" : monk.id(_id) }, docs[z] ).then(function (data) {
+            console.log('Party Updated');
+          });
+        }
+      };
+    });
+  }
+
 });
 
 app.get('/findEntities', function (req, res) {
@@ -261,7 +305,6 @@ function _Save(req, res, payload){
   delete payload._id;
   
   if(req.body._id) {
-    console.log(payload);
     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
       console.log(`${payload._type} updated!`);
       sendJSON(res, data);

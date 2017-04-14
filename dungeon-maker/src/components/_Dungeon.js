@@ -72,7 +72,9 @@ _Dungeon.addCharToMap = (state) => {
       
       let _i = state.combatList.findIndex(cmb => { return cmb.uuid === character.uuid});
       state.combatList[ _i ].slot = _slot.id;
+      return true;
     }
+    return false;
   });
 
   return state;
@@ -110,6 +112,7 @@ _Dungeon.setCombatList = (state) => {
     return slot;
   });
   party.members.map((p, i) => {
+console.log(p);
     state.combatList.push( Variables.clone(p) ); 
     return p;
   });
@@ -122,7 +125,7 @@ _Dungeon.setAttackAttributes = (state) => {
     state.combatList[i].currentWeapon = false;
     cb.powers.forEach( (pp, j) => {
       if(cb._type === 'character'){
-        let _power = state.existingPowers.find( p => { return p._id == pp});
+        let _power = state.existingPowers.find( p => { return p._id === pp});
         state.combatList[i].powers[j] = Variables.clone( _power );
       }
       state.combatList[i].powers[j].uuid = uuidV4();

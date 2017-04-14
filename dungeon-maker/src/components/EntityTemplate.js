@@ -238,15 +238,17 @@ function getDefenseModifier(state, defense)
 }
 
 export var updateWeightPrice = (state, item, action) => {
-  if(action === 'add'){
-    if(state.coin_purse < item.price){
-      return state;
+  if(state._type === 'character'){
+    if(action === 'add'){
+      if(state.coin_purse < item.price){
+        return state;
+      }
+      state.encumbered += parseFloat(item.weight, 10);
+      state.coin_purse -= parseFloat(item.price, 10);
+    } else {
+      state.encumbered -= parseFloat(item.weight, 10);
+      state.coin_purse += parseFloat(item.price, 10);
     }
-    state.encumbered += parseFloat(item.weight, 10);
-    state.coin_purse -= parseFloat(item.price, 10);
-  } else {
-    state.encumbered -= parseFloat(item.weight, 10);
-    state.coin_purse += parseFloat(item.price, 10);
   }
   return state;
 }
@@ -260,8 +262,10 @@ export var updateInventory = (state, item, category, action, index=false) => {
   tmpItem.quantity = (tmpItem.quantity === undefined) ? 1 : tmpItem.quantity;
 
   if(action === 'add'){
-    if(state.coin_purse < tmpItem.price){
-      return state;
+    if(state._type === 'character'){
+      if(state.coin_purse < tmpItem.price){
+        return state;
+      }
     }
     _i = inventory.findIndex((inv, i) => { return inv.item._id === inventory_id });
     
@@ -295,6 +299,10 @@ export var updateInventory = (state, item, category, action, index=false) => {
 }
 
 export var calcWeightPrice = (state, purchasedItem, category, bolRemove=false, bolAddItem=true) => {
+  if(state.inventory === undefined){
+    state.inventory = [];
+    state.inventory_log = [];
+  }
   if(bolRemove){
     let log = state.inventory_log;
     if(bolRemove === 'category'){      
@@ -308,9 +316,11 @@ export var calcWeightPrice = (state, purchasedItem, category, bolRemove=false, b
     if(bolRemove === 'item'){
       let inventory_id = purchasedItem._id;
       let _i = state.inventory.findIndex((inv, i) => { return inv.item._id === inventory_id });
-      if(state.inventory[_i].item.quantity > 0){
-        state = updateWeightPrice(state, purchasedItem, 'remove');
-        state = updateInventory(state, purchasedItem, category, 'removeItem');
+      if(_i !== undefined && _i > -1) {
+        if(state.inventory[_i].item.quantity > 0){
+          state = updateWeightPrice(state, purchasedItem, 'remove');
+          state = updateInventory(state, purchasedItem, category, 'removeItem');
+        }
       }
     }
   }
