@@ -145,11 +145,16 @@ class RunEncounter extends Component {
     let target = state.combatList.find(cb => { return cb.uuid === trg.uuid } );
 
     let _power = attacker.powers.find(function(p, i){ return p.uuid === attacker.currentPower });
+
+    let _weapon = attacker.inventory.find(function(w, i){ return w.item._id === attacker.currentWeapon });
+    _weapon = (_weapon === false) ? false : _weapon.item;
+
     //attack  { against, for, modifier}
     let natAttackRoll = DieRoll(20);
     let AttackMod = attacker.abilities[ _power.attack.for ].AttackModifier;
     let PowerMod = parseInt(_power.attack.modifier, 10);
-    let attackRoll = natAttackRoll + AttackMod + PowerMod;
+    let Profiency = (_weapon) ? _weapon.prof : 0;
+    let attackRoll = natAttackRoll + AttackMod + PowerMod + Profiency;
 
     state.selectedAttackers[0].natAttackRoll = natAttackRoll;
     state.selectedAttackers[0].attackMod = AttackMod;
@@ -164,29 +169,25 @@ class RunEncounter extends Component {
  
       //Get weapon from dropdown then search through entity's weapons.
 
-      let _weapon = attacker.inventory.find(function(w, i){ return w.item._id === attacker.currentWeapon });
-      _weapon = _weapon.item;
-      let die, num;
-      if(_weapon.damage.die === undefined) {
-        let damage = _weapon.damage.split('d');
-        die = parseInt(damage[1], 10);
-        num = parseInt(damage[0], 10);
+      let die, num = 0, damageMod = 0, totalDamage = 0;
+
+      if(_weapon){
+        let _damage = _weapon.damage;
+        totalDamage += calcWeaponDamage(attacker, AttackMod);
       } else {
-        let damage = _weapon.damage.split('d');
-        die = parseInt(damage[1], 10);
-        num = parseInt(_weapon.damage.num, 10);
+        let _damage = _power.damage;
+        totalDamage += _power.damage.modifier;
       }
 
-      let damageMod = calcWeaponDamage(attacker, AttackMod, _weapon);
-
-      let totalDamage = 0;
+      let damage = _damage.split('d');
+      die = parseInt(damage[1], 10);
+      num = ( _damage.die === undefined) ? parseInt(damage[0], 10) : parseInt(_damage.num, 10);
 
       for(var i=1;i<=num;i++){
         totalDamage += DieRoll(die);
       }
-      totalDamage += damageMod;
-      state.selectedAttackers[1].damage = totalDamage;
 
+      state.selectedAttackers[1].damage = totalDamage;
 
       let _i = state.combatList.findIndex(cb => { return cb.uuid === trg.uuid } );
       state.combatList[ _i ].hp -= totalDamage;
