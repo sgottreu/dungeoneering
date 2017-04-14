@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import {EntitySize} from './EntityTemplate';
-import Toggle from 'material-ui/Toggle';
 import RaisedButton from 'material-ui/RaisedButton';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
@@ -50,7 +48,7 @@ class AttackDialog extends Component {
   }
 
   loadTileIcon(entity){   
-    let style, size;
+    let style;
     
     style = {
       width: '75px',
@@ -63,10 +61,11 @@ class AttackDialog extends Component {
       bkGdDiv = function() { return ( <div className='Entity character bkgd' />) };
     }
 
+    let className = entity._type+' '+' '+entity.iconClass+' Entity icon';
     return (
       <div className={'EntityHolder '}>
         <div 
-        style={style} key={entity.uuid} className={entity._type+' '+' '+entity.iconClass+' Entity icon'} />
+        style={style} key={entity.uuid} className={className} />
          {bkGdDiv()}
       </div>
     );
@@ -76,7 +75,7 @@ class AttackDialog extends Component {
     let modstring = (mod !== undefined) ? ` (${mod}` : '';
     return (
       <Chip className="chip" key={`${total}_${modstring}`}>
-        <Avatar size={32}><img src={icon} style={{width :'30px',height: '30px'}} /></Avatar>
+        <Avatar size={32}><img alt={icon} src={icon} style={{width :'30px',height: '30px'}} /></Avatar>
         <span style={{fontWeight: 'bold'}}>{total}</span>
         {modstring}
       </Chip>
@@ -157,7 +156,7 @@ class AttackDialog extends Component {
               <RaisedButton 
               style={{ display: 'block', width: '200px', margin: '5px auto 30px' }}
               label="Roll Attack"
-               icon={<img src={d20} style={{width :'30px',height: '30px'}} />}
+               icon={<img alt='Roll Attack' src={d20} style={{width :'30px',height: '30px'}} />}
               secondary={true} 
               onTouchTap={this.props.onRollAttack}
               className="button"

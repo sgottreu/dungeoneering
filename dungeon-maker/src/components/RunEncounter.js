@@ -11,7 +11,6 @@ import {_Dungeon} from './_Dungeon';
 import {DieRoll} from './Die';
 import {calcWeaponDamage} from './Weapons';
 import {_Powers} from './_Powers';
-import { EntitySize, EntityClass} from './EntityTemplate';
 import uuidV4  from 'uuid/v4';
 
 import '../css/RunEncounter.css';
@@ -169,19 +168,19 @@ class RunEncounter extends Component {
  
       //Get weapon from dropdown then search through entity's weapons.
 
-      let die, num = 0, damageMod = 0, totalDamage = 0;
+      let die, num = 0, totalDamage = 0, _damage;
 
       if(_weapon){
-        let _damage = _weapon.damage;
+        _damage = _weapon.damage;
         totalDamage += calcWeaponDamage(attacker, AttackMod);
       } else {
-        let _damage = _power.damage;
+        _damage = _power.damage;
         totalDamage += _power.damage.modifier;
       }
 
-      let damage = _damage.split('d');
-      die = parseInt(damage[1], 10);
-      num = ( _damage.die === undefined) ? parseInt(damage[0], 10) : parseInt(_damage.num, 10);
+      let die_damage = (_damage.die === undefined) ? _damage.split('d') : _damage.die.split('d');
+      die = parseInt(die_damage[1], 10);
+      num = ( _damage.die === undefined) ? parseInt(die_damage[0], 10) : parseInt(_damage.num, 10);
 
       for(var i=1;i<=num;i++){
         totalDamage += DieRoll(die);
@@ -217,6 +216,7 @@ class RunEncounter extends Component {
       let {slot, uuid} = state.combatList[ index ];
       state = _Dungeon.setCurrentActor(state, roll, slot, uuid, true);
       state.showAttackDialog = false;
+      state.selectedAttackers = [];
 
       this.setState(state);
     }    
@@ -372,7 +372,13 @@ class RunEncounter extends Component {
     } 
     if(state.attacking){
         entity = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
-        state.selectedAttackers.push( { uuid: entity.uuid, status: false, attackRoll: false, natAttackRoll: false, attackMod: false, defense: false } );
+        let _status = (state.selectedAttackers.length === 0) ? 'Attacker' : 'Target';
+        state.selectedAttackers.push( { uuid: entity.uuid, status: _status, attackRoll: false, natAttackRoll: false, attackMod: false, defense: false } );
+
+      if(state.selectedAttackers.length === 2){ //_status === 'Target'){
+        state.attacking = false;
+        state.showAttackDialog = true;
+      }
     } 
     if(state !== undefined){
       this.setState( state );
@@ -399,15 +405,18 @@ class RunEncounter extends Component {
 
   setAttackerStatus = (uuid, status) => {
     let state = this.state;
-    let _status = (status) ? 'Attacker' : 'Target';
+    let _status = (state.selectedAttackers.length === 0) ? 'Attacker' : 'Target';
+    // let _status = (status) ? 'Attacker' : 'Target';
 
     state.selectedAttackers.map((sa, i) => {
       if(sa.uuid === uuid){
         state.selectedAttackers[i].status = _status;
+        return true;
       }
+      return false;
     });
 
-    if(_status === 'Target'){
+    if(state.selectedAttackers.length === 2){ //_status === 'Target'){
       state.attacking = false;
       state.showAttackDialog = true;
     }
@@ -432,7 +441,6 @@ class RunEncounter extends Component {
     if(party === undefined) {
       party = { members: [] };
     }
-    let state = this.state;
 
     return (    	
 	      <div className="RunEncounter">

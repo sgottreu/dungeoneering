@@ -23,7 +23,7 @@
     top: -95px;
 }
 
-.attackDialog {
+/*.attackDialog {
     top: -168px;
     position: relative;
     background: #fff;
@@ -32,6 +32,15 @@
     height: 100px;
     padding: 30px;
     border-radius: 15px;
+}*/
+
+.attackDialog {
+    top: -243px;
+    position: relative;
+    background: #ccc;
+    z-index: 999;
+    width: 75px;
+    height: 75px;
 }
 
 .DungeonGridSlot:before {

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {Variables} from './Variables';
 import { HalfLevelModifier } from './EntityTemplate';
-import {DieRoll} from './Die';
 
 export var WeaponTemplate = {
 	category: "",  

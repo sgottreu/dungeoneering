@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import {EntitySize} from './EntityTemplate';
-import Toggle from 'material-ui/Toggle';
-import RaisedButton from 'material-ui/RaisedButton';
 import uuidV4  from 'uuid/v4';
 import '../css/DungeonGridSlot.css';
 
@@ -10,7 +8,6 @@ class DungeonGridSlot extends Component {
   constructor(props){
     super(props);
     this.loadEntityTile = this.loadEntityTile.bind(this);
-    this.loadAttackDialog = this.loadAttackDialog.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
     this.setAttackStatus = this.setAttackStatus.bind(this);
 
@@ -24,33 +21,9 @@ class DungeonGridSlot extends Component {
     
   }
 
-  setAttackStatus(e){
-    this.props.onSetAttackerStatus(this.refs.attackToggle.props['data-uuid'], this.refs.attackToggle.state.switched);
-  }
-
-  loadAttackDialog(slot, entity=false) {
-    if(!entity) {
-      entity = slot.overlays.entity;
-    }
-
-    if(!entity){
-      return false;
-    }  
-
-    return (
-      <div className={'attackDialog '}>
-        <Toggle ref={'attackToggle'}
-          label="Attacker"
-          data-uuid={entity.uuid}
-        />
-         <RaisedButton
-              label={'Save'} 
-              secondary={true} 
-              onTouchTap={this.setAttackStatus}
-              className="button"
-            />
-      </div>
-    );
+  setAttackStatus(uuid, e){
+    // this.props.onSetAttackerStatus(this.refs.attackToggle.props['data-uuid'], this.refs.attackToggle.state.switched);
+    this.props.onSetAttackerStatus(uuid);
   }
 
   loadEntityTile(slot, entity=false){
@@ -58,16 +31,18 @@ class DungeonGridSlot extends Component {
       entity = slot.overlays.entity;
     }
 
-    if(!entity){
+    if(!entity || entity.hp <= 0){
       return false;
     }    
     let style, size;
     
-    if(entity._type === 'character'){
-      size = EntitySize.find(s => { return s.label === entity.size});
-    } else {
-      size = (EntitySize[entity.size] === undefined) ? false : EntitySize[entity.size];
-    }
+    // if(entity._type === 'character'){
+    //   size = EntitySize.find(s => { return s.label === entity.size});
+    // } else {
+    //   size = (EntitySize[entity.size] === undefined) ? false : EntitySize[entity.size];
+    // }
+
+    size = EntitySize.find(s => { return s.label === entity.size});
 
     if(size !== undefined && size !== false){
       style = {
@@ -97,7 +72,7 @@ class DungeonGridSlot extends Component {
 
 
   render() {
-    let {id, slot, onAddTile, entity, selectedAttackers} = this.props;
+    let {id, slot, onAddTile, entity} = this.props;
     let className = 'DungeonGridSlot ';
     className += (slot.tileType === undefined || slot.tileType === '') ? '' : slot.tileType;
 
@@ -105,20 +80,19 @@ class DungeonGridSlot extends Component {
       onAddTile = function() { return false };
     }
 
-    let bolShowDialog = false;
-    if(entity !== undefined){
-      bolShowDialog = selectedAttackers.find(att => { 
-        if(att.status === false){
-          return att.uuid === entity.uuid;
-        }
-        return false;
-       });
-    }
+    // let bolShowDialog = false;
+    // if(entity !== undefined){
+    //   bolShowDialog = selectedAttackers.find(att => { 
+    //     if(att.status === false){
+    //       return att.uuid === entity.uuid;
+    //     }
+    //     return false;
+    //    });
+    // }
     return (
       <div ref={'tile'+slot.id} id={'_slot'+slot.id}
         className={className} data-slot={id} onClick={onAddTile.bind(this, id)}>&nbsp;
         {this.loadEntityTile(slot, entity)}
-        {(bolShowDialog) ? this.loadAttackDialog(slot, entity) : ''}
       </div>
     );
   }

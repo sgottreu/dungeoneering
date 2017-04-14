@@ -201,7 +201,7 @@ class EntityForm extends Component {
   }
 
 	handleSizeChange = (event, index) => {
-		this._setEntityState('size', index);
+		this._setEntityState('size', EntitySize[index].label);
 	}
 
   handleClassChange = (event, index) => {    
@@ -596,6 +596,7 @@ class EntityForm extends Component {
 				{(this.EntityType === 'character') ? this.loadRaceField() : ''}
         {(this.EntityType === 'character') ? this.loadClassField() : ''}
         {(this.EntityType === 'monster') ? this.loadRoleField() : ''}
+        {console.log(this.state.entity.size)}
         <SelectField style={Variables.getSelectListStyle(this.state.entity.size, EntitySize.map( (size, index) => {return index}) )} 
           floatingLabelText="Size" 
           value={ EntitySize.findIndex( (size, i) => {return this.state.entity.size === size.label } ) }  
