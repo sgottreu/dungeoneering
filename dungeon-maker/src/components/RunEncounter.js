@@ -297,8 +297,8 @@ class RunEncounter extends Component {
       state._id = res.data._id;
       state.title = res.data.title;
 
-      state = _Dungeon.setCombatList(state);
-      state = _Dungeon.setAttackAttributes(state);
+      // state = _Dungeon.setCombatList(state);
+      // state = _Dungeon.setAttackAttributes(state);
       state = _Dungeon.addCharToMap(state);
       state.selectedDungeon = selectedDungeon;
 
@@ -334,7 +334,7 @@ class RunEncounter extends Component {
       state.slots[ slot - 1 ].occupied = false;
       state.hoverObj = false;
     } else {
-      state.slots[ slot - 1 ].overlays.entity = Variables.clone(state.selectedEntity.uuid);
+      state.slots[ slot - 1 ].overlays.entity = Variables.clone(state.selectedEntity);
       state.slots[ slot - 1 ].occupied = true;
 
       state.combatList.map(function(val){ if(val.uuid === state.selectedEntity.uuid) {val.slot = slot} return val; });
@@ -355,7 +355,7 @@ class RunEncounter extends Component {
     if(state.moving !== false){
       if(!state.selectedEntity){
         state.moving = slot;
-        entity = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
+        entity = state.slots[ slot-1 ].overlays.entity; //state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
         state = this.selectEntity(entity.uuid, entity._type, state, entity);
       } else {
         // Add Entity to new slot

@@ -63,15 +63,15 @@ _Dungeon.addCharToMap = (state) => {
 
   party.map( (character, x) => {
     let _slot = state.slots.find( slot => {
-      return !slot.occupied && slot.tileType === undefined;
+      return !slot.occupied && (slot.tileType === undefined || slot.tileType === '');
     });
 
     if(_slot){
-      state.slots[ _slot.id -1 ].overlays.entity = character.uuid;
+      state.slots[ _slot.id -1 ].overlays.entity = Variables.clone(character);//character.uuid;
       state.slots[ _slot.id -1 ].occupied = true;
       
-      let _i = state.combatList.findIndex(cmb => { return cmb.uuid === character.uuid});
-      state.combatList[ _i ].slot = _slot.id;
+      // let _i = state.combatList.findIndex(cmb => { return cmb.uuid === character.uuid});
+      // state.combatList[ _i ].slot = _slot.id;
       return true;
     }
     return false;
@@ -82,6 +82,10 @@ _Dungeon.addCharToMap = (state) => {
 
 _Dungeon.rollInitiative = (_this) => {
   let state = _this.state;
+
+  state = _Dungeon.setCombatList(state);
+  state = _Dungeon.setAttackAttributes(state);
+
   state.currentActor = {slot: false, roll: false, uuid: false};
 
   state.combatList.map((item, x) => {
@@ -102,20 +106,23 @@ _Dungeon.setCombatList = (state) => {
 
   slots.map((slot, x) => {
     if(slot.occupied){
-      let uuid = uuidV4();
-      slot.overlays.entity.uuid = uuid;
+      if(slot.overlays.entity.uuid === undefined){
+        let uuid = uuidV4();
+        slot.overlays.entity.uuid = uuid;
+      }
+      
       let entity = Variables.clone(slot.overlays.entity);
       entity.slot = slot.id;
       state.combatList.push( entity );
-      slot.overlays.entity = uuid;
+      //slot.overlays.entity = uuid;
     }
     return slot;
   });
-  party.members.map((p, i) => {
-console.log(p);
-    state.combatList.push( Variables.clone(p) ); 
-    return p;
-  });
+  // party.members.map((p, i) => {
+
+  //   state.combatList.push( Variables.clone(p) ); 
+  //   return p;
+  // });
   return state;
 }
 
