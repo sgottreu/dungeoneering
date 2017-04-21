@@ -300,6 +300,7 @@ class RunEncounter extends Component {
       // state = _Dungeon.setCombatList(state);
       // state = _Dungeon.setAttackAttributes(state);
       state = _Dungeon.addCharToMap(state);
+      state = _Dungeon.setUuidMonsters(state);
       state.selectedDungeon = selectedDungeon;
 
       _this.setState(state);
@@ -497,7 +498,7 @@ class RunEncounter extends Component {
               className="button"
             />
           </div>
-           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
+           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} combatList={combatList}/>
            {this.state.showAttackDialog ? this.loadAttackDialog() : '' }
         </div>
     );

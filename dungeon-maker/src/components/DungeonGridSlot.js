@@ -31,7 +31,18 @@ class DungeonGridSlot extends Component {
       entity = slot.overlays.entity;
     }
 
-    if(!entity || entity.hp <= 0){
+    let hp = true;
+    let combatList = this.props.combatList;
+    if(combatList !== undefined){
+      let cb = combatList.find(combat => { return combat.slot == slot.id});
+      if(cb !== undefined){
+        if(cb.hp <= 0 && entity._type == 'monster'){
+          hp = false;
+        }
+      }
+    }
+
+    if(!entity || !hp){
       return false;
     }    
     let style, size;
@@ -60,7 +71,7 @@ class DungeonGridSlot extends Component {
     let entitySize = (isNaN(entity.size)) ? entity.size : EntitySize[ entity.size ].label;
 
     let uuid = (entity.uuid === undefined) ? uuidV4() : entity.uuid
-    let ActorSlot = parseInt(this.props.currentActor.slot, 10);
+    let ActorSlot = (this.props.currentActor === undefined) ? -1 : parseInt(this.props.currentActor.slot, 10);
     return (
       <div className={'EntityHolder '+((ActorSlot === parseInt(slot.id, 10)) ? 'currentActor' : '')}>
         <div onMouseEnter={this.handleMouseOver.bind(this, entity, 'entity')} onMouseLeave={this.handleMouseOver.bind(this, false, false)} 
@@ -72,7 +83,7 @@ class DungeonGridSlot extends Component {
 
 
   render() {
-    let {id, slot, onAddTile, entity} = this.props;
+    let {id, slot, onAddTile, entity, combatList} = this.props;
     let className = 'DungeonGridSlot ';
     className += (slot.tileType === undefined || slot.tileType === '') ? '' : slot.tileType;
 
