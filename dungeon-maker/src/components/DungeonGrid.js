@@ -25,7 +25,7 @@ class DungeonGrid extends Component {
 	      <div className="DungeonGrid">
 	        {slots.map(slot => {
 						let entity;
-						if(slot.occupied){
+						if(slot.occupied && combatList !== undefined){
 							entity = combatList.find(item => { return item.uuid === slot.overlays.entity} );
 						} 
 						return (	          
@@ -39,6 +39,7 @@ class DungeonGrid extends Component {
 								currentActor={this.props.currentActor}
 								selectedAttackers={selectedAttackers}
 								onSetAttackerStatus={this.props.onSetAttackerStatus}
+								combatList={combatList}
 							/>
 	        	)
 					})}

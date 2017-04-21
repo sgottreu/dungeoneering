@@ -118,6 +118,9 @@ class DungeonMaker extends Component {
         state.slots = res.data.slots;
         state._id = res.data._id;
         state.title = res.data.title;
+        state.snackbarOpen = false;
+        state.selectedDungeon = selectedDungeon;
+
         _this.setState(state);
       });
   }
@@ -190,12 +193,13 @@ class DungeonMaker extends Component {
     state.slots[ slot-1 ].left = e.target.offsetLeft;
     state.slots[ slot-1 ].top = e.target.offsetTop;
 
-    if(tileType.entrance) {
-      state.slots[ slot-1 ].entrance = true;
-    }
+    let props = ['entrance', 'exit', 'door'];
 
-    if(tileType.exit) {
-      state.slots[ slot-1 ].exit = true;
+    for(var x=0;x<props.length;x++){
+      state.slots[ slot-1 ][ props[ x] ] = false;
+      if(tileType[ props[ x] ]) {
+        state.slots[ slot-1 ][ props[ x] ] = true;
+      }
     }
 
     this.setState( state );
@@ -250,7 +254,7 @@ class DungeonMaker extends Component {
           <TileDrawer tiles={TileOptions} onSelectTile={this.selectTile} selectedTile={selectedTile} />
           <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
-          <DungeonLoadDrawer showSave={true} onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.chooseDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
+          <DungeonLoadDrawer showSave={true} onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.setDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
           {selectedDungeon !== false ? this.showDupeButton() : ''}
           {this.loadSaveMenu()}
           <Snackbar

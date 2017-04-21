@@ -72,7 +72,7 @@ class AttackDialog extends Component {
   }
 
   loadAttackChip(icon, total, mod){
-    let modstring = (mod !== undefined) ? ` (${mod}` : '';
+    let modstring = (mod !== undefined) ? ` (${mod})` : '';
     return (
       <Chip className="chip" key={`${total}_${modstring}`}>
         <Avatar size={32}><img alt={icon} src={icon} style={{width :'30px',height: '30px'}} /></Avatar>
