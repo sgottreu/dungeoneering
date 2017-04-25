@@ -41,10 +41,13 @@ class RunEncounter extends Component {
     this.loadAttackDialog = this.loadAttackDialog.bind(this);
     this.rollAttack = this.rollAttack.bind(this);
     this.handlePowerSelect = this.handlePowerSelect.bind(this);
+    this.pickCombatList = this.pickCombatList.bind(this);
+    this.resetAttack = this.resetAttack.bind(this);
 
     this.state = { 
       slots: Slots,
       combatList: [],
+      pickingCombat: false,
       moving: false,
     	selectedTile: '',
     	connectedDoor: true,
@@ -189,7 +192,13 @@ class RunEncounter extends Component {
       state.selectedAttackers[1].damage = totalDamage;
 
       let _i = state.combatList.findIndex(cb => { return cb.uuid === trg.uuid } );
-      state.combatList[ _i ].hp -= totalDamage;
+      let hp = parseInt(state.combatList[ _i ].hp, 10) - totalDamage;
+      state.combatList[ _i ].hp = hp;
+      state.slots[ state.combatList[ _i ].slot - 1 ].overlays.entity.hp = hp;
+
+      if(hp <=0 && state.combatList[ _i ]._type === 'monster'){
+        state.slots[ state.combatList[ _i ].slot - 1 ].overlays.entity = false;
+      }
 
    } else {
       state.attackStatus = 'miss';
@@ -201,6 +210,7 @@ class RunEncounter extends Component {
 
   endTurn = () => {
     let state = this.state;
+    
  
     let index = state.combatList.findIndex( (cmb) => {
       return cmb.uuid === state.currentActor.uuid; 
@@ -217,9 +227,15 @@ class RunEncounter extends Component {
       state = _Dungeon.setCurrentActor(state, roll, slot, uuid, true);
       state.showAttackDialog = false;
       state.selectedAttackers = [];
-
-      this.setState(state);
     }    
+
+    for(var x = 0; x<state.combatList.length;x++){
+      if(state.combatList[x].hp <= 0 && state.combatList[x]._type === 'monster'){
+        delete state.combatList[x];
+      }
+    }
+
+    this.setState(state);
   }
 
   handlePartyChange = (e, index) => {
@@ -268,6 +284,13 @@ class RunEncounter extends Component {
 
   rollInitiative(){
     _Dungeon.rollInitiative(this);
+  }
+
+  pickCombatList = () => {
+    let state = this.state;
+    state.combatList = [];
+    state.pickingCombat = (state.pickingCombat) ? false : true;
+    this.setState(state);
   }
 
   setEncounter(selectedEncounter){
@@ -372,7 +395,12 @@ class RunEncounter extends Component {
       }
     } 
     if(state.attacking){
-        entity = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
+        entity = state.combatList.find(function(val){ 
+          if(val === undefined){
+            return false;
+          }
+          return parseInt(val.slot, 10) === parseInt(slot, 10); 
+        });
         let _status = (state.selectedAttackers.length === 0) ? 'Attacker' : 'Target';
         state.selectedAttackers.push( { uuid: entity.uuid, status: _status, attackRoll: false, natAttackRoll: false, attackMod: false, defense: false } );
 
@@ -381,10 +409,31 @@ class RunEncounter extends Component {
         state.showAttackDialog = true;
       }
     } 
+
+    if(state.pickingCombat){
+      entity = Variables.clone(state.slots[ slot-1 ].overlays.entity);
+      entity.slot = state.slots[ slot-1 ].id;
+
+      let cb = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
+      if(cb === undefined){
+        state.combatList.push( entity );
+      }
+      
+    } 
+
     if(state !== undefined){
       this.setState( state );
     }
     
+  }
+
+  resetAttack = () => {
+    let state = this.state;
+    state.selectedAttackers = [];
+    state.showAttackDialog = false;
+    state.attacking = true;
+
+    this.setState( state );
   }
 
   selectEntity(uuid, entityType='monster', state, saved=false) {
@@ -395,7 +444,12 @@ class RunEncounter extends Component {
     if(saved){
       state.selectedEntity = saved;
     } else {
-      state.selectedEntity = state.combatList.find(function(val){ return val.uuid === uuid});
+      state.selectedEntity = state.combatList.find(function(val){ 
+        if(val === undefined)  {
+          return false;
+        }
+        return val.uuid === uuid;
+      });
     }
 
     if(saved){
@@ -433,6 +487,7 @@ class RunEncounter extends Component {
               onRollAttack={this.rollAttack} 
               onHandleWeaponSelect={this.handleWeaponSelect}
               attackStatus={this.state.attackStatus}
+              onResetAttack={this.resetAttack}
               />);
   }
 
@@ -467,7 +522,14 @@ class RunEncounter extends Component {
               availableEncounters={availableEncounters}
               />
             <br />
-          
+            <RaisedButton
+              label={'Set Combat List'} 
+              secondary={(this.state.pickingCombat) ? false : true} 
+              primary={(this.state.pickingCombat) ? true : false }
+              onTouchTap={this.pickCombatList}
+              className="button"
+            />
+            <br/>
             <RaisedButton
               label={'Roll Initiative'} 
               secondary={true} 

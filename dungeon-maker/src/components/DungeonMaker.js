@@ -150,7 +150,7 @@ class DungeonMaker extends Component {
       state.slots[ slot - 1 ].occupied = false;
       state.hoverEntity = false;
     } else {
-      state.slots[ slot - 1 ].overlays.entity = state.selectedEntity;
+      state.slots[ slot - 1 ].overlays.entity = { _id: state.selectedEntity._id };
       state.slots[ slot - 1 ].occupied = true;
     }
 
@@ -212,7 +212,7 @@ class DungeonMaker extends Component {
 
   selectEntity(id) {
     let selectedEntity = this.state.availableMonsters.find(function(val){ return val._id === id});
-    this.setState( { selectedEntity: selectedEntity, selectedTile: '' });
+    this.setState( { selectedEntity: selectedEntity , selectedTile: '' });
   }
 
   showDupeButton = () => {
@@ -250,7 +250,14 @@ class DungeonMaker extends Component {
 
     return (    	
 	      <div className="DungeonMaker">
-          <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} onHandleObjMouseOver={this.handleObjMouseOver}/>
+          <DungeonGrid 
+            availableMonsters={availableMonsters}
+            slots={slots} 
+            onAddTile={this.addTile} 
+            selectedDungeon={selectedDungeon} 
+            onSetDungeon={this.setDungeon} 
+            onHandleObjMouseOver={this.handleObjMouseOver}
+          />
           <TileDrawer tiles={TileOptions} onSelectTile={this.selectTile} selectedTile={selectedTile} />
           <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
