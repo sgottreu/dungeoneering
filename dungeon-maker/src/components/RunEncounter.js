@@ -493,7 +493,7 @@ class RunEncounter extends Component {
   }
 
   render() {
-    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters, combatList, currentActor, selectedAttackers} = this.state;
+    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters, availableMonsters, combatList, currentActor, selectedAttackers} = this.state;
     let party = availableParties.find(p => { return p._id === selectedParty} );
     if(party === undefined) {
       party = { members: [] };
@@ -502,6 +502,7 @@ class RunEncounter extends Component {
     return (    	
 	      <div className="RunEncounter">
           <DungeonGrid slots={slots} 
+            availableMonsters={availableMonsters}
             onAddTile={this.addTile} 
             selectedDungeon={selectedDungeon} 
             onSetDungeon={this.setDungeon} 
