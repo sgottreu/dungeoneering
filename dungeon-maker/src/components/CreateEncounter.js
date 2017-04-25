@@ -26,7 +26,7 @@ class CreateEncounter extends Component {
     this.chooseDungeon = this.chooseDungeon.bind(this);
     this.setDungeon = this.setDungeon.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
-    this.handleEntityMouseOver = this.handleEntityMouseOver.bind(this);
+    this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
     this.handleDungeonChoice = this.handleDungeonChoice.bind(this);
     this.getDroppedItem = this.getDroppedItem.bind(this);
     this.moveItem = this.moveItem.bind(this);
@@ -38,12 +38,13 @@ class CreateEncounter extends Component {
     	connectedDoor: true,
     	choosingEntrance: false,
     	choosingExit: false,
+      availableEncounters: [],
       foundDungeonGrids: [],
       selectedDungeon: false,
       availableEncounters: [],
       snackbarOpen: false,
       snackbarMsg: '',
-      hoverEntity: false,
+      hoverObj: false,
       mouse: {
         clientX: false,
         clientY: false
@@ -65,11 +66,19 @@ class CreateEncounter extends Component {
     _Dungeon.findDungeonGrids(_this); 
 
     axios.get(`${Variables.host}/findEncounters`)
-      .then(res => {
-        let state = _this.state;
-        state.availableEncounters = res.data;
-        _this.setState(state);
-      });
+    .then(res => {
+      let state = _this.state;
+      state.availableEncounters = res.data;
+      _this.setState(state);
+    });
+
+    axios.get(`${Variables.host}/findEntities`)
+    .then(res => {
+      let state = _this.state;
+      state.availableMonsters = res.data.monster;
+      _this.setState( state );
+    });  
+
 
   }
   componentWillUnmount() {
@@ -80,9 +89,12 @@ class CreateEncounter extends Component {
   
   }
 
-  handleEntityMouseOver = (entity, eve) => {
+  handleObjMouseOver = (obj, _type, eve) => {
     let state = this.state;
-    state.hoverEntity = entity;
+    state.hoverObj = {
+      obj: obj,
+      type: _type
+    };
     state.mouse.clientX = eve.clientX;
     state.mouse.clientY = eve.clientY;
     this.setState(state);
@@ -122,6 +134,7 @@ class CreateEncounter extends Component {
 
   handleDungeonChoice(id, event){
 		this.chooseDungeon(id);
+    this.setDungeon(id);
 	}
 
   chooseDungeon(id){
@@ -164,13 +177,18 @@ class CreateEncounter extends Component {
   }
 
   render() {
-    let {slots, selectedDungeon} = this.state;
+    let {slots, selectedDungeon, availableMonsters} = this.state;
 
     return (    	
       <div className="CreateEncounter">
-        <DungeonGrid slots={slots} onAddTile={this.addTile} selectedDungeon={selectedDungeon} onSetDungeon={this.setDungeon} 
-            onHandleEntityMouseOver={this.handleEntityMouseOver}
-            />
+        <DungeonGrid 
+          slots={slots} 
+          availableMonsters={availableMonsters}
+          onAddTile={this.addTile} 
+          selectedDungeon={selectedDungeon} 
+          onSetDungeon={this.setDungeon} 
+          onHandleObjMouseOver={this.handleObjMouseOver}
+        />
         <List className="AvailableDungeons">
           {this.state.foundDungeonGrids.map( (grid, index) => {
             return (
@@ -179,7 +197,7 @@ class CreateEncounter extends Component {
           })}
         </List>
         <DroppableList onMoveItem={this.moveItem} encounterDungeons={this.state.encounter.encounterDungeons} onHandleDungeonChoice={this.handleDungeonChoice}/>
-        <EntityTooltip hoverEntity={this.state.hoverEntity} mouse={this.state.mouse} />
+        <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
         <br/>
 				<TextField hintText="Encounter Name" value={this.state.encounter.title} onChange={this.handleTitleChange} />
 				<RaisedButton label="Save Encounter" primary={true}  onClick={this.saveEncounter} />

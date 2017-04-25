@@ -66,9 +66,10 @@ class RunEncounter extends Component {
       availableParties: [],
       selectedParty: false,
       selectedEntity : false,
-      hoverObj: false,
+      
       party: false,      
       currentActor: {slot: false, roll: false},
+      hoverObj: false,
       mouse: {
         clientX: false,
         clientY: false
