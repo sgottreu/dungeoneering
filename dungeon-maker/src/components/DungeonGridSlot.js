@@ -29,12 +29,27 @@ class DungeonGridSlot extends Component {
   loadEntityTile(slot, entity=false){
     if(!entity) {
       entity = slot.overlays.entity;
+      if(!entity) {
+        return false;
+      }
+    }
+
+    if(entity._id !== undefined && entity.name === undefined){
+      let e = this.props.availableMonsters.find( m => { return m._id === entity._id} );
+      if(e !== undefined){
+        entity = e;
+      }
     }
 
     let hp = true;
     let combatList = this.props.combatList;
     if(combatList !== undefined){
-      let cb = combatList.find(combat => { return combat.slot == slot.id});
+      let cb = combatList.find(combat => { 
+        if(combat === undefined){
+          return false;
+        }
+        return combat.slot == slot.id
+      });
       if(cb !== undefined){
         if(cb.hp <= 0 && entity._type == 'monster'){
           hp = false;
@@ -46,12 +61,6 @@ class DungeonGridSlot extends Component {
       return false;
     }    
     let style, size;
-    
-    // if(entity._type === 'character'){
-    //   size = EntitySize.find(s => { return s.label === entity.size});
-    // } else {
-    //   size = (EntitySize[entity.size] === undefined) ? false : EntitySize[entity.size];
-    // }
 
     size = EntitySize.find(s => { return s.label === entity.size});
 

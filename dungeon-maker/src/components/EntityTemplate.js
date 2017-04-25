@@ -266,6 +266,11 @@ export var updateInventory = (state, item, category, action, index=false) => {
       if(state.coin_purse < tmpItem.price){
         return state;
       }
+    } else {
+      if(state.weapons.length === 0){
+        inventory = [];
+        inventory_log = [];
+      }
     }
     _i = inventory.findIndex((inv, i) => { return inv.item._id === inventory_id });
     

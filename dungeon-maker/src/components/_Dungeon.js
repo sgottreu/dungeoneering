@@ -202,9 +202,11 @@ _Dungeon.setUuidMonsters = (state) => {
 _Dungeon.rollInitiative = (_this) => {
   let state = _this.state;
 
-  let availSlots = findInitiativeArea(state.slots);
+  //let availSlots = findInitiativeArea(state.slots);
 
-  state = _Dungeon.setCombatList(state, availSlots);
+  // let availSlots = [];
+
+  // state = _Dungeon.setCombatList(state, availSlots);
   state = _Dungeon.setAttackAttributes(state);
 
   state.currentActor = {slot: false, roll: false, uuid: false};
@@ -218,6 +220,7 @@ _Dungeon.rollInitiative = (_this) => {
   });
 
   state.combatList.sort( sortInitiative );
+  state.pickingCombat = false;
   _this.setState( state );
 }
 

@@ -17,7 +17,7 @@ class DungeonGrid extends Component {
 	}
 
    render() {
-   		let {slots, onAddTile, combatList, selectedAttackers} = this.props;
+   		let {slots, onAddTile, combatList, selectedAttackers, availableMonsters} = this.props;
 
 			
 
@@ -26,10 +26,15 @@ class DungeonGrid extends Component {
 	        {slots.map(slot => {
 						let entity;
 						if(slot.occupied && combatList !== undefined){
-							entity = combatList.find(item => { return item.uuid === slot.overlays.entity} );
+							entity = combatList.find(item => { 
+								if(item === undefined){
+									return false;
+								}
+								return item.uuid === slot.overlays.entity} );
 						} 
 						return (	          
 							<DungeonGridSlot key={slot.id} 
+								availableMonsters={availableMonsters}
 								id={slot.id} 
 								slot={slot} 
 								entity={entity}

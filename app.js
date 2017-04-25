@@ -171,13 +171,14 @@ app.post('/saveEntity', function (req, res) {
           if(docs[z].slots[x].overlays.entity && docs[z].slots[x].overlays.entity._id == req.body._id){
             docs[z].slots[x].overlays.entity = JSON.parse(JSON.stringify(payload));
             updated = true;
+            break;
           }
         }
         if(updated){
           var _id = JSON.parse(JSON.stringify(docs[z]._id));
           delete docs[z]._id;
           dungeon_grid.findOneAndUpdate( { "_id" : monk.id(_id) }, docs[z] ).then(function (data) {
-            console.log('Dungeon Updated');
+            console.log('Dungeon Updated: '+docs[z].title);
           });
         }
       };

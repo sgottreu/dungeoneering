@@ -147,7 +147,7 @@ class AttackDialog extends Component {
             <br/>
             <Chip key="c">
               <Avatar size={32}><i className="fa fa-heart" aria-hidden="true"></i></Avatar>
-              {target.hp + ((attackStatus === 'hit') ? ' ( -'+trg.damage+' )' : '')}
+              {target.hp + ((attackStatus === 'hit' && trg.damage !== undefined) ? ' ( -'+trg.damage+' )' : '')}
             </Chip>
             
           </div>
@@ -164,11 +164,23 @@ class AttackDialog extends Component {
           </div>
           <div className="Attacker">
             {(att.attackRoll) ? this.loadAttackChip(attackIcon, att.attackRoll, `${att.natAttackRoll} + ${att.attackMod}`) : ''}
-            {(attackStatus === 'hit') ? this.loadAttackChip(damageIcon, '-'+trg.damage) : ''}
+            {(attackStatus === 'hit' && trg.damage !== undefined) ? this.loadAttackChip(damageIcon, '-'+trg.damage) : ''}
           </div>
           <div className="Target">
             {(att.attackRoll) ? this.loadAttackChip(defenseIcon, trg.defense) : ''}
           </div>
+
+          <div style={{clear :'both',float: 'none', paddingTop: '5px'}}>
+              <RaisedButton 
+              style={{ display: 'block', width: '200px', margin: '5px auto 30px' }}
+              label="Reset"
+              
+              primary={true} 
+              onTouchTap={this.props.onResetAttack}
+              className="button"
+            />
+          </div>
+
 	      </div>
 	    );
    }
