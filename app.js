@@ -320,6 +320,13 @@ function _Save(req, res, payload){
 	}
 }
 
+
+app.get('*', (req, res) => {
+  res.sendFile(__dirname + '/dungeon-maker/build/index.html');
+});
+
+
+
 app.listen(port, function () {
   console.log('API listening on port '+port)
 });
