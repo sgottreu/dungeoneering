@@ -69,10 +69,9 @@ class App extends Component {
         {this.props.children}
       	
         <Route exact path="/" component={Home} />
-        <Route path="/runEncounter" component={() => (<RunEncounter  onSetEncounterTitle={this.setEncounterTitle} />)}/>
+        <Route path="/runEncounter" component={RunEncounter}/>
         <Route path="/createEncounter" component={CreateEncounter}/>
-        <Route path="/dungeonMaker" component={() => (
-          <DungeonMaker />)} />
+        <Route path="/dungeonMaker" component={DungeonMaker} />
         <Route path="/createParty" component={CreateParty}/>
         <Route path="/createCharacter" component={CreateCharacter}/>
         <Route path="/addMonster" component={AddMonster}/>
