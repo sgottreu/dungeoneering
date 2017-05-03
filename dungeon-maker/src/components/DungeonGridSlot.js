@@ -48,10 +48,10 @@ class DungeonGridSlot extends Component {
         if(combat === undefined){
           return false;
         }
-        return combat.slot == slot.id
+        return combat.slot === slot.id
       });
       if(cb !== undefined){
-        if(cb.hp <= 0 && entity._type == 'monster'){
+        if(cb.hp <= 0 && entity._type === 'monster'){
           hp = false;
         }
       }
@@ -92,7 +92,7 @@ class DungeonGridSlot extends Component {
 
 
   render() {
-    let {id, slot, onAddTile, entity, combatList} = this.props;
+    let {id, slot, onAddTile, entity} = this.props;
     let className = 'DungeonGridSlot ';
     className += (slot.tileType === undefined || slot.tileType === '') ? '' : slot.tileType;
 

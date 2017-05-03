@@ -61,7 +61,7 @@ class AttackDialog extends Component {
       bkGdDiv = function() { return ( <div className='Entity character bkgd' />) };
     }
 
-    let className = entity._type+' '+' '+entity.iconClass+' Entity icon';
+    let className = `${entity._type} ${entity.iconClass} Entity icon`;
     return (
       <div className={'EntityHolder '}>
         <div 
@@ -113,8 +113,6 @@ class AttackDialog extends Component {
       let [ att, trg ] = attackers;
 			let attacker = combatList.find(cb => { return cb.uuid === att.uuid } );
       let target = combatList.find(cb => { return cb.uuid === trg.uuid } );
-
-
 
 	    return (
 	      <div className="AttackDialog">
@@ -170,13 +168,21 @@ class AttackDialog extends Component {
             {(att.attackRoll) ? this.loadAttackChip(defenseIcon, trg.defense) : ''}
           </div>
 
-          <div style={{clear :'both',float: 'none', paddingTop: '5px'}}>
+          <div style={{clear :'both', float: 'none', paddingTop: '5px', margin: '0px auto'}}>
               <RaisedButton 
-              style={{ display: 'block', width: '200px', margin: '5px auto 30px' }}
+              style={{ float: 'left', display: 'inline-block', width: '115px', margin: '5px 15px 30px' }}
               label="Reset"
               
-              primary={true} 
+              secondary={true} 
               onTouchTap={this.props.onResetAttack}
+              className="button"
+            />
+             <RaisedButton 
+              style={{ float: 'left', display: 'inline-block', width: '115px', margin: '5px 15px 30px' }}
+              label="Done"
+              
+              primary={true} 
+              onTouchTap={this.props.onCloseAttackDialog}
               className="button"
             />
           </div>

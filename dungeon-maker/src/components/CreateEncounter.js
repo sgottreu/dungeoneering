@@ -41,7 +41,6 @@ class CreateEncounter extends Component {
       availableEncounters: [],
       foundDungeonGrids: [],
       selectedDungeon: false,
-      availableEncounters: [],
       snackbarOpen: false,
       snackbarMsg: '',
       hoverObj: false,
