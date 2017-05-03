@@ -43,6 +43,7 @@ class RunEncounter extends Component {
     this.handlePowerSelect = this.handlePowerSelect.bind(this);
     this.pickCombatList = this.pickCombatList.bind(this);
     this.resetAttack = this.resetAttack.bind(this);
+    this.closeAttackDialog = this.closeAttackDialog.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -415,6 +416,19 @@ class RunEncounter extends Component {
       entity = Variables.clone(state.slots[ slot-1 ].overlays.entity);
       entity.slot = state.slots[ slot-1 ].id;
 
+      if(entity._type === undefined){
+        let _uuid = Variables.clone(entity.uuid);
+        let _slot = Variables.clone(entity.slot);
+
+        let _entity = state.availableMonsters.find( m => {
+          return m._id === entity._id;
+        });
+        entity = _entity;
+        entity.uuid = _uuid;
+        entity.slot = _slot;
+      }
+
+
       let cb = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
       if(cb === undefined){
         state.combatList.push( entity );
@@ -434,6 +448,12 @@ class RunEncounter extends Component {
     state.showAttackDialog = false;
     state.attacking = true;
 
+    this.setState( state );
+  }
+
+  closeAttackDialog = () => {
+    let state = this.state;
+    state.showAttackDialog = false;
     this.setState( state );
   }
 
@@ -489,6 +509,7 @@ class RunEncounter extends Component {
               onHandleWeaponSelect={this.handleWeaponSelect}
               attackStatus={this.state.attackStatus}
               onResetAttack={this.resetAttack}
+              onCloseAttackDialog={this.closeAttackDialog}
               />);
   }
 
