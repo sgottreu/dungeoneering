@@ -10,9 +10,9 @@ export var Die = [
 export var DieRoll = (uBound) => {
   let rolls = [];
   
-  //for( var x=0;x<3;x++){
+  for( var x=0;x<5;x++){
     rolls.push( ( Math.floor( Math.random() * uBound ) ) );
-  //}
+  }
   let median = Math.floor(findMedian(rolls));
 
   return median;
@@ -29,6 +29,6 @@ function findMedian(data) {
     if (data.length % 2) {
         return data[middle];
     } else {
-        return (data[middle] + data[middle + 1]) / 2.0;
+        return Math.floor( (data[middle] + data[middle + 1]) / 2.0 );
     }
 }

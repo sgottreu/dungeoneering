@@ -12,7 +12,8 @@ import {DieRoll} from './Die';
 import {calcWeaponDamage} from './Weapons';
 import {_Powers} from './_Powers';
 import uuidV4  from 'uuid/v4';
-
+import Chip from 'material-ui/Chip';
+import Avatar from 'material-ui/Avatar';
 import '../css/RunEncounter.css';
 
 class RunEncounter extends Component {
@@ -67,7 +68,7 @@ class RunEncounter extends Component {
       availableParties: [],
       selectedParty: false,
       selectedEntity : false,
-      
+      partyXP: 0,
       party: false,      
       currentActor: {slot: false, roll: false},
       hoverObj: false,
@@ -199,6 +200,7 @@ class RunEncounter extends Component {
       state.slots[ state.combatList[ _i ].slot - 1 ].overlays.entity.hp = hp;
 
       if(hp <=0 && state.combatList[ _i ]._type === 'monster'){
+        state.partyXP += parseInt(state.slots[ state.combatList[ _i ].slot - 1 ].overlays.entity.xp, 10);
         state.slots[ state.combatList[ _i ].slot - 1 ].overlays.entity = false;
       }
 
@@ -582,7 +584,17 @@ class RunEncounter extends Component {
               onTouchTap={this.endTurn}
               className="button"
             />
+
+
+            <div>
+              <Chip key="awd_xp">
+                <Avatar size={32}><i className="fa fa-trophy" aria-hidden="true"></i></Avatar>
+                {this.state.partyXP}
+              </Chip>
+            </div>
+
           </div>
+          
            <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} combatList={combatList}/>
            {this.state.showAttackDialog ? this.loadAttackDialog() : '' }
         </div>
