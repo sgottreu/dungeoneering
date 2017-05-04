@@ -1020,6 +1020,11 @@
         }
       }
     },
+    "create-react-class": {
+      "version": "15.5.2",
+      "from": "create-react-class@>=15.5.1 <16.0.0",
+      "resolved": "https://registry.npmjs.org/create-react-class/-/create-react-class-15.5.2.tgz"
+    },
     "cross-spawn": {
       "version": "4.0.2",
       "from": "cross-spawn@4.0.2",
@@ -3264,6 +3269,11 @@
       "from": "promise@>=7.1.1 <8.0.0",
       "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz"
     },
+    "prop-types": {
+      "version": "15.5.8",
+      "from": "prop-types@>=15.0.0 <16.0.0",
+      "resolved": "https://registry.npmjs.org/prop-types/-/prop-types-15.5.8.tgz"
+    },
     "proxy-addr": {
       "version": "1.1.3",
       "from": "proxy-addr@>=1.1.3 <1.2.0",
@@ -3368,6 +3378,11 @@
       "version": "0.4.1",
       "from": "react-event-listener@>=0.4.0 <0.5.0",
       "resolved": "https://registry.npmjs.org/react-event-listener/-/react-event-listener-0.4.1.tgz"
+    },
+    "react-redux": {
+      "version": "5.0.4",
+      "from": "react-redux@latest",
+      "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-5.0.4.tgz"
     },
     "react-router": {
       "version": "4.0.0",
