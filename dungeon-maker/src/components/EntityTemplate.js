@@ -212,6 +212,7 @@ export var calculateDefense = function(state, _defense=false,value=false){
       def.abilityMod = getDefenseModifier(state, d);
       def.halfLvl = + HalfLevelModifier(state.entity.level, state.entity._type);
       let subTotal = def.default + def.halfLvl + def.abilityMod + def.classBonus + def.raceBonus;
+      subTotal = (d === 'reflex') ? subTotal + state.entity.defense.armorClass.shield : subTotal;
       def.misc = (_defense === d && value) ? value-subTotal : def.misc;
       def.total = def.misc + subTotal;
       state.entity.defense[d] = def;
