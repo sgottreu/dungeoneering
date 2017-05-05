@@ -10,7 +10,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import EntityDrawer from './EntityDrawer';
 import axios from 'axios';
-import {Variables} from './Variables';
+import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 
 import '../css/DungeonMaker.css';
