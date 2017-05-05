@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {List, ListItem} from 'material-ui/List';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
-import {Variables} from './Variables';
+import {Variables} from '../lib/Variables';
 import '../css/EntityTooltip.css';
 
 class EntityTooltip extends Component {

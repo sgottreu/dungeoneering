@@ -6,7 +6,7 @@ import EntityTooltip from './EntityTooltip';
 import DroppableList from './DroppableList';
 import DraggableListItem from './DraggableListItem';
 import axios from 'axios';
-import {Variables} from './Variables';
+import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';

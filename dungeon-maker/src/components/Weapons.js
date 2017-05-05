@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Variables} from './Variables';
+import {Variables} from '../lib/Variables';
 import { HalfLevelModifier } from './EntityTemplate';
 
 export var WeaponTemplate = {

@@ -17,7 +17,7 @@ import { EntityClass, calcWeightPrice } from './EntityTemplate';
 // import { _Gear } from './_Gear';
 
 import axios from 'axios';
-import {Variables} from './Variables';
+import {Variables} from '../lib/Variables';
 
 import '../css/CreateParty.css';
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {Die} from './Die';
-import {Variables} from './Variables';
+import {Die} from '../lib/Die';
+import {Variables} from '../lib/Variables';
 
 import {saveWeapon, findWeapons} from './Weapons';
 

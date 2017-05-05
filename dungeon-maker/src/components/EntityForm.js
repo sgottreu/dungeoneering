@@ -4,7 +4,7 @@ import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize
   getInitialHitPoints, EntityArmor, calculateArmorClass, calculateDefense, saveEntity, EntityIcons, 
   findEntity, calculateInitiative} from './EntityTemplate';
 
-import {Variables} from './Variables';
+import {Variables} from '../lib/Variables';
 import {_Powers} from './_Powers';
 import {findWeapons} from './Weapons';
 import PowersForm from './PowersForm';

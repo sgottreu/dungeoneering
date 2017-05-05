@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import { Link } from 'react-router-dom';
 
+import store from './store';
+
 import AppBar from 'material-ui/AppBar';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
@@ -14,8 +16,10 @@ import CreateEncounter from './components/CreateEncounter';
 import AddMonster from './components/AddMonster';
 import CreateCharacter from './components/CreateCharacter';
 import AddWeapon from './components/AddWeapon';
-import AddPowers from './components/AddPowers';
+import AddPowersContainer from './components/containers/add-powers-container';
 import CreateParty from './components/CreateParty';
+
+
 
 import './css/App.css';
 
@@ -41,6 +45,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(store.getState());
     return (    	
       <div className="App">
        <AppBar className="AppBar"
@@ -76,7 +81,7 @@ class App extends Component {
         <Route path="/createCharacter" component={CreateCharacter}/>
         <Route path="/addMonster" component={AddMonster}/>
         <Route path="/addWeapon" component={AddWeapon}/>
-        <Route path="/addPowers" component={AddPowers}/>
+        <Route path="/addPowers" component={() => (<AddPowersContainer />)} />
       </div>
 
        
