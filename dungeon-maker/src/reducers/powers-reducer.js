@@ -14,6 +14,10 @@ const powersReducer = function(state = initialState, action) {
   let powers = false;
   let current_power = false;
 
+  if(action === undefined){
+    return state;
+  }
+
   switch(action.type) {
     case types.LOAD_EXISTING_POWERS:
       return Object.assign({}, state, {
