@@ -4,6 +4,8 @@ import {_Powers, PowerTemplate} from './_Powers';
 import {EntityTemplate, EntityClass} from './EntityTemplate';
 import {Variables} from '../lib/Variables';
 import {Die} from '../lib/Die';
+import * as powersApi from '../api/powers-api';
+
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
@@ -51,16 +53,16 @@ class PowersForm extends Component {
   }
 
   addPower(){
-    
-    if(this.props.onFindPowers !== undefined){
-      _Powers.savePower(this);
-      this.props.onFindPowers(this.state.power);
+    let {current_power, power } = this.props;
+
+    if(this.props.onIncludePower === undefined){
+      powersApi.savePower(power);
     } else {
-      this.props.onIncludePower(this.state.power, this.state.current_power);
-      let state = this.state;
-      state.power = Variables.clone(PowerTemplate);
-      state.current_power = false;
-      this.setState( state );
+      // this.props.onIncludePower(this.state.power, this.state.current_power);
+      // let state = this.state;
+      // state.power = Variables.clone(PowerTemplate);
+      // state.current_power = false;
+      // this.setState( state );
     }
     
   }
@@ -82,20 +84,18 @@ class PowersForm extends Component {
 
   handleWeaponChange = (event, index) => {
     let weapons = this.props.weapons;
-    let state = this.state;
-    state.power.weapon = index;
+    let power = this.props.power;
+    power.weapon = index;
     let _weapon = this.props.availableWeapons.find(function(w, i){ return w._id === weapons[index] });
 
     if(_weapon.damage.die === undefined) {
       let damage = _weapon.damage.split('d');
-      state.power.damage.die = `d${damage[1]}`;
-      state.power.damage.num = damage[0];
+      this.boundPowerAC.changeDieType( `d${damage[1]}` );
+      this.boundPowerAC.changeDieNumber( damage[0] );
     } else {
-      state.power.damage.die = _weapon.damage.die;
-      state.power.damage.num = _weapon.damage.num;
+      this.boundPowerAC.changeDieType( _weapon.damage.die );
+      this.boundPowerAC.changeDieNumber( _weapon.damage.num );
     }
-
-    this.setState( state );
   }
 
   handleRechargeChange = (event, index) => {

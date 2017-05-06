@@ -26,7 +26,7 @@ const powersReducer = function(state = initialState, action) {
         power = Variables.clone(PowerTemplate);
         current_power = false;
       } else {
-        power = state.existingPowers[action.index-1];
+        power = Variables.clone(state.existingPowers[action.index-1]);
         current_power = action.index;
       }
 
@@ -36,7 +36,7 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.ADD_TO_POWERS:
-      powers = state.existingPowers;
+      powers = Variables.clone(state.existingPowers);
       if(action.power._id !== undefined && action.power._id !== false){
         let _i = powers.findIndex(function(p) { return p._id === action.power._id});
         powers[_i] = action.power;
@@ -49,7 +49,7 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.RESET_CURRENT_POWER:
-      power = state.power;
+      power = Variables.clone(state.power);
       power._id = false;
 
       return Object.assign({}, state, {
@@ -58,7 +58,7 @@ const powersReducer = function(state = initialState, action) {
       });
     
     case types.CHANGE_DIE_TYPE:
-      power = state.power;
+      power = Variables.clone(state.power);
       power.damage.die = Die[action.index].label;
 
       return Object.assign({}, state, {
@@ -66,7 +66,7 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.CHANGE_DIE_NUMBER:
-      power = state.power;
+      power = Variables.clone(state.power);
       power.damage.num = action.quantity;
 
       return Object.assign({}, state, {
@@ -74,7 +74,7 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.CHANGE_DIE_MODIFIER:
-      power = state.power;
+      power = Variables.clone(state.power);
       power.damage.modifier = action.modifier;
       
       return Object.assign({}, state, {
@@ -82,7 +82,7 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.UPDATE_KEY:
-      power = state.power;
+      power = Variables.clone(state.power);
       power[ action.key ] = action.value;
       
       return Object.assign({}, state, {
@@ -90,7 +90,7 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.UPDATE_ATTACK:
-      power = state.power;
+      power = Variables.clone(state.power);
       power.attack[ action.key ] = action.value;
       
       return Object.assign({}, state, {

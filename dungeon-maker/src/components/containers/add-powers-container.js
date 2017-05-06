@@ -6,10 +6,6 @@ import * as powersApi from '../../api/powers-api';
 
 import * as PowerActionCreators from '../../actions/powers-actions';
 
-//console.log(PowerActionCreators);
-
-// http://redux.js.org/docs/api/bindActionCreators.html
-
 class AddPowersContainer extends Component {
 
   componentDidMount() {
@@ -17,21 +13,20 @@ class AddPowersContainer extends Component {
   }
 
   render() {
-    let { dispatch } = this.props;
-  console.log(this.props);
-    let boundPowerAC = bindActionCreators(PowerActionCreators, dispatch);
-
     return (
-      <AddPowers {...this.props} 
-        boundPowerAC={boundPowerAC} />
+      <AddPowers {...this.props} />
     );
   }
 }
 
 const mapStateToProps = function(store) {
-
   return store.powersState;
-
 };
 
-export default connect(mapStateToProps)(AddPowersContainer);
+function mapDispatchToProps(dispatch) {
+  return({
+    boundPowerAC: bindActionCreators(PowerActionCreators, dispatch)
+  })
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddPowersContainer);
