@@ -59,7 +59,7 @@ export function updateKey(key, value) {
 
 export function updateAttack(key, value) {
   return {
-    type: types.UPDATE_KEY,
+    type: types.UPDATE_ATTACK,
     key: key,
     value: value
   };
