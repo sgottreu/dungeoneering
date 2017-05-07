@@ -15,11 +15,11 @@ describe('powersReducer', function() {
   };
 
   describe('initilization', function() {
-    it('state returned if Action is not passed', function() {
+    it('powersReducer:initilization - State returned if Action is not passed', function() {
       var state = powersReducer();
       assert.isArray(state.existingPowers); // with optional message
     });
-    it('existingPowers should be empty', function() {
+    it('powersReducer:initilization - existingPowers should be empty', function() {
       var state = powersReducer();
       assert.isArray(state.existingPowers); // with optional message
     });
@@ -32,13 +32,13 @@ describe('powersReducer', function() {
       };
     var _state = powersReducer(state, action);
 
-    it('existingPowers should be an array', function() {
+    it('powersReducer:LOAD_EXISTING_POWERS - existingPowers should be an array', function() {
       assert.isArray(_state.existingPowers); // with optional message
     });
-    it('existingPowers should have length of 2', function() {
+    it('powersReducer:LOAD_EXISTING_POWERS - existingPowers should have length of 2', function() {
       assert.lengthOf(_state.existingPowers, 2, 'array has length of 2')
     });
-    it('Element[0]._id should equal 123', function() {
+    it('powersReducer:LOAD_EXISTING_POWERS - Element[0]._id should equal 123', function() {
       assert.equal(123, _state.existingPowers[0]._id); // with optional message
     });
   });

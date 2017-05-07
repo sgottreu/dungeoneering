@@ -284,15 +284,26 @@ app.post('/saveGear', function (req, res) {
 });
 
 
+// Code Coverage
+
+app.get('/coverage', function (req, res) {
+  res.sendFile(__dirname + '/coverage.html');
+});
+
+app.get('/coverage.json', function (req, res) {
+  let json = require('./dungeon-maker/coverage.json');
+  sendJSON(res, json);
+});
+
 // ************* Admin ******************//
 app.get('/admin', function (req, res) {
-  console.log('admin');
+  // console.log('admin');
    
-  EntityArmor.map(armor => {
-    armor._id = monk.id();
-    console.log(JSON.stringify(armor));
-  });
-  res.sendStatus(200);
+  // EntityArmor.map(armor => {
+  //   armor._id = monk.id();
+  //   console.log(JSON.stringify(armor));
+  // });
+  // res.sendStatus(200);
 });
 
 /*********** Global  *************/
