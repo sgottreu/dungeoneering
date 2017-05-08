@@ -10,6 +10,7 @@ var mongodb_config = (process.env.mongodb) ? process.env.mongodb : process.argv[
 mongodb_config = (!mongodb_config) ? dotenv['mongodb'] : mongodb_config;
 var mongo_url = 'mongodb://'+mongodb_config;
 var db = monk(mongo_url);
+const fs = require('fs');
 
 var app = express();
 
@@ -287,13 +288,9 @@ app.post('/saveGear', function (req, res) {
 // Code Coverage
 
 app.get('/coverage', function (req, res) {
-  res.sendFile(__dirname + '/coverage.html');
+  res.sendFile(__dirname + '/dungeon-maker/coverage/index.html');
 });
 
-app.get('/coverage.json', function (req, res) {
-  let json = require('./dungeon-maker/coverage.json');
-  sendJSON(res, json);
-});
 
 // ************* Admin ******************//
 app.get('/admin', function (req, res) {
@@ -331,11 +328,46 @@ function _Save(req, res, payload){
 	}
 }
 
+app.get('/*.css', (req, res) => {
+  fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
+    if (err) {
+      res.sendFile(__dirname + '/dungeon-maker/coverage/'+req.originalUrl);
+      //throw err;
+      return true;
+    }
+    res.sendFile(__dirname + '/dungeon-maker/public/'+req.originalUrl);
+  });  
+});
+
+app.get('/*.js', (req, res) => {
+  fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
+    if (err) {
+      res.sendFile(__dirname + '/dungeon-maker/coverage/'+req.originalUrl);
+      //throw err;
+      return true;
+    }
+    res.sendFile(__dirname + '/dungeon-maker/public/'+req.originalUrl);
+  });  
+});
+
+app.get('/*.png', (req, res) => {
+  fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
+    if (err) {
+      res.sendFile(__dirname + '/dungeon-maker/coverage/'+req.originalUrl);
+      //throw err;
+      return true;
+    }
+    res.sendFile(__dirname + '/dungeon-maker/public/'+req.originalUrl);
+  });  
+});
+
+app.get('/src/*', (req, res) => {
+  res.sendFile(__dirname + '/dungeon-maker/coverage/'+req.originalUrl);
+});
 
 app.get('*', (req, res) => {
   res.sendFile(__dirname + '/dungeon-maker/build/index.html');
 });
-
 
 
 app.listen(port, function () {
