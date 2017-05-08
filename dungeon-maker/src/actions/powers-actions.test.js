@@ -127,13 +127,43 @@ describe('updateKey', function() {
     });
   });
   describe('key', function() {
-    it('powersActions:updateKey.key |-| value should equal ranger', function() {
+    it('powersActions:updateKey.key |-| key should equal class', function() {
       assert.equal(state.key, 'class'); // with optional message
     });
   });
   describe('value', function() {
     it('powersActions:updateKey.value |-| value should equal ranger', function() {
       assert.equal(state.value, 'ranger'); // with optional message
+    });
+  });
+
+  
+});
+
+
+describe('updateAttack', function() {
+  var state = updateAttack('damage', '1d4');
+
+  it('powersActions:updateAttack |-| should be an object', function() {
+    assert.isObject(state); // with optional message
+  });
+
+  describe('type', function() {
+    it('powersActions:updateAttack.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('powersActions:updateAttack.type |-| should equal = UPDATE_ATTACK', function() {
+      assert.equal(state.type, 'UPDATE_ATTACK'); // with optional message
+    });
+  });
+  describe('key', function() {
+    it('powersActions:updateAttack.key |-| key should equal damage', function() {
+      assert.equal(state.key, 'damage'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('powersActions:updateAttack.value |-| value should equal 1d4', function() {
+      assert.equal(state.value, '1d4'); // with optional message
     });
   });
 

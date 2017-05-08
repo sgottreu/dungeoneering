@@ -288,7 +288,7 @@ app.post('/saveGear', function (req, res) {
 // Code Coverage
 
 app.get('/coverage', function (req, res) {
-  res.sendFile(__dirname + '/dungeon-maker/coverage/index.html');
+  res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/index.html');
 });
 
 
@@ -331,7 +331,7 @@ function _Save(req, res, payload){
 app.get('/*.css', (req, res) => {
   fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
     if (err) {
-      res.sendFile(__dirname + '/dungeon-maker/coverage/'+req.originalUrl);
+      res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+req.originalUrl);
       //throw err;
       return true;
     }
@@ -342,7 +342,7 @@ app.get('/*.css', (req, res) => {
 app.get('/*.js', (req, res) => {
   fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
     if (err) {
-      res.sendFile(__dirname + '/dungeon-maker/coverage/'+req.originalUrl);
+      res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+req.originalUrl);
       //throw err;
       return true;
     }
@@ -353,7 +353,7 @@ app.get('/*.js', (req, res) => {
 app.get('/*.png', (req, res) => {
   fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
     if (err) {
-      res.sendFile(__dirname + '/dungeon-maker/coverage/'+req.originalUrl);
+      //res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+req.originalUrl);
       //throw err;
       return true;
     }
@@ -362,7 +362,7 @@ app.get('/*.png', (req, res) => {
 });
 
 app.get('/src/*', (req, res) => {
-  res.sendFile(__dirname + '/dungeon-maker/coverage/'+req.originalUrl);
+  res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+req.originalUrl);
 });
 
 app.get('*', (req, res) => {
