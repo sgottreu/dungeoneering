@@ -80,4 +80,22 @@ describe('powersReducer', function() {
 
   });
 
+  describe('UPDATE_KEY', function() {
+    var action = updateKey('class', 'ranger');
+    var _state = powersReducer(state, action);
+
+    it('powersReducer:UPDATE_KEY |-| class should be "ranger"', function() {
+      assert.equal(_state.power.class, 'ranger'); // with optional message
+    });
+  });
+
+  describe('UPDATE_ATTACK', function() {
+    var action = updateAttack('damage', '1d4');
+    var _state = powersReducer(state, action);
+
+    it('powersReducer:UPDATE_ATTACK |-| attack.damage should be "1d4"', function() {
+      assert.equal(_state.power.attack.damage, '1d4'); // with optional message
+    });
+  });
+
 });
