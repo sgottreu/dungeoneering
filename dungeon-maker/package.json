@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "jest": "https://registry.npmjs.org/jest/-/jest-18.1.0.tgz",
+    "chai": "^3.5.0",
     "react-scripts": "0.9.0"
   },
   "dependencies": {
@@ -25,7 +26,8 @@
     "start": "set NODE_ENV=development && set PORT=3000 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "coverage": "npm test -- --colors --verbose --coverage --json --outputFile=coverage.json --watch",
+    "full_test": "npm test -- --colors --verbose --coverage --collectCoverageFrom=src/*.js --json --outputFile=coverage.json --watch",
+    "coverage": "node watch_coverage.js",
     "eject": "react-scripts eject"
   }
 }
