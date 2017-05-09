@@ -1,9 +1,9 @@
 const fs = require('fs');
 const cp = require('child_process');
 
-fs.watchFile('./coverage.json', function(eventType, filename){
-  // var output = cp.exec('istanbul report -r "./coverage.json"');
-  // console.log('rebuilding');
+//fs.watchFile('./coverage.json', function(eventType, filename){
+  var output = cp.exec('istanbul report -r "./coverage.json"');
+  console.log('rebuilding coverage.json');
   fs.readFile('./coverage.json', (err, data) => {
 	  if (err) throw err;
 	  var json = JSON.parse(data);
@@ -12,9 +12,11 @@ fs.watchFile('./coverage.json', function(eventType, filename){
     var coverageMap = [];
 
     for (var file of map.values()) {
-      var fullpath = file.path.replace('/Users/sgottreu/Sites/dungeoneering/dungeon-maker/', '');
-      var dirs = fullpath.split('/');
 
+      let _tmp = file.path.split('dungeon-maker'); 
+      var fullpath = _tmp[1].replace(/\\/g, "/");
+      var dirs = fullpath.split('/');
+      console.log(fullpath);
       for(var x=0;x<=dirs.length-2;x++){
         dirs[x] = "__"+dirs[x];
       }
@@ -63,9 +65,24 @@ fs.watchFile('./coverage.json', function(eventType, filename){
       console.log('The file has been saved!');
     });
   });
-});
+// });
 
+const reduce = Function.bind.call(Function.call, Array.prototype.reduce);
+const isEnumerable = Function.bind.call(Function.call, Object.prototype.propertyIsEnumerable);
+const concat = Function.bind.call(Function.call, Array.prototype.concat);
+const keys = Reflect.ownKeys;
 
+if (!Object.values) {
+	Object.values = function values(O) {
+		return reduce(keys(O), (v, k) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []), []);
+	};
+}
+
+if (!Object.entries) {
+	Object.entries = function entries(O) {
+		return reduce(keys(O), (e, k) => concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []), []);
+	};
+}
 
 // var istanbul = require('istanbul'),
 //     collector = new istanbul.Collector(),

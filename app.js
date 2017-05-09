@@ -285,11 +285,7 @@ app.post('/saveGear', function (req, res) {
 });
 
 
-// Code Coverage
 
-app.get('/coverage', function (req, res) {
-  res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/index.html');
-});
 
 
 // ************* Admin ******************//
@@ -328,10 +324,18 @@ function _Save(req, res, payload){
 	}
 }
 
-app.get('/*.css', (req, res) => {
+app.get('/reports/coverage', function (req, res) {
+  res.sendFile(__dirname + '/dungeon-maker/reports/coverage.html');
+});
+
+app.get('/reports/src/*', (req, res) => {
   fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
     if (err) {
-      res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+req.originalUrl);
+      var newPath = req.originalUrl.replace('/reports/', '');
+      newPath = newPath.replace('/', '\\');
+      newPath = (newPath.indexOf('.html') > -1) ? newPath : newPath+'.html';
+      res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+newPath);
+
       //throw err;
       return true;
     }
@@ -339,30 +343,21 @@ app.get('/*.css', (req, res) => {
   });  
 });
 
-app.get('/*.js', (req, res) => {
+app.get('/reports/*', (req, res) => {
   fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
     if (err) {
-      res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+req.originalUrl);
+      if(req.originalUrl.indexOf('/reports/data.json') > -1){
+        let json = require('./dungeon-maker/reports/data.json');
+        sendJSON(res, json);
+      } else {
+        res.sendFile(__dirname + '/dungeon-maker/'+req.originalUrl);
+      }
+     
       //throw err;
       return true;
     }
     res.sendFile(__dirname + '/dungeon-maker/public/'+req.originalUrl);
   });  
-});
-
-app.get('/*.png', (req, res) => {
-  fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
-    if (err) {
-      //res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+req.originalUrl);
-      //throw err;
-      return true;
-    }
-    res.sendFile(__dirname + '/dungeon-maker/public/'+req.originalUrl);
-  });  
-});
-
-app.get('/src/*', (req, res) => {
-  res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+req.originalUrl);
 });
 
 app.get('*', (req, res) => {
