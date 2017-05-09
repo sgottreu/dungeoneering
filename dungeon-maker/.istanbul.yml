@@ -1,10 +1,10 @@
-verbose: true
+verbose: false
 instrumentation:
     root: .
     extensions:
         - .js
-    default-excludes: true
-    excludes: []
+    default-excludes: false
+    excludes: ['**/reports/**','**/coverage/**', './watch_coverage.js']
     embed-source: false
     variable: __coverage__
     compact: true
