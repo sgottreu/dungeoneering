@@ -173,7 +173,7 @@ describe('powersReducer', function() {
     });
   });
 
-  describe('CHANGE_DIE_TYPE', function() {
+  describe('CHANGE_DIE_NUMBER', function() {
     var action = changeDieNumber(3);
     var _state = powersReducer(state, action);
 

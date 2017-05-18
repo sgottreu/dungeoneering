@@ -371,3 +371,11 @@ export var saveEntity = function(_this){
     _this.setState( state );
   });
 }
+
+
+export var calcWeaponDamage = (player, AttackModifier) => {
+	let half = HalfLevelModifier(player.level, player._type);
+	let damageMod = half + AttackModifier;
+
+	return damageMod;
+}

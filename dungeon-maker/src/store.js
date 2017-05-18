@@ -7,7 +7,7 @@ import { logger } from 'redux-logger';
         reducers,
         applyMiddleware(logger)
     );
-
+console.log(reducers);
     //const store = createStore(reducers);
 
 

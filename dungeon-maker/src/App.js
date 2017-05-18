@@ -15,7 +15,7 @@ import RunEncounter from './components/RunEncounter';
 import CreateEncounter from './components/CreateEncounter';
 import AddMonster from './components/AddMonster';
 import CreateCharacter from './components/CreateCharacter';
-import AddWeapon from './components/AddWeapon';
+import AddWeaponsContainer from './components/containers/add-weapons-container';
 import AddPowersContainer from './components/containers/add-powers-container';
 import CreateParty from './components/CreateParty';
 
@@ -45,7 +45,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(store.getState());
     return (    	
       <div className="App">
        <AppBar className="AppBar"
@@ -80,7 +79,7 @@ class App extends Component {
         <Route path="/createParty" component={CreateParty}/>
         <Route path="/createCharacter" component={CreateCharacter}/>
         <Route path="/addMonster" component={AddMonster}/>
-        <Route path="/addWeapon" component={AddWeapon}/>
+        <Route path="/addWeapon" component={() => (<AddWeaponsContainer />)} />
         <Route path="/addPowers" component={() => (<AddPowersContainer />)} />
       </div>
 

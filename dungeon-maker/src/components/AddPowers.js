@@ -4,7 +4,6 @@ import PowersForm from './PowersForm';
 
 function AddPowers( {existingPowers, current_power, power, boundPowerAC} )
 { 
-  console.log(boundPowerAC);
     return (
       <div className="AddPowers">
 		    <PowersForm entityType='character' 

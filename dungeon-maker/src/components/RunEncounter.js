@@ -9,7 +9,7 @@ import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import {DieRoll} from '../lib/Die';
-import {calcWeaponDamage} from './Weapons';
+import {calcWeaponDamage} from './EntityTemplate';
 import {_Powers} from './_Powers';
 import uuidV4  from 'uuid/v4';
 import Chip from 'material-ui/Chip';

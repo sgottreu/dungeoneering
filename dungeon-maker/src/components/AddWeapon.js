@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Die} from '../lib/Die';
 import {Variables} from '../lib/Variables';
 
-import {saveWeapon, findWeapons} from './Weapons';
+import * as weaponsApi from '../api/powers-api';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
@@ -14,9 +14,8 @@ import '../css/AddWeapon.css';
 class AddWeapon extends Component {
   constructor(props){
     super(props);
-
+console.log(this.props);
     this.handleChooseWeapon = this.handleChooseWeapon.bind(this);
-    this._setWeaponState = this._setWeaponState.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleWeaponSave = this.handleWeaponSave.bind(this);
     this.handleDieChange = this.handleDieChange.bind(this);
@@ -30,99 +29,43 @@ class AddWeapon extends Component {
     this.weaponType = ['Melee', 'Ranged', 'Both'];
     this.category = ['Simple', 'Military', 'Superior'];
     this.hands = ['One-Handed', 'Two-Handed'];
-    this.dice = Die.types.map( (die) => { return die.label } );
-
-    this.state = { 
-  		availableWeapons: [],
-  		weapon: {
-        _id: false,
-        category: "",  
-        type: "", 
-        name: "", 
-        prof: 2, 
-        damage: { die: 'd6', num: 1},
-        price: 5, 
-        weight: 2, 
-        range: '',
-        hands: 1
-      } 
-    };
   }
 
-  componentDidMount() {
-    let _this = this;    
-    findWeapons(_this) ;
-  }
-  componentWillUnmount() {
-  }
 
-  handleWeaponSave = () => saveWeapon(this);
-
-  _setWeaponState(key, value){
-    let state = this.state;
-    if(key === 'range'){
-      let range = value.split("/");
-      state.range = value;
-      state.weapon[ key ] = (value === '') ? false : { low: range[0], high: range[1] };
-    } else {
-      state.weapon[ key ] = value;
-    }
-
-    this.setState( state );
-  }
+  handleWeaponSave = () => weaponsApi.saveWeapon(this.weapon);
 
   handleChange = (event) => {
-    this._setWeaponState( event.target.name, event.target.value);
+    this.boundWeaponAC.updateKey( event.target.name, event.target.value );
   }
 
   handleDieNumChange = (event) => {
-    let state = this.state;
-    state.weapon.damage = {
-      die: state.weapon.damage.die,
-      num : event.target.value
-    };
-    this.setState( state );
+    this.boundWeaponAC.changeDieNumber( event.target.value );
   }
 
   handleDieChange = (event, index) => {
-    let state = this.state;
-    state.weapon.damage = {
-      die: Die[index].label,
-      num : state.weapon.damage.num
-    };
-    this.setState( state );
+    this.boundWeaponAC.changeDieType( index );
   }
 
   handleCategoryChange = (event, index) => {    
-    this._setWeaponState( 'category', this.category[index]);
+    this.boundWeaponAC.updateKey( 'category', this.category[index]);
   }
 
   handleHandsChange = (event, index) => {
-
-    this._setWeaponState( 'hands', this.hands[index]);
+    this.boundWeaponAC.updateKey( 'hands', this.hands[index]);
   }
 
   handleTypeChange = (event, index) => {
-    this._setWeaponState( 'type', this.weaponType[index]);
+    this.boundWeaponAC.updateKey( 'type', this.weaponType[index]);
   }
 
 
 
   handleProfChange = (event, index) => {
-    this._setWeaponState( 'prof', index+2);
+    this.boundWeaponAC.updateKey( 'prof', index+2);
   }
 
   handleChooseWeapon(event, index) {
-    let state = this.state;
-    state.weapon = this.state.availableWeapons[index];
-
-    if(state.weapon.damage.die === undefined) {
-      let damage = state.weapon.damage.split('d');
-      state.weapon.damage = { die: `d${damage[1]}`, num: damage[0] };
-    }
-    state.range = (this.state.weapon.range.low === undefined) ? '' : `${this.state.weapon.range.low}/${this.state.weapon.range.high}`;
-
-    this.setState( state );
+    this.boundWeaponAC.changeWeapon( index );
   }
 
   loadRangeField(){
@@ -132,7 +75,7 @@ class AddWeapon extends Component {
   }
 
 	render() {
-    let _weapon = this.state.weapon;
+    let _weapon = this.weapon;
     // style={Variables.getSelectListStyle(_weapon._id, this.state.availableWeapons.map( (w) => { return w._id } ))}
 		return (
 			<div className="AddWeapon">

@@ -19,7 +19,7 @@ class AddPowersContainer extends Component {
   }
 }
 
-const mapStateToProps = function(store) {
+var mapStateToProps = function(store) {
   return store.powersState;
 };
 
