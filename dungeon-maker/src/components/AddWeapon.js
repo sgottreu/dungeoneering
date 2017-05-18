@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Die} from '../lib/Die';
 import {Variables} from '../lib/Variables';
-
+import {WeaponTemplate} from '../lib/Weapons';
 import * as weaponsApi from '../api/powers-api';
 
 import MenuItem from 'material-ui/MenuItem';
@@ -14,7 +14,7 @@ import '../css/AddWeapon.css';
 class AddWeapon extends Component {
   constructor(props){
     super(props);
-console.log(this.props);
+    this.boundWeaponAC = this.props.boundWeaponAC;
     this.handleChooseWeapon = this.handleChooseWeapon.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleWeaponSave = this.handleWeaponSave.bind(this);
@@ -68,22 +68,24 @@ console.log(this.props);
     this.boundWeaponAC.changeWeapon( index );
   }
 
-  loadRangeField(){
+  loadRangeField(weapon){
     return (
-      <TextField className="shortField" floatingLabelText="Range" type="text" value={this.state.range} name="range" onChange={this.handleChange} />
+      <TextField className="shortField" floatingLabelText="Range" type="text" value={weapon.range} name="range" onChange={this.handleChange} />
     );
   }
 
 	render() {
-    let _weapon = this.weapon;
-    // style={Variables.getSelectListStyle(_weapon._id, this.state.availableWeapons.map( (w) => { return w._id } ))}
+    let _weapon = this.props.weapon;
+    let availableWeapons = this.props.availableWeapons;
+    // style={Variables.getSelectListStyle(_weapon._id, this.props.availableWeapons.map( (w) => { return w._id } ))}
 		return (
 			<div className="AddWeapon">
         <SelectField  floatingLabelText="Choose Weapon" value={_weapon._id} onChange={this.handleChooseWeapon} >
-          {this.state.availableWeapons.map( (weapon, index) => {
+          <MenuItem key={0} value={0} primaryText="Add New Power" />
+          {availableWeapons.map( (weapon, index) => {
             let die = (weapon.damage.die === undefined) ? weapon.damage : `${weapon.damage.num}${weapon.damage.die}`;
             return (
-              <MenuItem key={index} value={weapon._id} primaryText={`${weapon.name} - ${die}`} />
+              <MenuItem key={index+1} value={weapon._id} primaryText={`${weapon.name} - ${die}`} />
             );
           })}
         </SelectField>
@@ -114,13 +116,13 @@ console.log(this.props);
         <div className="damage">
           <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_weapon.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
           <SelectField style={ { position: 'relative', top: 15 } } floatingLabelText="Damage" name="damage_die" value={_weapon.damage.die}  onChange={this.handleDieChange} >
-            {Die.map( (die, index) => (
+            {Die.types.map( (die, index) => (
               <MenuItem key={index} value={`${die.label}`} primaryText={`${die.label}`} />
             ))}
           </SelectField>
         </div>
         <br/>
-        {(_weapon.type === 'Ranged' || _weapon.type === 'Both') ? this.loadRangeField() : ''}        
+        {(_weapon.type === 'Ranged' || _weapon.type === 'Both') ? this.loadRangeField(_weapon) : ''}        
         <TextField className="shortField" floatingLabelText="Price"      type="number" value={_weapon.price}      name="price"      onChange={this.handleChange} />
         <TextField className="shortField" floatingLabelText="Weight"      type="number" value={_weapon.weight}      name="weight"      onChange={this.handleChange} />
         <br/>
