@@ -6,7 +6,7 @@ import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize
 
 import {Variables} from '../lib/Variables';
 import {_Powers} from './_Powers';
-import {findWeapons} from './Weapons';
+import * as weaponsApi from '../api/weapons-api';
 import PowersForm from './PowersForm';
 
 import EntityChooser from './EntityChooser';
@@ -107,7 +107,7 @@ class EntityForm extends Component {
       this.findPowers();
     }
     findEntity(this);
-    findWeapons(this);
+    weaponsApi.findWeapons();
   }
 
   handleObjMouseOver = (obj, _type, eve) => {
