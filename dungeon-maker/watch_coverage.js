@@ -16,7 +16,7 @@ const cp = require('child_process');
       let _tmp = file.path.split('dungeon-maker'); 
       var fullpath = _tmp[1].replace(/\\/g, "/");
       var dirs = fullpath.split('/');
-      console.log(fullpath);
+
       for(var x=0;x<=dirs.length-2;x++){
         dirs[x] = "__"+dirs[x];
       }
@@ -34,15 +34,15 @@ const cp = require('child_process');
         file: dirs[dirs.length-1],
         statements: {
           total: _statements.length,
-          covered: _statements.reduce(function(acc, val) { return acc + ((val > 0) ? 1 : 0) }, 0)
+          covered: _statements.reduce(function(acc, val) { let newVal = (val > 0) ? 1 : 0; return acc + newVal; }, 0)
         },
         functions: {
           total: _functions.length,
-          covered: _functions.reduce(function(acc, val) { return acc + ((val > 0) ? 1 : 0) }, 0)
+          covered: _functions.reduce(function(acc, val) { let newVal = (val > 0) ? 1 : 0; return acc + newVal; }, 0)
         },
         branches: {
           total: _branches.length,
-          covered: _branches.reduce(function(acc, val) { return acc + ((val > 0) ? 1 : 0) }, 0)
+          covered: _branches.reduce(function(acc, val) { let newVal = (val > 0) ? 1 : 0; return acc + newVal; }, 0)
         }
       });
     }

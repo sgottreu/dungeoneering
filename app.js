@@ -324,9 +324,9 @@ function _Save(req, res, payload){
 	}
 }
 
-app.get('/reports/coverage', function (req, res) {
-  res.sendFile(__dirname + '/dungeon-maker/reports/coverage.html');
-});
+// app.get('/reports/coverage', function (req, res) {
+//   res.sendFile(__dirname + '/dungeon-maker/reports/coverage.html');
+// });
 
 app.get('/reports/src/*', (req, res) => {
   fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {

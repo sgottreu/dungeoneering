@@ -26,7 +26,7 @@
     "start": "set NODE_ENV=development && set PORT=3000 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "full_test": "npm test -- --colors --coverage --json --outputFile=coverage.json --updateSnapshot",
+    "full_test": "npm test -- --colors --coverage --verbose --json --outputFile=coverage.json --updateSnapshot",
     "coverage": "node watch_coverage.js",
     "eject": "react-scripts eject"
   }
