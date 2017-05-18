@@ -63,7 +63,7 @@ const powersReducer = function(state = initialState, action) {
     
     case types.CHANGE_DIE_TYPE:
       power = Variables.clone(state.power);
-      power.damage.die = Die[action.index].label;
+      power.damage.die = Die.types[action.index].label;
 
       return Object.assign({}, state, {
         power: power

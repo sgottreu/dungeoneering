@@ -30,7 +30,7 @@ class AddWeapon extends Component {
     this.weaponType = ['Melee', 'Ranged', 'Both'];
     this.category = ['Simple', 'Military', 'Superior'];
     this.hands = ['One-Handed', 'Two-Handed'];
-    this.dice = Die.map( (die) => { return die.label } );
+    this.dice = Die.types.map( (die) => { return die.label } );
 
     this.state = { 
   		availableWeapons: [],
