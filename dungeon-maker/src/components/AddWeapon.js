@@ -102,7 +102,7 @@ class AddWeapon extends Component {
 		return (
 			<div className="AddWeapon">
         <SelectField  floatingLabelText="Choose Weapon" value={_i+1} onChange={this.handleChooseWeapon} >
-          <MenuItem key={0} value={0} primaryText="Add New Power" />
+          <MenuItem key={0} value={0} primaryText="Add New Weapon" />
           {availableWeapons.map( (w, index) => {
             let die = (w.damage.die === undefined) ? w.damage : `${w.damage.num}${w.damage.die}`;
             return (
@@ -114,21 +114,21 @@ class AddWeapon extends Component {
         <TextField className="" floatingLabelText="Name"      type="text" value={_weapon.name}      name="name"      onChange={this.handleChange} />
         <br/>
         <div className="damage">
-        <SelectField style={Variables.getSelectListStyle(_weapon.category, this.category)} floatingLabelText="Category" value={_weapon.category}  onChange={this.handleCategoryChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Category" value={_weapon.category}  onChange={this.handleCategoryChange} >
           <MenuItem key={0} value={'Simple'} primaryText='Simple' />
           <MenuItem key={1} value={'Military'} primaryText='Military' />
           <MenuItem key={2} value={'Superior'} primaryText='Superior' />
         </SelectField>
-        <SelectField style={Variables.getSelectListStyle(_weapon.type, this.weaponType)} floatingLabelText="Type" value={_weapon.type}  onChange={this.handleTypeChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Type" value={_weapon.type}  onChange={this.handleTypeChange} >
           {this.weaponType.map( (type, index) => (
             <MenuItem key={index} value={type} primaryText={type} />
           ))}          
         </SelectField>
-        <SelectField style={Variables.getSelectListStyle(_weapon.hands, this.hands)} floatingLabelText="Hands" value={_weapon.hands}  onChange={this.handleHandsChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Hands" value={_weapon.hands}  onChange={this.handleHandsChange} >
           <MenuItem key={0} value={'One-Handed'} primaryText='One-Handed' />
           <MenuItem key={1} value={'Two-Handed'} primaryText='Two-Handed' />
         </SelectField>
-        <SelectField style={Variables.getSelectListStyle(_weapon.prof, [2,3])} floatingLabelText="Proficiency" value={_weapon.prof}  onChange={this.handleProfChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Proficiency" value={_weapon.prof}  onChange={this.handleProfChange} >
           <MenuItem key={0} value={2} primaryText='+2' />
           <MenuItem key={1} value={3} primaryText='+3' />
         </SelectField>
@@ -136,7 +136,7 @@ class AddWeapon extends Component {
         <br/>
         <div className="damage">
           <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_weapon.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
-          <SelectField style={ { position: 'relative', top: 15 } } floatingLabelText="Damage" name="damage_die" value={_weapon.damage.die}  onChange={this.handleDieChange} >
+          <SelectField className="bottomAlign" floatingLabelText="Damage" name="damage_die" value={_weapon.damage.die}  onChange={this.handleDieChange} >
             {Die.types.map( (die, index) => (
               <MenuItem key={index} value={`${die.label}`} primaryText={`${die.label}`} />
             ))}

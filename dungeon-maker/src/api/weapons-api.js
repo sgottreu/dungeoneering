@@ -12,7 +12,6 @@ export var findWeapons = () => {
 export var saveWeapon = (weapon) => {
   axios.post(`${Variables.host}/saveWeapon`, weapon)
   .then(res => {
-    store.dispatch(editAvailableWeapons(weapon));
+    store.dispatch(editAvailableWeapons(res.data));
   }); 
 };
-
