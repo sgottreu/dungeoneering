@@ -9,12 +9,9 @@ const rootReducer = combineReducers({
   powersState: powersReducer
 });
 
-    const store = createStore(
-        rootReducer,
-        applyMiddleware(logger)
-    );
-console.log(store.getState());
-    //const store = createStore(reducers);
-
+const store = createStore(
+  rootReducer,
+  applyMiddleware(logger)
+);
 
 export default store;

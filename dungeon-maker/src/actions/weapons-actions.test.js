@@ -1,10 +1,10 @@
 var assert = require('chai').assert;
 
 import * as types from './action-types';
-import { loadAvailableWeapons, editAvailableWeapons, changeWeapon, changeDieType, changeDieNumber, updateKey } from './weapons-actions';
+import { loadAvailableWeapons, editAvailableWeapons, changeWeapon, changeDieType, changeDieNumber, updateKey, updateRange } from './weapons-actions';
 
 var weapons = [ {_id: 123, name: "Short Sword"}, {_id:456} ];
-var weapon = { _id: 123 };
+var weapon = { _id: 123, name: "Short Sword" };
 
 describe('loadAvailableWeapons', function() {
 
@@ -30,26 +30,25 @@ describe('loadAvailableWeapons', function() {
 });
 
 describe('editAvailableWeapons', function() {
-
-  var state = editAvailableWeapons(weapons);
-
-  describe('type', function() {
-    
-    it('weaponsActions:editAvailableWeapons.type |-| should exist', function() {
-		  assert.isString(state.type); // with optional message
-    });
-    it('weaponsActions:editAvailableWeapons.type |-| should equal EDIT_AVAILABLE_WEAPONS', function() {
-      assert.equal('EDIT_AVAILABLE_WEAPONS', state.type); // with optional message
-    });
+  var state;
+  beforeEach(function() {
+    state = editAvailableWeapons(weapon);
   });
-  describe('weapons', function() {
-    it('weaponsActions:editAvailableWeapons.weapons |-| should be an Object()', function() {
-      assert.isObject(state.weapon); // with optional message
-    });
-    it('weaponsActions:editAvailableWeapons.weapons |-| Element[0]._id should equal 123', function() {
-      assert.equal('War Hammer', state.weapon[0].name); // with optional message
-    });
+
+  it('weaponsActions:editAvailableWeapons.type |-| should exist', function() {
+	  assert.isString(state.type); // with optional message
   });
+  it('weaponsActions:editAvailableWeapons.type |-| should equal EDIT_AVAILABLE_WEAPONS', function() {
+    assert.equal('EDIT_AVAILABLE_WEAPONS', state.type); // with optional message
+  });
+
+  it('weaponsActions:editAvailableWeapons.weapon |-| should be an Object()', function() {
+    assert.isObject(state.weapon); // with optional message
+  });
+  it('weaponsActions:editAvailableWeapons.weapons |-| Element[0]._id should equal 123', function() {
+    assert.equal('Short Sword', state.weapon.name); // with optional message
+  });
+
 });
 
 describe('changeWeapon', function() {
@@ -136,4 +135,25 @@ describe('updateKey', function() {
   
 });
 
+describe('updateRange', function() {
+  var state = updateRange('low', 10);
+
+  describe('type', function() {
+    it('weaponsActions:updateRange.type |-| should equal = UPDATE_RANGE', function() {
+      assert.equal(state.type, 'UPDATE_RANGE'); // with optional message
+    });
+  });
+  describe('key', function() {
+    it('weaponsActions:updateRange.key |-| key should equal low', function() {
+      assert.equal(state.key, 'low'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('weaponsActions:updateRange.value |-| value should equal 10', function() {
+      assert.equal(state.value, 10); // with optional message
+    });
+  });
+
+  
+});
 
