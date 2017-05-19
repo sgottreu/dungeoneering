@@ -11,7 +11,7 @@ export var Die =
 
     dieRoll: (uBound, rnd=[]) => {
         let rolls = [];
-        let len = (rnd.length == 0) ? 5 : rnd.length;
+        let len = (rnd.length === 0) ? 5 : rnd.length;
         for( var x=0;x<len;x++){
             let random = (rnd[x] !== undefined) ? rnd[x] : Die.getRandomRoll();
             rolls.push( ( Math.floor( random * uBound ) ) );

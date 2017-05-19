@@ -100,10 +100,9 @@ const powersReducer = function(state = initialState, action) {
       return Object.assign({}, state, {
         power: power
       });
+    default:
+      return state;
   }
-
-  return state;
-
 }
 
 export default powersReducer;
