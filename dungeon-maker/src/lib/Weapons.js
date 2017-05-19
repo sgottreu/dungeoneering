@@ -1,5 +1,3 @@
-import { loadAvailableWeapons } from '../actions/weapons-actions';
-
 export var WeaponTemplate = {
 	_id: false,
 	category: "",  

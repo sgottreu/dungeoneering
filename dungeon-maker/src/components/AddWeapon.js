@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import {Die} from '../lib/Die';
-import {Variables} from '../lib/Variables';
-import {WeaponTemplate} from '../lib/Weapons';
 import * as weaponsApi from '../api/weapons-api';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import '../css/AddWeapon.css';
 
@@ -106,7 +105,7 @@ class AddWeapon extends Component {
           {availableWeapons.map( (w, index) => {
             let die = (w.damage.die === undefined) ? w.damage : `${w.damage.num}${w.damage.die}`;
             return (
-              <MenuItem key={index+1} value={index+1} primaryText={`${w.name}`} />
+              <MenuItem key={index+1} value={index+1} primaryText={`${w.name} - ${die}`} />
             );
           })}
         </SelectField>
@@ -151,6 +150,11 @@ class AddWeapon extends Component {
         <RaisedButton primary={true}
           label="Save Weapon"
           onTouchTap={this.handleWeaponSave}
+        />
+        <Snackbar
+          open={this.state.snackbarOpen}
+          message={this.state.snackbarMsg}
+          autoHideDuration={4000}            
         />
 			</div>
 		);

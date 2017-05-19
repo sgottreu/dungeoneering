@@ -89,9 +89,11 @@ const weaponsReducer = function(state = initialState, action) {
         weapon: weapon
       });
 
+    default:
+      return state;    
   }
 
-  return state;
+  
 
 }
 
