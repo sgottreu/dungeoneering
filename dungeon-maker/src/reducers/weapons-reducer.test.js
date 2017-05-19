@@ -7,14 +7,16 @@ import {Die} from '../lib/Die';
 
 import weaponsReducer from './weapons-reducer';
 
-import { loadAvailableWeapons, editAvailableWeapons, changeWeapon, changeDieType, changeDieNumber, updateKey } from '../actions/weapons-actions';
+import { loadAvailableWeapons, editAvailableWeapons, changeWeapon, changeDieType, changeDieNumber, updateKey, updateRange } from '../actions/weapons-actions';
 
 var state = {
   availableWeapons: [],
   weapon: Variables.clone(WeaponTemplate)
 };
 
-const weapons = [ {_id: 123, name: 'Short Sword'}, {_id: 456, name: 'Long Bow'} ];
+const weapons = [ 
+                  {_id: 123, name: 'Short Sword', damage: { die: '1d6', num: 1}}, 
+                  {_id: 456, name: 'Long Bow', damage: { die: '1d6', num: 1}} ];
 
 
 describe('weaponsReducer', function() {
@@ -34,7 +36,7 @@ describe('weaponsReducer', function() {
   describe('non-existant reducer', function() {
     it('weaponsReducer:non-existant reducer |-| State returned if Action is not found', function() {
       var _state = weaponsReducer(Variables.clone(state), "NULL");
-      assert.equal(_state.weapon._id, undefined); // with optional message
+      assert.equal(_state.weapon._id, false); // with optional message
     });
 
   });
@@ -112,36 +114,58 @@ describe('weaponsReducer', function() {
 
 
   describe('CHANGE_WEAPON', function() {
-    var _state = Object.assign({}, state);
-    _state.availableWeapons = weapons;
+    var weapon, action, test;
+    
+    beforeEach(function() {
+      state = {
+        availableWeapons: weapons,
+        weapon: Variables.clone(WeaponTemplate)
+      };
+    });
 
     it('weaponsReducer:CHANGE_WEAPON |-| change weapon._id: false to 123', function() {
-      var action = changeWeapon( 1 );
-      _state = weaponsReducer(_state, action);      
-      assert.equal(_state.weapon._id, 123); // with optional message
+      action = changeWeapon( 1 );
+      state = weaponsReducer(state, action);      
+      assert.equal(state.weapon._id, 123); // with optional message
     });
   
     it('weaponsReducer:CHANGE_WEAPON |-| change weapon._id: 123 to false', function() {
-      var action = changeWeapon( 1 );
-      _state = weaponsReducer(_state, action);
+      action = changeWeapon( 1 );
+      state = weaponsReducer(state, action);
 
       action = changeWeapon( 0 );
-      _state = weaponsReducer(_state, action);      
-      assert.equal(_state.weapon._id, undefined); // with optional message
+      state = weaponsReducer(state, action);      
+      assert.equal(state.weapon._id, false); // with optional message
     });
 
   });
 
 
   describe('UPDATE_KEY', function() {
-    var action = updateKey('name', 'Sword');
-    var _state = weaponsReducer(Variables.clone(state), action);
+    var state, action;
+
+    beforeEach(function() {
+      state = {
+        availableWeapons: [],
+        weapon: Variables.clone(WeaponTemplate)
+      };
+      action = updateKey('name', 'Sword');
+      state = weaponsReducer(state, action);
+    });
 
     it('weaponsReducer:UPDATE_KEY |-| name should be "Sword"', function() {
-      assert.equal(_state.weapon.name, 'Sword'); // with optional message
+      assert.equal(state.weapon.name, 'Sword'); // with optional message
     });
   });
 
+  describe('UPDATE_RANGE', function() {
+    var action = updateRange('low', 10);
+    var _state = weaponsReducer(state, action);
+
+    it('weaponsReducer:UPDATE_RANGE |-| range.low should be 10', function() {
+      assert.equal(_state.weapon.range.low, 10); // with optional message
+    });
+  });
 
 
   describe('CHANGE_DIE_TYPE', function() {
@@ -161,7 +185,5 @@ describe('weaponsReducer', function() {
       assert.equal(_state.weapon.damage.num, 3); // with optional message
     });
   });
-
-
 
 });

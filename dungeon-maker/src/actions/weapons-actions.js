@@ -42,3 +42,11 @@ export function updateKey(key, value) {
     value: value
   };
 }
+
+export function updateRange(key, value) {
+  return {
+    type: types.UPDATE_RANGE,
+    key: key,
+    value: value
+  };
+}

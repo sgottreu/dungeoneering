@@ -77,6 +77,13 @@ const weaponsReducer = function(state = initialState, action) {
         weapon: weapon
       });
 
+    case types.UPDATE_RANGE:
+      weapon = Variables.clone(state.weapon);
+      weapon.range[ action.key ] = action.value;
+      
+      return Object.assign({}, state, {
+        weapon: weapon
+      });
 
   }
 

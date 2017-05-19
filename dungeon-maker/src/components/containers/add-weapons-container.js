@@ -13,7 +13,6 @@ class AddWeaponsContainer extends Component {
   }
 
   render() {
-    console.log(this.props);
     return (
       <AddWeapon {...this.props} />
     );
@@ -21,9 +20,6 @@ class AddWeaponsContainer extends Component {
 }
 
 const mapStateToProps = function(store) {
-  if(store.weaponsState === undefined){
-      store.weaponsState = {};
-  }
   return store.weaponsState;
 };
 

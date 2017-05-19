@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Die} from '../lib/Die';
 import {Variables} from '../lib/Variables';
 import {WeaponTemplate} from '../lib/Weapons';
-import * as weaponsApi from '../api/powers-api';
+import * as weaponsApi from '../api/weapons-api';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
@@ -17,6 +17,7 @@ class AddWeapon extends Component {
     this.boundWeaponAC = this.props.boundWeaponAC;
     this.handleChooseWeapon = this.handleChooseWeapon.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleRangeChange = this.handleRangeChange.bind(this);
     this.handleWeaponSave = this.handleWeaponSave.bind(this);
     this.handleDieChange = this.handleDieChange.bind(this);
     this.handleDieNumChange = this.handleDieNumChange.bind(this);
@@ -29,13 +30,29 @@ class AddWeapon extends Component {
     this.weaponType = ['Melee', 'Ranged', 'Both'];
     this.category = ['Simple', 'Military', 'Superior'];
     this.hands = ['One-Handed', 'Two-Handed'];
+
+    this.state = {
+      snackbarOpen: false,
+      snackbarMsg: ''
+    }
   }
 
 
-  handleWeaponSave = () => weaponsApi.saveWeapon(this.weapon);
+  handleWeaponSave = () => {
+    let weapon = this.props.weapon;
+    weaponsApi.saveWeapon(weapon);
+    this.setState( {
+      snackbarOpen: true,
+      snackbarMsg: (weapon._id) ? 'Weapon Updated' : 'Weapon Added'
+    });
+  }
 
   handleChange = (event) => {
     this.boundWeaponAC.updateKey( event.target.name, event.target.value );
+  }
+
+  handleRangeChange = (event) => {
+    this.boundWeaponAC.updateRange( event.target.name, event.target.value );
   }
 
   handleDieNumChange = (event) => {
@@ -70,22 +87,26 @@ class AddWeapon extends Component {
 
   loadRangeField(weapon){
     return (
-      <TextField className="shortField" floatingLabelText="Range" type="text" value={weapon.range} name="range" onChange={this.handleChange} />
+      <div>
+        <label>Range</label>
+        <TextField className="shortField" floatingLabelText="Low" type="text" value={weapon.range.low} name="low" onChange={this.handleRangeChange} />
+        <TextField className="shortField" floatingLabelText="High" type="text" value={weapon.range.high} name="high" onChange={this.handleRangeChange} />
+      </div>
     );
   }
 
 	render() {
     let _weapon = this.props.weapon;
     let availableWeapons = this.props.availableWeapons;
-    // style={Variables.getSelectListStyle(_weapon._id, this.props.availableWeapons.map( (w) => { return w._id } ))}
+    let _i = availableWeapons.findIndex( (w, index) => { return w._id === _weapon._id });
 		return (
 			<div className="AddWeapon">
-        <SelectField  floatingLabelText="Choose Weapon" value={_weapon._id} onChange={this.handleChooseWeapon} >
+        <SelectField  floatingLabelText="Choose Weapon" value={_i+1} onChange={this.handleChooseWeapon} >
           <MenuItem key={0} value={0} primaryText="Add New Power" />
-          {availableWeapons.map( (weapon, index) => {
-            let die = (weapon.damage.die === undefined) ? weapon.damage : `${weapon.damage.num}${weapon.damage.die}`;
+          {availableWeapons.map( (w, index) => {
+            let die = (w.damage.die === undefined) ? w.damage : `${w.damage.num}${w.damage.die}`;
             return (
-              <MenuItem key={index+1} value={weapon._id} primaryText={`${weapon.name} - ${die}`} />
+              <MenuItem key={index+1} value={index+1} primaryText={`${w.name}`} />
             );
           })}
         </SelectField>
