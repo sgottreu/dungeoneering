@@ -1,6 +1,6 @@
 import * as types from '../actions/action-types';
 import {Variables} from '../lib/Variables';
-import {WeaponTemplate} from '../lib/Weapons';
+import {WeaponTemplate, sortWeapons} from '../lib/Weapons';
 import {Die} from '../lib/Die';
 
 const initialState = {
@@ -18,21 +18,25 @@ const weaponsReducer = function(state = initialState, action) {
 
   switch(action.type) {
     case types.LOAD_AVAILABLE_WEAPONS:
+      action.weapons = sortWeapons(action.weapons);
       return Object.assign({}, state, {
         availableWeapons: action.weapons
       });
 
     case types.EDIT_AVAILABLE_WEAPONS:
       availableWeapons = state.availableWeapons;
-      if(action.weapon._id === undefined){
+
+      let _i = availableWeapons.findIndex( (w) => { return w._id === action.weapon._id });
+
+      if(_i === -1){
         availableWeapons.push(action.weapon);
-      } else {
-        let _i = availableWeapons.findIndex( (w) => { return w._id === action.weapon._id });
+      } else {        
         availableWeapons[_i] = action.weapon;
       }
-
+      availableWeapons = sortWeapons(availableWeapons);
       return Object.assign({}, state, {
-        availableWeapons: availableWeapons
+        availableWeapons: availableWeapons,
+        weapon: Variables.clone(WeaponTemplate)
       });
 
     case types.CHANGE_WEAPON:

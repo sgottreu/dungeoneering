@@ -523,23 +523,10 @@ class EntityForm extends Component {
     let _this = this;
     let listStyle = { height: '150px', width: '250px', overflowY: 'scroll' };
 
-    this.state.availableWeapons.sort(function(a, b) {
-      var nameA = a.name.toUpperCase(), nameB = b.name.toUpperCase(); // ignore upper and lowercase
-      if (nameA < nameB) {
-        return -1;
-      } else {
-        if (nameA > nameB) {
-          return 1;
-        }
-      }
-      return 0;
-    });
-
     let selWeapons = this.state.availableWeapons.filter(function(val){ 
       return _this.state.entity.weapons.includes(val._id);
     });
     let remWeapons = this.state.availableWeapons.filter(function(val){ return !_this.state.entity.weapons.includes(val._id) });
-
 
     return(
       <div className="container">

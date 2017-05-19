@@ -15,8 +15,8 @@ var state = {
 };
 
 const weapons = [ 
-                  {_id: 123, name: 'Short Sword', damage: { die: '1d6', num: 1}}, 
-                  {_id: 456, name: 'Long Bow', damage: { die: '1d6', num: 1}} ];
+                  {_id: 123, name: 'Short Sword', damage: { die: 'd6', num: 1}}, 
+                  {_id: 456, name: 'Long Bow', damage: { die: 'd6', num: 1}} ];
 
 
 describe('weaponsReducer', function() {
@@ -60,8 +60,8 @@ describe('weaponsReducer', function() {
     it('weaponsReducer:LOAD_AVAILABLE_WEAPONS |-| loadAvailableWeapons should have length of 2', function() {
       assert.lengthOf(_state.availableWeapons, 2, 'array has length of 2')
     });
-    it('weaponsReducer:LOAD_AVAILABLE_WEAPONS |-| Element[0].name should equal "Short Sword"', function() {
-      assert.equal('Short Sword', _state.availableWeapons[0].name); // with optional message
+    it('weaponsReducer:LOAD_AVAILABLE_WEAPONS |-| Element[1].name should equal "Short Sword"', function() {
+      assert.equal('Short Sword', _state.availableWeapons[1].name); // with optional message
     });
   });
  
@@ -74,17 +74,16 @@ describe('weaponsReducer', function() {
           availableWeapons: weapons,
           weapon: Variables.clone(WeaponTemplate)
         };
-        weapon = {_id: 456, name: 'Cross Bow'};
+        weapon = {_id: 456, name: 'Cross Bow', damage: { die: 'd6', num: 1}};
         action = editAvailableWeapons( weapon );
         test = weaponsReducer(state, action);
       });
 
- 
       it('weaponsReducer:EDIT_AVAILABLE_WEAPONS |-| editAvailableWeapons should remain length of 2', function() {
         assert.lengthOf(test.availableWeapons, 2, 'array has length of 2')
       });
-      it('weaponsReducer:EDIT_AVAILABLE_WEAPONS |-| Element[1].name should equal "Cross Bow"', function() {
-        assert.equal('Cross Bow', test.availableWeapons[1].name); // with optional message
+      it('weaponsReducer:EDIT_AVAILABLE_WEAPONS |-| Element[0].name should equal "Cross Bow"', function() {
+        assert.equal('Cross Bow', test.availableWeapons[0].name); // with optional message
       });
     });
 
@@ -96,7 +95,7 @@ describe('weaponsReducer', function() {
           availableWeapons: weapons,
           weapon: Variables.clone(WeaponTemplate)
         };
-        weapon = {name: 'War Hammer'};
+        weapon = { _id: false, name: 'War Hammer', damage: { die: 'd6', num: 1} };
         action = editAvailableWeapons( weapon );
         test = weaponsReducer(state, action);
       });
@@ -106,6 +105,9 @@ describe('weaponsReducer', function() {
       });
       it('weaponsReducer:EDIT_AVAILABLE_WEAPONS |-| Element[0].name should equal "War Hammer"', function() {
         assert.equal('War Hammer', test.availableWeapons[2].name); // with optional message
+      });
+      it('weaponsReducer:EDIT_AVAILABLE_WEAPONS |-| weapon has been reset', function() {
+        assert.equal('', test.weapon.name); // with optional message
       });
     });
 
@@ -118,18 +120,22 @@ describe('weaponsReducer', function() {
     
     beforeEach(function() {
       state = {
-        availableWeapons: weapons,
+        availableWeapons: [],
         weapon: Variables.clone(WeaponTemplate)
       };
+
+      action = loadAvailableWeapons( weapons );
+      state = weaponsReducer(state, action);
     });
 
-    it('weaponsReducer:CHANGE_WEAPON |-| change weapon._id: false to 123', function() {
+    it('weaponsReducer:CHANGE_WEAPON |-| change weapon._id: false to 456', function() {
       action = changeWeapon( 1 );
-      state = weaponsReducer(state, action);      
-      assert.equal(state.weapon._id, 123); // with optional message
+      state = weaponsReducer(state, action);  
+
+      assert.equal(state.weapon._id, 456); // with optional message
     });
   
-    it('weaponsReducer:CHANGE_WEAPON |-| change weapon._id: 123 to false', function() {
+    it('weaponsReducer:CHANGE_WEAPON |-| change weapon._id: 456 to false', function() {
       action = changeWeapon( 1 );
       state = weaponsReducer(state, action);
 
@@ -138,8 +144,18 @@ describe('weaponsReducer', function() {
       assert.equal(state.weapon._id, false); // with optional message
     });
 
-  });
+    it('weaponsReducer:CHANGE_WEAPON |-| test that damage as string is converted to obj', function() {
+      weapon = {_id: 456, name: 'Long Bow', damage: '1d6'};
+      action = editAvailableWeapons( weapon );
+      test = weaponsReducer(state, action);
+      
+      action = changeWeapon( 1 );
+      state = weaponsReducer(state, action);  
 
+      assert.isObject(state.weapon.damage); // with optional message
+    });
+
+  });
 
   describe('UPDATE_KEY', function() {
     var state, action;
@@ -166,7 +182,6 @@ describe('weaponsReducer', function() {
       assert.equal(_state.weapon.range.low, 10); // with optional message
     });
   });
-
 
   describe('CHANGE_DIE_TYPE', function() {
     var action = changeDieType(3);
