@@ -24,9 +24,6 @@ class EntityTooltip extends Component {
     return (
       <List className="stats">
         <ListItem primaryText={entity.name} leftIcon={<div className={'tooltip_icon icon '+entity.iconClass} />}  />
-        {/*<ListItem primaryText={entity.level} leftIcon={<i className="fa fa-line-chart" aria-hidden="true"></i>}  />
-        <ListItem primaryText={entity.xp} leftIcon={<i className="fa fa-trophy" aria-hidden="true"></i>}  />
-        <ListItem primaryText={entity.hp} leftIcon={<i className="fa fa-heart" aria-hidden="true"></i>}  />*/}
         <ListItem primaryText={
           <div className="flex-horiz">
             <Chip key="a">

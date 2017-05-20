@@ -277,7 +277,15 @@ class DungeonMaker extends Component {
           />
           <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
-          <DungeonLoadDrawer showSave={true} onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.setDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
+          <DungeonLoadDrawer 
+            showSave={true} 
+            onHandleTitleChange={this.handleTitleChange} 
+            onChooseDungeon={this.setDungeon} 
+            selectedDungeon={selectedDungeon} 
+            onSaveDungeonGrid={this.saveDungeonGrid} 
+            foundDungeonGrids={foundDungeonGrids} 
+            dungeonTitle={this.state.title}
+          />
           {selectedDungeon !== false ? this.showDupeButton() : ''}
           {this.loadSaveMenu()}
           <Snackbar
