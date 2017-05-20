@@ -26,3 +26,9 @@
 .Target .chip, .Attacker .chip {
     margin: 5px 0px !important;
 }
+
+.EntityHolder .Entity.icon {
+  width: 75px;
+  height: 75px;
+  background-size: 75px;
+}

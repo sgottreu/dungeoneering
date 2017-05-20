@@ -18,7 +18,6 @@ class DungeonGridSlot extends Component {
   }
 
   setAttackStatus(uuid, e){
-    // this.props.onSetAttackerStatus(this.refs.attackToggle.props['data-uuid'], this.refs.attackToggle.state.switched);
     this.props.onSetAttackerStatus(uuid);
   }
 
@@ -37,7 +36,7 @@ class DungeonGridSlot extends Component {
       }
     }
 
-    let hp = true;
+    let bolHP = true;
     let combatList = this.props.combatList;
     if(combatList !== undefined){
       let cb = combatList.find(combat => { 
@@ -48,12 +47,12 @@ class DungeonGridSlot extends Component {
       });
       if(cb !== undefined){
         if(cb.hp <= 0 && entity._type === 'monster'){
-          hp = false;
+          bolHP = false;
         }
       }
     }
 
-    if(!entity || !hp){
+    if(!entity || !bolHP){
       return false;
     }    
     let style, size;

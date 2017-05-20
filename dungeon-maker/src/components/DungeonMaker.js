@@ -48,7 +48,9 @@ class DungeonMaker extends Component {
       availableMonsters: [],
       availableCharacters: [],
       drawers: {
-        tile: false
+        tile: false,
+        dungeon: false,
+        entity: false
       },
       _id: false,
       snackbarOpen: false,
@@ -275,7 +277,14 @@ class DungeonMaker extends Component {
             onSelectTile={this.selectTile} 
             selectedTile={selectedTile} 
           />
-          <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
+          <EntityDrawer 
+            entityType="monster" 
+            availableMonsters={availableMonsters} 
+            onSelectEntity={this.selectEntity} 
+            selectedEntity={selectedEntity} 
+            onOpenDrawer={this.openDrawer}
+            open={this.state.drawers.entity} 
+          />
           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
           <DungeonLoadDrawer 
             showSave={true} 
@@ -285,6 +294,8 @@ class DungeonMaker extends Component {
             onSaveDungeonGrid={this.saveDungeonGrid} 
             foundDungeonGrids={foundDungeonGrids} 
             dungeonTitle={this.state.title}
+            onOpenDrawer={this.openDrawer}
+            open={this.state.drawers.dungeon} 
           />
           {selectedDungeon !== false ? this.showDupeButton() : ''}
           {this.loadSaveMenu()}
