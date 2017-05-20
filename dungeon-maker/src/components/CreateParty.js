@@ -14,7 +14,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
 
 import { EntityClass, calcWeightPrice } from './EntityTemplate';
-// import { _Gear } from './_Gear';
 
 import axios from 'axios';
 import {Variables} from '../lib/Variables';

@@ -8,7 +8,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
-import {DieRoll} from '../lib/Die';
+import {Die} from '../lib/Die';
 import {calcWeaponDamage} from './EntityTemplate';
 import {_Powers} from './_Powers';
 import uuidV4  from 'uuid/v4';
@@ -165,7 +165,7 @@ class RunEncounter extends Component {
     _weapon = (_weapon === false) ? false : _weapon.item;
 
     //attack  { against, for, modifier}
-    let natAttackRoll = DieRoll(20);
+    let natAttackRoll = Die.dieRoll(20);
     let AttackMod = attacker.abilities[ _power.attack.for ].AttackModifier;
     let PowerMod = parseInt(_power.attack.modifier, 10);
     let Profiency = (_weapon) ? _weapon.prof : 0;
@@ -199,7 +199,7 @@ class RunEncounter extends Component {
       num = ( _damage.die === undefined) ? parseInt(die_damage[0], 10) : parseInt(_damage.num, 10);
 
       for(var i=1;i<=num;i++){
-        totalDamage += DieRoll(die);
+        totalDamage += Die.dieRoll(die);
       }
 
       state.selectedAttackers[1].damage = totalDamage;
