@@ -17,10 +17,6 @@ class DungeonGridSlot extends Component {
     this.props.onHandleObjMouseOver(entity, type, eve);
   }
 
-  componentDidMount(){
-    
-  }
-
   setAttackStatus(uuid, e){
     // this.props.onSetAttackerStatus(this.refs.attackToggle.props['data-uuid'], this.refs.attackToggle.state.switched);
     this.props.onSetAttackerStatus(uuid);
@@ -100,15 +96,6 @@ class DungeonGridSlot extends Component {
       onAddTile = function() { return false };
     }
 
-    // let bolShowDialog = false;
-    // if(entity !== undefined){
-    //   bolShowDialog = selectedAttackers.find(att => { 
-    //     if(att.status === false){
-    //       return att.uuid === entity.uuid;
-    //     }
-    //     return false;
-    //    });
-    // }
     return (
       <div ref={'tile'+slot.id} id={'_slot'+slot.id}
         className={className} data-slot={id} onClick={onAddTile.bind(this, id)}>&nbsp;
