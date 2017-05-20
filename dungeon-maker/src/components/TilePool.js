@@ -4,7 +4,7 @@ import Paper from 'material-ui/Paper';
 import Tile from './Tile';
 import '../css/TilePool.css';
 
-const TilePool = (tiles, onSelectTile, selectedTile) => {
+const TilePool = ({tiles, onSelectTile, selectedTile}) => {
   return (
     <div className="TilePool">
       {tiles.map((tile, index) => {

@@ -11,7 +11,7 @@ const Tile = ( { id, tile, onSelectTile } ) => {
 	}
 	
   return (
-    <div style={style} className={className} onClick={onSelectTile.bind(this,id)}></div>
+    <div style={style} className={className} onClick={() => {onSelectTile(id)}}></div>
   );
 	
 };

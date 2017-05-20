@@ -34,6 +34,7 @@ class DungeonMaker extends Component {
     this.duplicateDungeon = this.duplicateDungeon.bind(this);
     this.loadSaveMenu = this.loadSaveMenu.bind(this);
     this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
+    this.openDrawer = this.openDrawer.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -46,6 +47,9 @@ class DungeonMaker extends Component {
       selectedDungeon: false,
       availableMonsters: [],
       availableCharacters: [],
+      drawers: {
+        tile: false
+      },
       _id: false,
       snackbarOpen: false,
       snackbarMsg: '',
@@ -105,6 +109,12 @@ class DungeonMaker extends Component {
 
         _this.setState( {snackbarOpen: true, snackbarMsg: 'Encounter successfully saved'});
       });
+  }
+
+  openDrawer = (name, status) => {
+    let state = this.state;
+    state.drawers[ name ] = (status === undefined) ? !state.drawers[ name ] : status;
+    this.setState( state );
   }
 
   setDungeon(selectedDungeon){
@@ -258,7 +268,13 @@ class DungeonMaker extends Component {
             onSetDungeon={this.setDungeon} 
             onHandleObjMouseOver={this.handleObjMouseOver}
           />
-          <TileDrawer tiles={TileOptions} onSelectTile={this.selectTile} selectedTile={selectedTile} />
+          <TileDrawer 
+            onOpenDrawer={this.openDrawer}
+            open={this.state.drawers.tile} 
+            tiles={TileOptions} 
+            onSelectTile={this.selectTile} 
+            selectedTile={selectedTile} 
+          />
           <EntityDrawer entityType="monster" availableMonsters={availableMonsters} onSelectEntity={this.selectEntity} selectedEntity={selectedEntity} />
           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
           <DungeonLoadDrawer showSave={true} onHandleTitleChange={this.handleTitleChange} onChooseDungeon={this.setDungeon} selectedDungeon={selectedDungeon} onSaveDungeonGrid={this.saveDungeonGrid} foundDungeonGrids={foundDungeonGrids} dungeonTitle={this.state.title}/>
