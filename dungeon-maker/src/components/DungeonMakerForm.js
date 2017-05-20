@@ -6,9 +6,9 @@ import MenuItem from 'material-ui/MenuItem';
 
 const DungeonMakerForm = ({ onChooseDungeon, onSaveDungeonGrid, foundDungeonGrids, selectedDungeon }) => {
 
-	handleChange(event, index, value){
+	const handleChange = (event, index, value) => {
 		onChooseDungeon(value);
-	}
+	};
 
 	return (
 		<div className="DungeonMakerForm">
@@ -23,7 +23,7 @@ const DungeonMakerForm = ({ onChooseDungeon, onSaveDungeonGrid, foundDungeonGrid
 			</SelectField>
 		</div>
 	);
-}
+};
 
 export default DungeonMakerForm;
 
