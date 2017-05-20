@@ -31,6 +31,7 @@ class CreateEncounter extends Component {
     this.getDroppedItem = this.getDroppedItem.bind(this);
     this.moveItem = this.moveItem.bind(this);
     this.saveEncounter = this.saveEncounter.bind(this);
+    this.openDrawer = this.openDrawer.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -44,6 +45,9 @@ class CreateEncounter extends Component {
       snackbarOpen: false,
       snackbarMsg: '',
       hoverObj: false,
+      drawers: {
+        encounter: false
+      },
       mouse: {
         clientX: false,
         clientY: false
@@ -86,6 +90,12 @@ class CreateEncounter extends Component {
 
   handleMyEvent(e) {
   
+  }
+
+  openDrawer = (name, status) => {
+    let state = this.state;
+    state.drawers[ name ] = (status === undefined) ? !state.drawers[ name ] : status;
+    this.setState( state );
   }
 
   handleObjMouseOver = (obj, _type, eve) => {

@@ -45,6 +45,7 @@ class RunEncounter extends Component {
     this.pickCombatList = this.pickCombatList.bind(this);
     this.resetAttack = this.resetAttack.bind(this);
     this.closeAttackDialog = this.closeAttackDialog.bind(this);
+    this.openDrawer = this.openDrawer.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -71,6 +72,9 @@ class RunEncounter extends Component {
       partyXP: 0,
       party: false,      
       currentActor: {slot: false, roll: false},
+      drawers: {
+        encounter: false
+      },
       hoverObj: false,
       mouse: {
         clientX: false,
@@ -128,6 +132,12 @@ class RunEncounter extends Component {
   }
 
   addTile(slot) {}
+
+  openDrawer = (name, status) => {
+    let state = this.state;
+    state.drawers[ name ] = (status === undefined) ? !state.drawers[ name ] : status;
+    this.setState( state );
+  }
 
   setToMove = () => {
     let state = this.state;
@@ -545,6 +555,8 @@ class RunEncounter extends Component {
               selectedParty={selectedParty}            
               availableParties={availableParties}
               availableEncounters={availableEncounters}
+              onOpenDrawer={this.openDrawer}
+              open={this.state.drawers.encounter}
               />
             <br />
             <RaisedButton

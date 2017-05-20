@@ -24,7 +24,7 @@ const TileDrawer = ({ onSelectTile, selectedTile, onOpenDrawer, open }) => {
 		 <RaisedButton
         label="Show Tiles"
         secondary={true} 
-        onTouchTap={() => {onOpenDrawer('tile')}}
+        onTouchTap={ () => {onOpenDrawer('tile')} }
 				className="button"
       />
       <Drawer
