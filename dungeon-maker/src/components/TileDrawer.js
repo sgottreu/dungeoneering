@@ -1,7 +1,7 @@
 import React from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import Drawer from 'material-ui/Drawer';
-import TileOptions from './TileOptions';
+import TileOptions from '../lib/TileOptions';
 import TilePool from './TilePool';
 import '../css/TileDrawer.css';
 

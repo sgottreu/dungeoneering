@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Slots from './Slots.js';
 import DungeonGrid from './DungeonGrid';
-import TileOptions from './TileOptions';
+import TileOptions from '../lib/TileOptions';
 import DungeonLoadDrawer from './DungeonLoadDrawer';
 import TileDrawer from './TileDrawer';
 import EntityTooltip from './EntityTooltip';
