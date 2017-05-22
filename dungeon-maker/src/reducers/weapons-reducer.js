@@ -1,6 +1,7 @@
 import * as types from '../actions/action-types';
+import SortByKey from '../lib/SortByKey';
 import {Variables} from '../lib/Variables';
-import {WeaponTemplate, sortWeapons} from '../lib/Weapons';
+import {WeaponTemplate} from '../lib/Weapons';
 import {Die} from '../lib/Die';
 
 const initialState = {
@@ -18,7 +19,8 @@ const weaponsReducer = function(state = initialState, action) {
 
   switch(action.type) {
     case types.LOAD_AVAILABLE_WEAPONS:
-      action.weapons = sortWeapons(action.weapons);
+      action.weapons.sort(SortByKey('name'));
+
       return Object.assign({}, state, {
         availableWeapons: action.weapons
       });
@@ -33,7 +35,7 @@ const weaponsReducer = function(state = initialState, action) {
       } else {        
         availableWeapons[_i] = action.weapon;
       }
-      availableWeapons = sortWeapons(availableWeapons);
+      availableWeapons.sort(SortByKey('name'));
       return Object.assign({}, state, {
         availableWeapons: availableWeapons,
         weapon: Variables.clone(WeaponTemplate)

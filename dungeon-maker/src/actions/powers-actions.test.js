@@ -136,8 +136,6 @@ describe('updateKey', function() {
       assert.equal(state.value, 'ranger'); // with optional message
     });
   });
-
-  
 });
 
 
