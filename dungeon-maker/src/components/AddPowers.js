@@ -1,5 +1,5 @@
 import React from 'react';
-import {_Powers} from './_Powers';
+import {_Powers} from '../lib/_Powers';
 import PowersForm from './PowersForm';
 
 function AddPowers( {existingPowers, current_power, power, boundPowerAC} )

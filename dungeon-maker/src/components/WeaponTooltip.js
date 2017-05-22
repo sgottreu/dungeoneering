@@ -4,10 +4,7 @@ import TooltipChip from './TooltipChip';
 import uuidV4  from 'uuid/v4';
 import '../css/WeaponTooltip.css';
 
-const WeaponTooltip = ({
-  hoverObj,
-  mouse
-}) => {
+const WeaponTooltip = ({ hoverObj, mouse }) => {
 
   if(hoverObj === undefined){
     return false;
@@ -28,7 +25,6 @@ const WeaponTooltip = ({
 
 	return (
 		<div className={className} style={style}>
-
       <List className="stats">
         <ListItem primaryText={weapon.name} leftIcon={<div className={'tooltip_icon icon weapon_'+weapon.type.toLowerCase()} />}  />        
         {<ListItem primaryText={
@@ -40,7 +36,6 @@ const WeaponTooltip = ({
           </div>
         } />}
       </List>
-
 		</div>
 	);
 }

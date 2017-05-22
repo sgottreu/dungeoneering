@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import {_Powers} from './_Powers';
+import {_Powers} from '../lib/_Powers';
 import {EntityTemplate, EntityClass} from './EntityTemplate';
 import {Variables} from '../lib/Variables';
 import {Die} from '../lib/Die';

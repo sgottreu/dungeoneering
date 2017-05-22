@@ -10,7 +10,7 @@ import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import {Die} from '../lib/Die';
 import {calcWeaponDamage} from './EntityTemplate';
-import {_Powers} from './_Powers';
+import {_Powers} from '../lib/_Powers';
 import uuidV4  from 'uuid/v4';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
