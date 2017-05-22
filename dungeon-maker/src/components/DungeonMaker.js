@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Slots from './Slots.js';
+import Slots from '../lib/Slots.js';
 import DungeonGrid from './DungeonGrid';
 import TileOptions from '../lib/TileOptions';
 import DungeonLoadDrawer from './DungeonLoadDrawer';
@@ -11,7 +11,7 @@ import TextField from 'material-ui/TextField';
 import EntityDrawer from './EntityDrawer';
 import axios from 'axios';
 import {Variables} from '../lib/Variables';
-import {_Dungeon} from './_Dungeon';
+import * as dungeonsApi from '../api/dungeons-api';
 
 import '../css/DungeonMaker.css';
 
@@ -41,7 +41,7 @@ class DungeonMaker extends Component {
     	connectedDoor: true,
     	choosingEntrance: false,
     	choosingExit: false,
-      foundDungeonGrids: [],
+      availableDungeons: [],
       selectedDungeon: false,
       availableMonsters: [],
       availableCharacters: [],
@@ -69,7 +69,7 @@ class DungeonMaker extends Component {
 
     let _this = this;
 
-    _Dungeon.findDungeonGrids(_this);
+    dungeonsApi.findDungeon();
 
     axios.get(`${Variables.host}/findEntities`)
     .then(res => {
@@ -100,12 +100,7 @@ class DungeonMaker extends Component {
     let _this = this;
     axios.post(`${Variables.host}/saveDungeonGrids`, {slots: slots, title: title, _id: _id})
       .then(res => {
-        let fDG = _this.state.foundDungeonGrids;
-        if(!_id){
-          fDG.push({ _id: res.data._id, title: title });
-        } else {
-          fDG.map( function(grid, i){ if(grid._id === _id){ grid.title = title; } return grid;});
-        }
+        
 
         _this.setState( {snackbarOpen: true, snackbarMsg: 'Encounter successfully saved'});
       });
@@ -244,7 +239,7 @@ class DungeonMaker extends Component {
   }
 
   render() {
-    let {slots, selectedTile, foundDungeonGrids, selectedDungeon, selectedEntity, availableMonsters} = this.state;
+    let {slots, selectedTile, availableDungeons, selectedDungeon, selectedEntity, availableMonsters} = this.state;
 
     return (    	
 	      <div className="DungeonMaker">
@@ -278,7 +273,7 @@ class DungeonMaker extends Component {
             onChooseDungeon={this.setDungeon} 
             selectedDungeon={selectedDungeon} 
             onSaveDungeonGrid={this.saveDungeonGrid} 
-            foundDungeonGrids={foundDungeonGrids} 
+            availableDungeons={availableDungeons} 
             dungeonTitle={this.state.title}
             onOpenDrawer={this.openDrawer}
             open={this.state.drawers.dungeon} 

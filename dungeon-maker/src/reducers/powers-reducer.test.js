@@ -28,7 +28,7 @@ describe('powersReducer', function() {
     });
     it('powersReducer:initilization |-| existingPowers should be empty', function() {
       var _state = powersReducer();
-      assert.isArray(_state.existingPowers); // with optional message
+      assert.lengthOf(_state.existingPowers, 0, 'array has length of 0')
     });
   });
 
@@ -37,7 +37,6 @@ describe('powersReducer', function() {
       var _state = powersReducer(state, "NULL");
       assert.equal(_state.power._id, undefined); // with optional message
     });
-
   });
 
   describe('LOAD_EXISTING_POWERS', function() {

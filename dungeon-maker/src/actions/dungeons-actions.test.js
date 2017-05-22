@@ -1,7 +1,7 @@
 var assert = require('chai').assert;
 
 import * as types from './action-types';
-import { loadDungeons, setDungeon, updateKey, updateDungeonKey, updateMouseover, setSlotEntity, addTile, duplicateDungeon } from './dungeons-actions';
+import { loadDungeons, updateExistingDungeon, setDungeon, updateKey, updateDungeonKey, updateMouseover, setSlotEntity, addTile, duplicateDungeon } from './dungeons-actions';
 
 var dungeons = [ {_id: 123}, {_id: 456} ];
 var dungeon = { _id: 123 };
@@ -33,6 +33,29 @@ describe('loadDungeons', function() {
   });
 });
 
+
+describe('updateExistingDungeon', function() {
+
+  var state = updateExistingDungeon(123, 'Clearing');
+
+  describe('type', function() {
+    
+    it('dungeonsActions:updateExistingDungeon.type |-| should exist', function() {
+		  assert.isString(state.type); // with optional message
+    });
+    it('dungeonsActions:updateExistingDungeon.type |-| should equal UPDATE_EXISTING_DUNGEON', function() {
+      assert.equal('UPDATE_EXISTING_DUNGEON', state.type); // with optional message
+    });
+  });
+  describe('id', function() {
+    it('dungeonsActions:updateExistingDungeon.id |-| id should equal 123', function() {
+      assert.equal(123, state.id); // with optional message
+    });
+    it('dungeonsActions:updateExistingDungeon.title |-| title should equal `Clearing`', function() {
+      assert.equal('Clearing', state.title); // with optional message
+    });
+  });
+});
 
 describe('setDungeon', function() {
 
