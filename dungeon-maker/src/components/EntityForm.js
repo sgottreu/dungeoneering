@@ -24,6 +24,8 @@ import Toggle from 'material-ui/Toggle';
 
 import '../css/EntityForm.css';
 
+import store from '../store';
+
 class EntityForm extends Component {
   
   constructor(props){
@@ -101,13 +103,21 @@ class EntityForm extends Component {
   }
 
   componentDidMount(){
+    weaponsApi.findWeapons();
+
     let state = this.calcRemainingPoints(this.state);
     this.setState( state );
     if(this.EntityType === 'character'){
       this.findPowers();
     }
     findEntity(this);
-    weaponsApi.findWeapons();
+    
+    let _this = this;
+    setTimeout( function() {
+        let _state = store.getState();
+        _this.setState( {availableWeapons: _state.weaponsState.availableWeapons});
+    }, 2000);
+
   }
 
   handleObjMouseOver = (obj, _type, eve) => {

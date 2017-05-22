@@ -1,77 +1,48 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {List, ListItem} from 'material-ui/List';
-import Chip from 'material-ui/Chip';
-import Avatar from 'material-ui/Avatar';
+import TooltipChip from './TooltipChip';
+import uuidV4  from 'uuid/v4';
 import '../css/WeaponTooltip.css';
 
-class WeaponTooltip extends Component {
+const WeaponTooltip = ({
+  hoverObj,
+  mouse
+}) => {
 
-  constructor(props){
-    super(props);
-
-    this.loadData = this.loadData.bind(this);
+  if(hoverObj === undefined){
+    return false;
   }
+  if(!hoverObj.obj){
+    return false;
+  }
+  let weapon = hoverObj.obj;
 
-  loadData = (weapon) => {
-    if(!weapon){
-      return false;
-    }
-    let damage = (weapon.damage.die === undefined) ? weapon.damage : `${weapon.damage.num}${weapon.damage.die}`
-    let _range = (range) => {
-          if(range === false || range === ''){ return false; }
-           return ( <Chip key="G">
-              <Avatar size={32}><i className="fa fa-area-chart" aria-hidden="true"></i></Avatar>
-              {`${range.low}/${range.high}`}
-            </Chip>)
-          };
-    let handed = (weapon.hands === '' || weapon.hands === undefined) ? ()=>{} : (hands) => {
-          return ( <Chip key="H">
-              <Avatar size={32}><i className="fa fa-hand-rock-o" aria-hidden="true"></i></Avatar>
-              {`${hands}`}
-            </Chip>)
-          };
-    return (
+  let showRange = (weapon.range !== false && weapon.range !== '');
+  let showHanded = (weapon.hands !== '' && weapon.hands !== undefined);
+
+  let damage = (weapon.damage.die === undefined) ? weapon.damage : `${weapon.damage.num}${weapon.damage.die}`
+
+  let className = 'WeaponTooltip'+(weapon === false ? ' hide' : '');
+
+  let style = (mouse) ? {left: `${mouse.clientX+40}px`, top: `${mouse.clientY-80}px` } : {};
+
+	return (
+		<div className={className} style={style}>
+
       <List className="stats">
-        <ListItem primaryText={weapon.name} leftIcon={<div className={'tooltip_icon icon weapon_'+weapon.type.toLowerCase()} />}  />
-        
-        
+        <ListItem primaryText={weapon.name} leftIcon={<div className={'tooltip_icon icon weapon_'+weapon.type.toLowerCase()} />}  />        
         {<ListItem primaryText={
           <div className="flex-horiz">
-            <Chip key={0}>
-              <Avatar size={32}><i className="fa fa-usd" aria-hidden="true"></i></Avatar>
-              {weapon.price}
-            </Chip>
-            <Chip key="B">
-              <Avatar size={32}><i className="fa fa-bomb" aria-hidden="true"></i></Avatar>
-              {damage}
-            </Chip>
-            { _range(weapon.range) }
-            { handed(weapon.hands) }
+            <TooltipChip key={uuidV4()} text={`${weapon.price}`} opts={{icon: 'fa-usd'}} />  
+            <TooltipChip key={uuidV4()} text={`${damage}`} opts={{icon: 'fa-bomb'}} />  
+            <TooltipChip key={uuidV4()} text={`${weapon.range.low}/${weapon.range.high}`} opts={{show: showRange, icon: 'fa-area-chart'}} />            
+            <TooltipChip key={uuidV4()} text={`${weapon.hands}`} opts={{show: showHanded, icon: 'fa-hand-rock-o'}} />            
           </div>
         } />}
       </List>
-    );
-  }
 
-	render() {
-    let { hoverObj } = this.props;
-
-    if(hoverObj === undefined){
-      return false;
-    }
-    let weapon = hoverObj.obj;
-    let mouse = this.props.mouse;
-    let className = 'WeaponTooltip'+(weapon === false ? ' hide' : '');
-
-    let style = (mouse) ? {left: `${mouse.clientX+40}px`, top: `${mouse.clientY-80}px` } : {};
-		return (
-			<div className={className} style={style}>
-				{this.loadData(weapon)}
-			</div>
-		);
-
-	}
-
+		</div>
+	);
 }
 
 export default WeaponTooltip;
