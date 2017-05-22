@@ -189,7 +189,7 @@ export var getInitialHitPoints = function(state, classIndex){
 export var calculateArmorClass = function(state, value=false){
   let armor = state.entity.defense.armorClass;
   let ability = (!state.entity.class) ? 'constitution' : EntityClass[ state.entity.class ].ability;
-  armor.armorBonus = EntityArmor[ state.entity.armor].score;
+  armor.armorBonus = (!state.entity.armor) ? 0 : EntityArmor[ state.entity.armor ].score;
   if(state.entity.armor <= 2){
     armor.armorBonus += getDefenseModifier(state, 'reflex');
   }

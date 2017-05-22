@@ -21,7 +21,6 @@ class DungeonMaker extends Component {
 
     this.selectTile = this.selectTile.bind(this);
     this.addTile = this.addTile.bind(this);
-    // this.setDoors = this.setDoors.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.saveDungeonGrid = this.saveDungeonGrid.bind(this);
     this.chooseDungeon = this.chooseDungeon.bind(this);
@@ -32,7 +31,6 @@ class DungeonMaker extends Component {
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.showDupeButton = this.showDupeButton.bind(this);
     this.duplicateDungeon = this.duplicateDungeon.bind(this);
-    this.loadSaveMenu = this.loadSaveMenu.bind(this);
     this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
     this.openDrawer = this.openDrawer.bind(this);
 
@@ -234,7 +232,6 @@ class DungeonMaker extends Component {
 					className="button"
           onTouchTap={this.duplicateDungeon}
         />
-
     );
   }
 
@@ -245,17 +242,6 @@ class DungeonMaker extends Component {
     state.title = 'Copy of '+state.title;
     this.setState(state);
   }
-
-  loadSaveMenu = () => {
-		return(
-			<div>
-
-				<br/>
-				<TextField hintText="Dungeon Name" value={this.state.title} onChange={this.handleTitleChange} />
-				<RaisedButton label="Save Dungeon" primary={true}  onClick={this.saveDungeonGrid} />
-			</div>
-		)
-	}
 
   render() {
     let {slots, selectedTile, foundDungeonGrids, selectedDungeon, selectedEntity, availableMonsters} = this.state;
@@ -298,7 +284,12 @@ class DungeonMaker extends Component {
             open={this.state.drawers.dungeon} 
           />
           {selectedDungeon !== false ? this.showDupeButton() : ''}
-          {this.loadSaveMenu()}
+          <div>
+
+            <br/>
+            <TextField hintText="Dungeon Name" value={this.state.title} onChange={this.handleTitleChange} />
+            <RaisedButton label="Save Dungeon" primary={true}  onClick={this.saveDungeonGrid} />
+          </div>
           <Snackbar
             open={this.state.snackbarOpen}
             message={this.state.snackbarMsg}
