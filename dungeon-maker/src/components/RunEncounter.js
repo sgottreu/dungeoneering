@@ -16,6 +16,13 @@ import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import '../css/RunEncounter.css';
 
+import * as weaponsApi from '../api/weapons-api';
+import * as powersApi from '../api/powers-api';
+
+import store from '../store';
+
+
+
 class RunEncounter extends Component {
   constructor(props){
     super(props);
@@ -107,7 +114,13 @@ class RunEncounter extends Component {
       state.availableCharacters = res.data.character;
       _this.setState( state );
     });  
-    _Powers.findPowers(_this);
+
+    powersApi.findPowers();
+
+    setTimeout( function() {
+        let _state = store.getState();
+        _this.setState( {existingPowers: _state.powersState.existingPowers});
+    }, 2000);
 
   }
   componentWillUnmount() {
