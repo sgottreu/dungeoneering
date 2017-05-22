@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Slots from './Slots.js';
+import Slots from '../lib/Slots.js';
 import DungeonGrid from './DungeonGrid';
 import AttackDialog from './AttackDialog';
 import EncounterLoadDrawer from './EncounterLoadDrawer';
@@ -64,7 +64,7 @@ class RunEncounter extends Component {
     	choosingEntrance: false,
     	choosingExit: false,
       showAttackDialog: false,
-      foundDungeonGrids: [],
+      availableDungeons: [],
       availableEncounters: [],
       availableMonsters: [],
       availableCharacters: [],

@@ -5,27 +5,7 @@ import uuidV4  from 'uuid/v4';
 
 class _Dungeon {};
 
-_Dungeon.findDungeonGrids = function(_this) {
-    axios.get(`${Variables.host}/findDungeonGrids`)
-    .then(res => {
-      let state = _this.state;
-      state.foundDungeonGrids = res.data;
-      state.foundDungeonGrids.sort(function(a, b) {
-        var nameA = a.title.toUpperCase(), nameB = b.title.toUpperCase(); // ignore upper and lowercase
-        if (nameA < nameB) {
-          return -1;
-        } else {
-          if (nameA > nameB) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }
-      });
 
-      _this.setState( state );
-    });
-}
 
 var sortInitiative = (a, b) => {
   var aa = parseInt(a.initiative.current, 10), bb = parseInt(b.initiative.current, 10);

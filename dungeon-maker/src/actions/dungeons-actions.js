@@ -7,6 +7,14 @@ export function loadDungeons(dungeons) {
   };
 }
 
+export function updateExistingDungeon(id, title) {
+  return {
+    type: types.UPDATE_EXISTING_DUNGEON,
+    id: id,
+    title: title
+  };
+}
+
 export function setDungeon(dungeon) {
   return {
     type: types.SET_DUNGEON,

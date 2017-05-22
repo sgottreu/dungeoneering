@@ -40,7 +40,7 @@ class CreateEncounter extends Component {
     	choosingEntrance: false,
     	choosingExit: false,
       availableEncounters: [],
-      foundDungeonGrids: [],
+      availableDungeons: [],
       selectedDungeon: false,
       snackbarOpen: false,
       snackbarMsg: '',
@@ -199,7 +199,7 @@ class CreateEncounter extends Component {
           onHandleObjMouseOver={this.handleObjMouseOver}
         />
         <List className="AvailableDungeons">
-          {this.state.foundDungeonGrids.map( (grid, index) => {
+          {this.state.availableDungeons.map( (grid, index) => {
             return (
               <DraggableListItem key={index} onGetDroppedItem={this.getDroppedItem} onHandleDungeonChoice={this.handleDungeonChoice} name={grid.title} _id={grid._id}/>
             );
