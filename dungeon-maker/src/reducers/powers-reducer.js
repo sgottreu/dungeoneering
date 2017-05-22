@@ -1,6 +1,6 @@
 import * as types from '../actions/action-types';
 import {Variables} from '../lib/Variables';
-import {PowerTemplate} from '../components/_Powers';
+import {PowerTemplate} from '../lib/_Powers';
 import {Die} from '../lib/Die';
 
 const initialState = {

@@ -5,8 +5,9 @@ import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize
   findEntity, calculateInitiative} from './EntityTemplate';
 
 import {Variables} from '../lib/Variables';
-import {_Powers} from './_Powers';
+import {_Powers} from '../lib/_Powers';
 import * as weaponsApi from '../api/weapons-api';
+import * as powersApi from '../api/powers-api';
 import PowersForm from './PowersForm';
 
 import EntityChooser from './EntityChooser';
@@ -149,7 +150,14 @@ class EntityForm extends Component {
   }
 
   findPowers(){
-    _Powers.findPowers(this);
+    powersApi.findPowers(this);
+
+    let _this = this;
+    setTimeout( function() {
+        let _state = store.getState();
+        _this.setState( {existingPowers: _state.powersState.existingPowers});
+    }, 2000);
+
   }
 
   handleSnackBarClose = () => {
