@@ -19,47 +19,18 @@ class DungeonMaker extends Component {
   constructor(props){
     super(props);
 
-    this.selectTile = this.selectTile.bind(this);
-    this.addTile = this.addTile.bind(this);
+    this.boundDungeonAC = this.props.boundDungeonAC;
+
     this.handleMyEvent = this.handleMyEvent.bind(this);
-    this.saveDungeonGrid = this.saveDungeonGrid.bind(this);
-    this.chooseDungeon = this.chooseDungeon.bind(this);
-    this.setDungeon = this.setDungeon.bind(this);
-    this.selectEntity = this.selectEntity.bind(this);
-    this.setTile = this.setTile.bind(this);
-    this.setEntity = this.setEntity.bind(this);
-    this.handleTitleChange = this.handleTitleChange.bind(this);
     this.showDupeButton = this.showDupeButton.bind(this);
     this.duplicateDungeon = this.duplicateDungeon.bind(this);
-    this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
     this.openDrawer = this.openDrawer.bind(this);
 
     this.state = { 
-      slots: Slots,
-      title: '',
-    	selectedTile: '',
-    	connectedDoor: true,
-    	choosingEntrance: false,
-    	choosingExit: false,
-      availableDungeons: [],
-      selectedDungeon: false,
-      availableMonsters: [],
-      availableCharacters: [],
       drawers: {
         tile: false,
         dungeon: false,
         entity: false
-      },
-      _id: false,
-      snackbarOpen: false,
-      snackbarMsg: '',
-      hoverObj: {
-        obj: false,
-        type: false
-      },
-      mouse: {
-        clientX: false,
-        clientY: false
       }
     };
   }
@@ -68,8 +39,6 @@ class DungeonMaker extends Component {
     window.addEventListener("click", this.handleMyEvent);
 
     let _this = this;
-
-    dungeonsApi.findDungeon();
 
     axios.get(`${Variables.host}/findEntities`)
     .then(res => {
@@ -84,140 +53,31 @@ class DungeonMaker extends Component {
     window.removeEventListener("click", this.handleMyEvent);
   }
 
-  handleObjMouseOver = (obj, _type, eve) => {
-    let state = this.state;
-    state.hoverObj = {
-      obj: obj,
-      type: _type
-    };
-    state.mouse.clientX = eve.clientX;
-    state.mouse.clientY = eve.clientY;
-    this.setState(state);
-  }
-
-  saveDungeonGrid(){
-    let {slots, title, _id} = this.state;
-    let _this = this;
-    axios.post(`${Variables.host}/saveDungeonGrids`, {slots: slots, title: title, _id: _id})
-      .then(res => {
-        
-
-        _this.setState( {snackbarOpen: true, snackbarMsg: 'Encounter successfully saved'});
-      });
-  }
-
   openDrawer = (name, status) => {
     let state = this.state;
     state.drawers[ name ] = (status === undefined) ? !state.drawers[ name ] : status;
     this.setState( state );
   }
 
-  setDungeon(selectedDungeon){
-    if(selectedDungeon === false){
-      return false;
-    }
-    let _this = this;
-    axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
-      .then(res => {
-        let state = _this.state;
-        state.slots = res.data.slots;
-        state._id = res.data._id;
-        state.title = res.data.title;
-        state.snackbarOpen = false;
-        state.selectedDungeon = selectedDungeon;
-
-        _this.setState(state);
-      });
-  }
-
-  chooseDungeon(id){
-    let state = this.state;
-    state.selectedDungeon = id;
-    state.snackbarOpen = false;
-    this.setState( state );
-  }
-
-  setTile(e, state, slot){
-    let tileType = TileOptions.find( function(val) { return val.id === state.selectedTile });
-
-    if(tileType === undefined){
-      return false;
-    } 
-
-    state.tileType = (state.tileType === tileType.label) ? '' : tileType.label;
-
-    this.setState( state );
-  }
-
-  setEntity(e, state, slot){
-    if(state.slots[ slot - 1 ].occupied === true && state.selectedEntity._id){
-      state.slots[ slot - 1 ].overlays.entity = false;
-      state.slots[ slot - 1 ].occupied = false;
-      state.hoverEntity = false;
-    } else {
-      state.slots[ slot - 1 ].overlays.entity = { _id: state.selectedEntity._id };
-      state.slots[ slot - 1 ].occupied = true;
-    }
-
-    this.setState( state );
-  }
-
   handleMyEvent(e) {
-    let state = this.state;
     if(e.target.dataset.slot === undefined){
       return false;
     }
   
     let slot = e.target.dataset.slot;
 
-    if(state.selectedEntity){
-      this.setEntity(e, state, slot);
+    if(selectedEntity){
+      this.boundDungeonAC.setSlotEntity(selectedEntity, slot);
     }
 
-    if(state.selectedTile){
-      this.setTile(e, state, slot);
+    if(selectedTile){
+      let tileType = TileOptions.find( function(val) { return val.id === selectedTile });
+
+      if(tileType === undefined){
+        return false;
+      } 
+      this.boundDungeonAC.updateKey('selectedTile', tileType);
     }
-   
-  }
-
-  handleTitleChange = (e) => {
-    this.setState( { title: e.target.value } );
-  }
-
-  addTile(slot, e) {
-    let state = this.state;
-
-    let selectedTile = state.selectedTile;
-    let tileType = TileOptions.find( function(val) { return val.id === selectedTile });
-
-    if(tileType === undefined || tileType.overlay){
-      return false;
-    }
-
-    state.slots[ slot-1 ].tileType = (state.slots[ slot-1 ].tileType === tileType.label) ? '' : tileType.label;
-    state.slots[ slot-1 ].left = e.target.offsetLeft;
-    state.slots[ slot-1 ].top = e.target.offsetTop;
-
-    let props = ['entrance', 'exit', 'door'];
-
-    for(var x=0;x<props.length;x++){
-      state.slots[ slot-1 ][ props[ x] ] = false;
-      if(tileType[ props[ x] ]) {
-        state.slots[ slot-1 ][ props[ x] ] = true;
-      }
-    }
-
-    this.setState( state );
-  }
-
-  selectTile(id) {
-    let selectedTile = this.state.selectedTile;
-    this.setState( { selectedTile: (selectedTile === id) ? '' : id, selectedEntity: false });
-  }
-
-  selectEntity(id) {
-    let selectedEntity = this.state.availableMonsters.find(function(val){ return val._id === id});
-    this.setState( { selectedEntity: selectedEntity , selectedTile: '' });
   }
 
   showDupeButton = () => {
@@ -246,33 +106,32 @@ class DungeonMaker extends Component {
           <DungeonGrid 
             availableMonsters={availableMonsters}
             slots={slots} 
-            onAddTile={this.addTile} 
+            onAddTile={this.boundDungeonAC.addTile} 
             selectedDungeon={selectedDungeon} 
-            onSetDungeon={this.setDungeon} 
-            onHandleObjMouseOver={this.handleObjMouseOver}
+            onHandleObjMouseOver={ this.boundDungeonAC.handleObjMouseOver }
           />
           <TileDrawer 
             onOpenDrawer={this.openDrawer}
             open={this.state.drawers.tile} 
             tiles={TileOptions} 
-            onSelectTile={this.selectTile} 
+            onUpdateKey={this.boundDungeonAC.updateKey} 
             selectedTile={selectedTile} 
+            selectedEntity={selectedEntity}
           />
           <EntityDrawer 
             entityType="monster" 
             availableMonsters={availableMonsters} 
-            onSelectEntity={this.selectEntity} 
+            onUpdateKey={this.boundDungeonAC.updateKey} 
+            selectedTile={selectedTile} 
             selectedEntity={selectedEntity} 
             onOpenDrawer={this.openDrawer}
             open={this.state.drawers.entity} 
           />
-          <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
+          <EntityTooltip hoverObj={hoverObj} mouse={mouse} />
           <DungeonLoadDrawer 
             showSave={true} 
-            onHandleTitleChange={this.handleTitleChange} 
-            onChooseDungeon={this.setDungeon} 
+            onChooseDungeon={dungeonsApi.findDungeon} 
             selectedDungeon={selectedDungeon} 
-            onSaveDungeonGrid={this.saveDungeonGrid} 
             availableDungeons={availableDungeons} 
             dungeonTitle={this.state.title}
             onOpenDrawer={this.openDrawer}
@@ -282,11 +141,14 @@ class DungeonMaker extends Component {
           <div>
 
             <br/>
-            <TextField hintText="Dungeon Name" value={this.state.title} onChange={this.handleTitleChange} />
-            <RaisedButton label="Save Dungeon" primary={true}  onClick={this.saveDungeonGrid} />
+            <TextField 
+              hintText="Dungeon Name" 
+              value={this.state.title} 
+              onChange={(e) => { this.boundDungeonAC.updateDungeonKey('title', e.target.value) } } />
+            <RaisedButton label="Save Dungeon" primary={true}  onClick={(e,i,v) => { dungeonsApi.saveDungeon(dungeon)}} />
           </div>
           <Snackbar
-            open={this.state.snackbarOpen}
+            open={open}
             message={this.state.snackbarMsg}
             autoHideDuration={4000}
             

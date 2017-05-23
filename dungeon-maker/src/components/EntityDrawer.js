@@ -9,7 +9,8 @@ import '../css/EntityDrawer.css';
 
 const EntityDrawer = ( {
   entityType, 
-  onSelectEntity, 
+  onUpdateKey,
+  selectedTile, 
   selectedEntity, 
   availableMonsters,
   onOpenDrawer,
@@ -42,7 +43,12 @@ const EntityDrawer = ( {
                 <ListItem 
                   className={className}
                   key={index}
-                  onTouchTap={ () => { onSelectEntity(m._id)} }
+                  onTouchTap={ () => { 
+                      let _entity = availableMonsters.find(function(val){ return val._id === m._id});
+                      onUpdateKey('selectedEntity', _entity);
+                      onUpdateKey('selectedTile', false);
+                    } 
+                  }
                   primaryText={m.name}
                   secondaryText={<span>HP: {m.hp}, XP: {m.xp}, Lvl: {m.level}</span>}
                   leftAvatar={<Avatar data-icon={m.iconClass} className={`${m.iconClass} icon`} />}

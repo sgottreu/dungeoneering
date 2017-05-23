@@ -2,7 +2,7 @@ import React from 'react';
 
 import '../css/Tile.css';
 
-const Tile = ( { id, tile, onSelectTile } ) => {
+const Tile = ( { id, tile, onUpdateKey, selectedTile, selectedEntity } ) => {
 
 	const className = tile.label+' Tile';
 	const style = {
@@ -11,7 +11,12 @@ const Tile = ( { id, tile, onSelectTile } ) => {
 	}
 	
   return (
-    <div style={style} className={className} onClick={() => {onSelectTile(id)}}></div>
+    <div style={style} className={className} 
+    	onClick={() => {
+    		  onUpdateKey('selectedTile', (selectedTile === id) ? '' : id);
+          onUpdateKey('selectedEntity', false);
+        }
+      }></div>
   );
 	
 };
