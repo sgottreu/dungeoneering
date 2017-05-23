@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {List} from 'material-ui/List';
-import Slots from './Slots';
+import Slots from '../lib/Slots';
 import DungeonGrid from './DungeonGrid';
 import EntityTooltip from './EntityTooltip';
 import DroppableList from './DroppableList';

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import store from '../store';
-import { loadDungeons, updateExistingDungeon, setDungeon } from '../actions/weapons-actions';
+import { loadDungeons, updateExistingDungeon, setDungeon, updateKey } from '../actions/dungeons-actions';
 
 export var findDungeons = () => {
   axios.get(`${Variables.host}/findDungeonGrids`)
@@ -16,7 +16,7 @@ export var findDungeon = (selectedDungeon) => {
   axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
   .then(res => {
     store.dispatch(setDungeon(res.data));
-    store.dispatch(updateKey(res.data._id));
+    store.dispatch(updateKey('selectedDungeon', res.data._id));
   }); 
 };
 export var saveDungeon = (dungeon) => {

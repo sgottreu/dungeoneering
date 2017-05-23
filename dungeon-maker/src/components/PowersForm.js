@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import {_Powers} from '../lib/_Powers';
+import {Powers} from '../lib/Powers';
 import {EntityTemplate, EntityClass} from './EntityTemplate';
 import {Variables} from '../lib/Variables';
 import {Die} from '../lib/Die';
@@ -66,9 +66,9 @@ class PowersForm extends Component {
   }
 
   handleTypeChange = (event, index) => {
-  	this.boundPowerAC.updateAttack( 'for', _Powers.powerType[index].attack.for );
-    this.boundPowerAC.updateAttack( 'against', _Powers.powerType[index].attack.against );
-  	this.boundPowerAC.updateKey( 'class', _Powers.powerType[index].class);
+  	this.boundPowerAC.updateAttack( 'for', Powers.powerType[index].attack.for );
+    this.boundPowerAC.updateAttack( 'against', Powers.powerType[index].attack.against );
+  	this.boundPowerAC.updateKey( 'class', Powers.powerType[index].class);
     this.boundPowerAC.updateKey( 'type', index );
   }
 
@@ -223,19 +223,19 @@ class PowersForm extends Component {
 				<br/>
         <div className="selectRow">
   				<SelectField className="bottomAlign" maxHeight={200} style={Variables.getSelectListStyle(power.type)} floatingLabelText="Power Type" value={power.type} name="type" onChange={this.handleTypeChange} >
-            {_Powers.powerType.map( (type, index) => (
+            {Powers.powerType.map( (type, index) => (
             	<MenuItem key={index} value={index} primaryText={type.name} />
             ))}
           </SelectField>
           
   				<SelectField className="bottomAlign" maxHeight={200} style={Variables.getSelectListStyle(power.action)} floatingLabelText="Power Action" value={power.action} name="action" onChange={this.handleActionChange} >
-            {_Powers.powerAction.map( (action, index) => (
+            {Powers.powerAction.map( (action, index) => (
             	<MenuItem key={index} value={index} primaryText={action} />
             ))}
           </SelectField>
           
   				<SelectField className="bottomAlign" maxHeight={200} style={Variables.getSelectListStyle(power.recharge)} floatingLabelText="Power Recharge" value={power.recharge} name="recharge" onChange={this.handleRechargeChange} >
-            {_Powers.powerRecharge.map( (recharge, index) => (
+            {Powers.powerRecharge.map( (recharge, index) => (
             	<MenuItem key={index} value={index} primaryText={recharge} />
             ))}
           </SelectField>

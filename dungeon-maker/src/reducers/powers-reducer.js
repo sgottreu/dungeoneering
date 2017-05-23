@@ -1,12 +1,12 @@
 import * as types from '../actions/action-types';
 import {Variables} from '../lib/Variables';
-import {PowerTemplate} from '../lib/_Powers';
+import {Powers} from '../lib/Powers';
 import {Die} from '../lib/Die';
 
 const initialState = {
   existingPowers: [],
   current_power: false,
-  power: Variables.clone(PowerTemplate)
+  power: Variables.clone(Powers.powerTemplate)
 };
 
 const powersReducer = function(state = initialState, action) {
@@ -25,9 +25,9 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.CHANGE_CURRENT_POWER:
-      power = Variables.clone(PowerTemplate);
+      power = Variables.clone(Powers.powerTemplate);
       if(action.index === 0){
-        power = Variables.clone(PowerTemplate);
+        power = Variables.clone(Powers.powerTemplate);
         current_power = false;
       } else {
         power = Variables.clone(state.existingPowers[action.index-1]);
