@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import EntityTile from './EntityTile';
-import uuidV4  from 'uuid/v4';
+
 import '../css/DungeonGridSlot.css';
 
 class DungeonGridSlot extends Component {

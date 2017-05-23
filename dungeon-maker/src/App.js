@@ -8,14 +8,14 @@ import MenuItem from 'material-ui/MenuItem';
 import { Route } from 'react-router-dom';
 
 import Home from './components/Home';
-import DungeonMaker from './components/DungeonMaker';
+
 import RunEncounter from './components/RunEncounter';
 import CreateEncounter from './components/CreateEncounter';
 import AddMonster from './components/AddMonster';
 import CreateCharacter from './components/CreateCharacter';
-import AddWeaponsContainer from './components/containers/add-weapons-container';
-import AddPowersContainer from './components/containers/add-powers-container';
-import AddDungeonsContainer from './components/containers/add-dungeons-container';
+import AddWeaponsContainer from './containers/add-weapons-container';
+import AddPowersContainer from './containers/add-powers-container';
+import AddDungeonsContainer from './containers/add-dungeons-container';
 import CreateParty from './components/CreateParty';
 
 

@@ -5,7 +5,7 @@ import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize
   findEntity, calculateInitiative} from './EntityTemplate';
 
 import {Variables} from '../lib/Variables';
-import {_Powers} from '../lib/_Powers';
+import {Powers} from '../lib/Powers';
 import * as weaponsApi from '../api/weapons-api';
 import * as powersApi from '../api/powers-api';
 import PowersForm from './PowersForm';
@@ -526,7 +526,7 @@ class EntityForm extends Component {
               return (
                 <ListItem className={className} key={index} 
                   primaryText={<div >{power.name}</div>}  
-                  leftAvatar={<Avatar className={'icon weapon_'+_Powers.powerType[power.type].class} onTouchTap={this.selectPower.bind(this, power)}/>}
+                  leftAvatar={<Avatar className={'icon weapon_'+Powers.powerType[power.type].class} onTouchTap={this.selectPower.bind(this, power)}/>}
                 />
               );
             }

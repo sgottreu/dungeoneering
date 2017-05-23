@@ -10,13 +10,12 @@ import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import {Die} from '../lib/Die';
 import {calcWeaponDamage} from './EntityTemplate';
-import {_Powers} from '../lib/_Powers';
 import uuidV4  from 'uuid/v4';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import '../css/RunEncounter.css';
 
-import * as weaponsApi from '../api/weapons-api';
+// import * as weaponsApi from '../api/weapons-api';
 import * as powersApi from '../api/powers-api';
 
 import store from '../store';

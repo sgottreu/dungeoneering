@@ -2,7 +2,7 @@ var assert = require('chai').assert;
 
 import * as types from '../actions/action-types';
 import {Variables} from '../lib/Variables';
-import {PowerTemplate} from '../lib/_Powers';
+import {Powers} from '../lib/Powers';
 import {Die} from '../lib/Die';
 
 import powersReducer from './powers-reducer';
@@ -16,7 +16,7 @@ describe('powersReducer', function() {
   const state = {
     existingPowers: [],
     current_power: false,
-    power: Variables.clone(PowerTemplate)
+    power: Variables.clone(Powers.powerTemplate)
   };
 
   const powers = [ {_id: 123, name: 'Melee'}, {_id: 456} ];
@@ -155,11 +155,11 @@ describe('powersReducer', function() {
   });
 
   describe('UPDATE_ATTACK', function() {
-    var action = updateAttack('damage', '1d4');
+    var action = updateAttack('for', 'strength');
     var _state = powersReducer(state, action);
 
-    it('powersReducer:UPDATE_ATTACK |-| attack.damage should be "1d4"', function() {
-      assert.equal(_state.power.attack.damage, '1d4'); // with optional message
+    it('powersReducer:UPDATE_ATTACK |-| attack.for should be "strength"', function() {
+      assert.equal(_state.power.attack.for, 'strength'); // with optional message
     });
   });
 

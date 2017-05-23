@@ -1,7 +1,7 @@
 import * as types from '../actions/action-types';
 import {Variables} from '../lib/Variables';
 import SortByKey from '../lib/SortByKey';
-import Slots from '../lib/Slots.js';
+import Slots from '../lib/Slots';
 import TileOptions from '../lib/TileOptions';
 
 const initialState = {
@@ -11,7 +11,9 @@ const initialState = {
     title: '',
     _id: false
   },
-  selectedTile: '',
+  selectedTile: false,
+  tileType: false,
+  selectedEntity: false,
   selectedDungeon: false,
   hoverObj: {
     obj: false,
@@ -24,7 +26,6 @@ const initialState = {
 };
 
 const dungeonsReducer = function(state = initialState, action) {
-  let dungeons = false;
   let dungeon = false;
   let slots = Variables.clone(state.dungeon.slots);
   let s;
@@ -65,6 +66,10 @@ const dungeonsReducer = function(state = initialState, action) {
       let _state = Variables.clone(state);
       _state[ action.key ] = action.value;
       
+      if(action.value === undefined){
+        return state;
+      }
+
       return Object.assign({}, state, _state);
 
     case types.UPDATE_DUNGEON_KEY:
@@ -130,10 +135,6 @@ const dungeonsReducer = function(state = initialState, action) {
           slots: slots
         }
       });
-
-/*
-
-    */
 
     default:
       return state;

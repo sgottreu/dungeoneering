@@ -136,6 +136,11 @@ describe('UPDATE_KEY', function() {
   it('powersReducer:UPDATE_KEY |-| selectedTile should equal `gravel`', function() {
     assert.equal(_state.selectedTile, 'gravel'); // with optional message
   });
+  it('powersReducer:UPDATE_KEY |-| selectedTile is remains the same', function() {
+    action = updateKey( 'selectedTile', undefined);
+    _state = dungeonsReducer(_state, action);
+    assert.equal(_state.selectedTile, 'gravel'); // with optional message
+  });
 });
 
 describe('UPDATE_DUNGEON_KEY', function() {

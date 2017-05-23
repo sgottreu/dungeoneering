@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import uuidV4  from 'uuid/v4';
 

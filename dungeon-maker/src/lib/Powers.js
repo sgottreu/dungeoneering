@@ -1,6 +1,6 @@
-class _Powers {};
+class Powers {};
 
-_Powers.powerTemplate = {
+Powers.powerTemplate = {
   name: '',
   type: false,
   _type: "power",
@@ -9,7 +9,6 @@ _Powers.powerTemplate = {
   class: false,
   reach: 1,
   attack: { for: false, against: 'armorClass', modifier: 0},
-  against: '',
   damage: {
     modifier: 0,
     die: 'd6',
@@ -21,25 +20,25 @@ _Powers.powerTemplate = {
   ability_modifier: false
 };
 
-_Powers.powerType = [
+Powers.powerType = [
   { name: 'Melee', class: 'melee', attack: {for: 'strength', against: 'armorClass', modifier: 0}, defense: {} },
   { name: 'Ranged', class: 'ranged', attack: {for: 'dexterity', against: 'armorClass', modifier: 0}, defense: {} },
   { name: 'Close', class: 'blast_affect', attack: {for: 'wisdom', against: 'armorClass', modifier: 0}, defense: {} },
   { name: 'Area', class: 'area_affect', attack: {for: 'charisma', against: 'armorClass', modifier: 0}, defense: {} },
 ];
 
-_Powers.powerAction = [
+Powers.powerAction = [
   'Standard',
   'Move',
   'Minor',
   'Free'
 ];
 
-_Powers.powerRecharge = [
+Powers.powerRecharge = [
   'At-Will',
   'Encounter',
   'Daily',
   'Recharge'
 ];
 
-export {_Powers};
+export {Powers};

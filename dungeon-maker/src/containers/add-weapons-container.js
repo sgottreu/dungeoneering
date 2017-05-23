@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux';
-import AddWeapon from '../AddWeapon';
-import * as weaponsApi from '../../api/weapons-api';
+import AddWeapon from '../components/AddWeapon';
+import * as weaponsApi from '../api/weapons-api';
 
-import * as WeaponActionCreators from '../../actions/weapons-actions';
+import * as WeaponActionCreators from '../actions/weapons-actions';
 
 class AddWeaponsContainer extends Component {
 
