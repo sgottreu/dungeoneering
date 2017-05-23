@@ -12,7 +12,7 @@ import { loadCharacters, loadMonsters } from '../actions/entities-actions';
 import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize, EntityRace, EntityClass, 
   EntityShield, calcWeightPrice,
   getInitialHitPoints, EntityArmor, calculateArmorClass, calculateDefense, saveEntity, EntityIcons, 
-  findEntity, calculateInitiative} from './EntityTemplate';
+  findEntity, calculateInitiative} from '../components/EntityTemplate';
 
 const state = {
   availableCharacters: [],
