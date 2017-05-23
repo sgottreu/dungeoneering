@@ -22,7 +22,7 @@ export var EntityTemplate = {
     inventory: [],
     encumbered: 0,
     resistances: [],
-    armor: false,
+    armor: 0,
     shield: false,
     abilities: {
       strength: { score: 12, abilityMod: 0, AttackModifier: 0 },
@@ -189,8 +189,8 @@ export var getInitialHitPoints = function(state, classIndex){
 export var calculateArmorClass = function(state, value=false){
   let armor = state.entity.defense.armorClass;
   let ability = (!state.entity.class) ? 'constitution' : EntityClass[ state.entity.class ].ability;
-  armor.armorBonus = (!state.entity.armor) ? 0 : EntityArmor[ state.entity.armor ].score;
-  if(state.entity.armor <= 2){
+  armor.armorBonus = EntityArmor[ state.entity.armor ].score;
+  if(EntityArmor[ state.entity.armor ].weight <= 15){
     armor.armorBonus += getDefenseModifier(state, 'reflex');
   }
   
@@ -224,15 +224,16 @@ export var calculateDefense = function(state, _defense=false,value=false){
 function getDefenseModifier(state, defense)
 {
   let abl = state.entity.abilities;
+  let aM = 'abilityMod';
   let score = 0;
   if(defense === 'fortitude'){
-    score = (abl.strength.abilityMod >= abl.constitution.abilityMod) ? abl.strength.abilityMod : abl.constitution.abilityMod;
+    score = (abl.strength[aM] >= abl.constitution[aM]) ? abl.strength[aM] : abl.constitution[aM];
   }
   if(defense === 'reflex'){
-    score = (abl.dexterity.abilityMod >= abl.intelligence.abilityMod) ? abl.dexterity.abilityMod : abl.intelligence.abilityMod;
+    score = (abl.dexterity[aM] >= abl.intelligence[aM]) ? abl.dexterity[aM] : abl.intelligence[aM];
   }
   if(defense === 'willpower'){
-    score = (abl.wisdom.abilityMod >= abl.charisma.abilityMod) ? abl.wisdom.abilityMod : abl.charisma.abilityMod;
+    score = (abl.wisdom[aM] >= abl.charisma[aM]) ? abl.wisdom[aM] : abl.charisma[aM];
   }
   
   return score;
