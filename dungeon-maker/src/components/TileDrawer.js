@@ -35,7 +35,12 @@ const TileDrawer = ({ onSelectTile, selectedTile, onOpenDrawer, open }) => {
           onOpenDrawer('tile', false)
         }}
       >
-				<TilePool tiles={TileOptions} onSelectTile={onSelectTile} selectedTile={selectedTile} />
+				<TilePool 
+          tiles={TileOptions} 
+          onUpdateKey={onUpdateKey} 
+          selectedTile={selectedTile} 
+          selectedEntity={selectedEntity}
+        />
       </Drawer>
     </div>
   )

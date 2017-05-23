@@ -11,8 +11,8 @@ const DungeonLoadDrawer = ( {
 	onOpenDrawer, 
 	open,
 	onChooseDungeon,
-  availableDungeons, 
-  selectedDungeon
+	availableDungeons, 
+	selectedDungeon
 }) => {
 
 	return (
@@ -29,7 +29,13 @@ const DungeonLoadDrawer = ( {
       open={open}
       onRequestChange={() => { onOpenDrawer('dungeon', false) } }
     >
-			<SelectField onChange={(e,i,v) => { onChooseDungeon(v) } } value={selectedDungeon} floatingLabelText="Saved Dungeon Grids" >
+			<SelectField 
+				onChange={(e,i,v) => { 
+				    onChooseDungeon(v) 
+          } 
+        } 
+        value={selectedDungeon} 
+        floatingLabelText="Saved Dungeon Grids" >
 				{availableDungeons.map( (grid, x) => {
 					let label = (grid.title) ? grid.title : grid._id;
 					return (

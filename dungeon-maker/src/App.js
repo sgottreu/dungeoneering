@@ -15,6 +15,7 @@ import AddMonster from './components/AddMonster';
 import CreateCharacter from './components/CreateCharacter';
 import AddWeaponsContainer from './components/containers/add-weapons-container';
 import AddPowersContainer from './components/containers/add-powers-container';
+import AddDungeonsContainer from './components/containers/add-dungeons-container';
 import CreateParty from './components/CreateParty';
 
 
@@ -73,7 +74,7 @@ class App extends Component {
         <Route exact path="/" component={Home} />
         <Route path="/runEncounter" component={RunEncounter}/>
         <Route path="/createEncounter" component={CreateEncounter}/>
-        <Route path="/dungeonMaker" component={DungeonMaker} />
+        <Route path="/dungeonMaker" component={() => (<AddDungeonsContainer />)} />
         <Route path="/createParty" component={CreateParty}/>
         <Route path="/createCharacter" component={CreateCharacter}/>
         <Route path="/addMonster" component={AddMonster}/>
