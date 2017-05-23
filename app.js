@@ -210,17 +210,32 @@ app.post('/saveEntity', function (req, res) {
 
 });
 
-app.get('/findEntities', function (req, res) {
-	console.log('Finding Entities');
-  let query = (req.query.type !== undefined) ? { _type: {"$in": [req.query.type] }} : { _type: {"$in": ["monster","character"] }};
+app.get('/findMonsters', function (req, res) {
+	console.log('Finding Monsters');
+  let query = { _type: {"$in": ["monster"] }};
 	dungeon_grid.find(query).then(function(docs) {
-    let entities = { "monster": [], "character": [] };
+    let entities = [];
 
     for(var x=0,len = docs.length;x<len;x++){
-    	entities[ docs[x]._type ].push(docs[x]);
+    	entities.push(docs[x]);
     }
 
-    console.log(`Found ${docs.length} entities`);
+    console.log(`Found ${docs.length} Monsters`);
+    sendJSON(res, entities);
+  });
+});
+
+app.get('/findCharacters', function (req, res) {
+	console.log('Finding Characters');
+  let query = { _type: {"$in": ["character"] }};
+	dungeon_grid.find(query).then(function(docs) {
+    let entities = [];
+
+    for(var x=0,len = docs.length;x<len;x++){
+    	entities.push(docs[x]);
+    }
+
+    console.log(`Found ${docs.length} Characters`);
     sendJSON(res, entities);
   });
 });
