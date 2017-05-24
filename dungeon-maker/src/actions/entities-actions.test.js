@@ -1,7 +1,7 @@
 var assert = require('chai').assert;
 
 import * as types from './action-types';
-import { loadCharacters, loadMonsters, updateKey } from './entities-actions';
+import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey } from './entities-actions';
 
 var availableCharacters = [ {_id: 123, name: 'Steelhorn'}, {_id: 456, name: 'Jarim'} ];
 var availableMonsters = [ {_id: 123, name: 'Goblin'}, {_id: 456, name: 'Wolf'} ];
@@ -72,6 +72,60 @@ describe('updateKey', function() {
   describe('value', function() {
     it('entitiesActions:updateKey.value |-| value should equal 4', function() {
       assert.equal(state.value, 4); // with optional message
+    });
+  });
+});
+
+describe('updateEntityKey', function() {
+  var state = updateEntityKey('abilities.strength.score', 16);
+
+  it('entitiesActions:updateEntityKey |-| should be an object', function() {
+    assert.isObject(state); // with optional message
+  });
+
+  describe('type', function() {
+    it('entitiesActions:updateEntityKey.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityKey.type |-| should equal = UPDATE_ENTITY_KEY', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_KEY'); // with optional message
+    });
+  });
+  describe('key', function() {
+    it('entitiesActions:updateEntityKey.key |-| key should equal abilities.strength.score', function() {
+      assert.equal(state.key, 'abilities.strength.score'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('entitiesActions:updateEntityKey.value |-| value should equal 16', function() {
+      assert.equal(state.value, 16); // with optional message
+    });
+  });
+});
+
+describe('updatePointsKey', function() {
+  var state = updatePointsKey('points.usedPoints', 16);
+
+  it('entitiesActions:updatePointsKey |-| should be an object', function() {
+    assert.isObject(state); // with optional message
+  });
+
+  describe('type', function() {
+    it('entitiesActions:updatePointsKey.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updatePointsKey.type |-| should equal = UPDATE_POINTS_KEY', function() {
+      assert.equal(state.type, 'UPDATE_POINTS_KEY'); // with optional message
+    });
+  });
+  describe('key', function() {
+    it('entitiesActions:updatePointsKey.key |-| key should equal points.usedPoints', function() {
+      assert.equal(state.key, 'points.usedPoints'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('entitiesActions:updatePointsKey.value |-| value should equal 16', function() {
+      assert.equal(state.value, 16); // with optional message
     });
   });
 });

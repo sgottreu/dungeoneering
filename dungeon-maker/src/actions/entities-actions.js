@@ -21,3 +21,19 @@ export function updateKey(key, value) {
     value: value
   };
 }
+
+export function updateEntityKey(key, value) {
+  return {
+    type: types.UPDATE_ENTITY_KEY,
+    key: key,
+    value: value
+  };
+}
+
+export function updatePointsKey(key, value) {
+  return {
+    type: types.UPDATE_POINTS_KEY,
+    key: key,
+    value: value
+  };
+}

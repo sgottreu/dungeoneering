@@ -3,19 +3,19 @@ import {Variables} from '../lib/Variables';
 import SortByKey from '../lib/SortByKey';
 import Slots from '../lib/Slots';
 import TileOptions from '../lib/TileOptions';
-import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize, EntityRace, EntityClass, 
-  EntityShield, calcWeightPrice,
-  getInitialHitPoints, EntityArmor, calculateArmorClass, calculateDefense, saveEntity, EntityIcons, 
-  findEntity, calculateInitiative} from '../components/EntityTemplate';
+import * as Entity from '../lib/Entity';
 
 const initialState = {
   availableCharacters: [],
   availableMonsters: [],
-  totalRacePoints: 0,
-  remainingPoints: 0,
-  usedPoints: 0,
+  entity: Variables.clone(Entity.Template),
+  points: {
+    totalRacePoints: 0,
+    usedPoints: 0,
+    remainingPoints: 0
+  },
   selectedEntity: false,
-  entity: Variables.clone(EntityTemplate),
+  
   hoverObj: {
     obj: false,
     type: false
@@ -27,6 +27,8 @@ const initialState = {
 };
 
 const entitiesReducer = function(state = initialState, action) {
+  let _state = Variables.clone(state);
+
   if(action === undefined){
     return state;
   }
@@ -45,7 +47,6 @@ const entitiesReducer = function(state = initialState, action) {
       });
 
     case types.UPDATE_KEY:
-      let _state = Variables.clone(state);
       _state[ action.key ] = action.value;
       
       if(action.value === undefined){
@@ -53,7 +54,25 @@ const entitiesReducer = function(state = initialState, action) {
       }
 
       return Object.assign({}, state, _state);
-      
+    
+    case types.UPDATE_ENTITY_KEY:
+       _state.entity = Variables.addField( _state.entity, action.key, action.value );
+
+      if(action.value === undefined){
+        return state;
+      }
+
+      return Object.assign({}, state, _state);
+
+    case types.UPDATE_POINTS_KEY:
+       _state.points = Variables.addField( _state.points, action.key, action.value );
+
+      if(action.value === undefined){
+        return state;
+      }
+
+      return Object.assign({}, state, _state);
+
     // case types.UPDATE_MOUSEOVER:
     //   return Object.assign({}, state, {
     //     hoverObj: {

@@ -48,7 +48,7 @@ const dungeonsReducer = function(state = initialState, action) {
 
     case types.UPDATE_EXISTING_DUNGEON:
       let _dungeons = state.availableDungeons;
-      if(action.id){
+      if(!action.id){
         _dungeons.push({ _id: action.id, title: action.title });
       } else {
         let _i = _dungeons.findIndex( (grid, i) => { return grid._id === action.id });

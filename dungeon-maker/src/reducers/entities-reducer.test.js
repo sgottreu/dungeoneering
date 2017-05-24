@@ -4,20 +4,29 @@ import * as types from '../actions/action-types';
 import {Variables} from '../lib/Variables';
 import Slots from '../lib/Slots.js';
 import TileOptions from '../lib/TileOptions';
-
 import entitiesReducer from './entities-reducer';
-
-import { loadCharacters, loadMonsters, updateKey } from '../actions/entities-actions';
-
-import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize, EntityRace, EntityClass, 
-  EntityShield, calcWeightPrice,
-  getInitialHitPoints, EntityArmor, calculateArmorClass, calculateDefense, saveEntity, EntityIcons, 
-  findEntity, calculateInitiative} from '../components/EntityTemplate';
+import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey } from '../actions/entities-actions';
+import * as Entity from '../lib/Entity';
 
 const state = {
   availableCharacters: [],
   availableMonsters: [],
-  entity: Variables.clone(EntityTemplate)
+  entity: Variables.clone(Entity.Template),
+  points: {
+    totalRacePoints: 0,
+    usedPoints: 0,
+    remainingPoints: 0
+  },
+  selectedEntity: false,
+  
+  hoverObj: {
+    obj: false,
+    type: false
+  },
+  mouse: {
+    clientX: false,
+    clientY: false
+  }
 };
 
 const availableCharacters = [ {_id: 123, name: 'Steelhorn'}, {_id: 456, name: 'Jarim'} ];
@@ -105,16 +114,46 @@ describe('LOAD_MONSTERS', function() {
 describe('UPDATE_KEY', function() {
   let action, _state;
   beforeEach(function() {
-    action = updateKey( 'usedPoints', 4);
+    action = updateKey( 'selectedEntity', 4);
     _state = entitiesReducer(Variables.clone(state), action);
   });
 
-  it('entitiesReducer:UPDATE_KEY |-| usedPoints should equal 4', function() {
-    assert.equal(_state.usedPoints, 4); // with optional message
+  it('entitiesReducer:UPDATE_KEY |-| selectedEntity should equal 4', function() {
+    assert.equal(_state.selectedEntity, 4); // with optional message
   });
-  it('entitiesReducer:UPDATE_KEY |-| usedPoints is remains the same', function() {
-    action = updateKey( 'usedPoints', undefined);
+  it('entitiesReducer:UPDATE_KEY |-| selectedEntity is remains the same', function() {
+    action = updateKey( 'selectedEntity', undefined);
     _state = entitiesReducer(_state, action);
-    assert.equal(_state.usedPoints, 4); // with optional message
+    assert.equal(_state.selectedEntity, 4); // with optional message
+  });
+});
+
+
+describe('UPDATE_ENTITY_KEY', function() {
+  let action, _state;
+  beforeEach(function() {
+    action = updateEntityKey( 'abilities.strength.score', 16);
+    _state = entitiesReducer(Variables.clone(state), action);
+  });
+
+  it('entitiesReducer:UPDATE_ENTITY_KEY |-| abilities.strength.score should equal 16', function() {
+    assert.equal(_state.entity.abilities.strength.score, 16); // with optional message
+  });
+  it('entitiesReducer:UPDATE_ENTITY_KEY |-| level equals `12`', function() {
+    action = updateEntityKey( 'level', 12);
+    _state = entitiesReducer(_state, action);
+    assert.equal(_state.entity.level, 12); // with optional message
+  });
+});
+
+describe('UPDATE_POINTS_KEY', function() {
+  let action, _state;
+  beforeEach(function() {
+    action = updatePointsKey( 'usedPoints', 16);
+    _state = entitiesReducer(Variables.clone(state), action);
+  });
+
+  it('entitiesReducer:UPDATE_POINTS_KEY |-| points.usedPoints should equal 16', function() {
+    assert.equal(_state.points.usedPoints, 16); // with optional message
   });
 });

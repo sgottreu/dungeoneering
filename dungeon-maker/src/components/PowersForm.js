@@ -17,7 +17,7 @@ class PowersForm extends Component {
 
 	constructor(props){
 		super(props);
-
+console.log(this.props);
 		this.abilities = Variables.mapObj(EntityTemplate.abilities);
 		this.defense = Variables.mapObj(EntityTemplate.defense);
 
