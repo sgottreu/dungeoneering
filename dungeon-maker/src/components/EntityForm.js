@@ -107,6 +107,7 @@ class EntityForm extends Component {
     weaponsApi.findWeapons();
 
     let state = this.calcRemainingPoints(this.state);
+    
     this.setState( state );
     if(this.EntityType === 'character'){
       this.findPowers();

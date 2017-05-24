@@ -13,3 +13,11 @@ export function loadMonsters(availableMonsters) {
     entities: availableMonsters
   };
 }
+
+export function updateKey(key, value) {
+  return {
+    type: types.UPDATE_KEY,
+    key: key,
+    value: value
+  };
+}
