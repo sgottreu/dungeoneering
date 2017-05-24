@@ -11,6 +11,10 @@ import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize
 const initialState = {
   availableCharacters: [],
   availableMonsters: [],
+  totalRacePoints: 0,
+  remainingPoints: 0,
+  usedPoints: 0,
+  selectedEntity: false,
   entity: Variables.clone(EntityTemplate),
   hoverObj: {
     obj: false,
@@ -40,7 +44,16 @@ const entitiesReducer = function(state = initialState, action) {
         availableMonsters: action.entities
       });
 
+    case types.UPDATE_KEY:
+      let _state = Variables.clone(state);
+      _state[ action.key ] = action.value;
+      
+      if(action.value === undefined){
+        return state;
+      }
 
+      return Object.assign({}, state, _state);
+      
     // case types.UPDATE_MOUSEOVER:
     //   return Object.assign({}, state, {
     //     hoverObj: {
