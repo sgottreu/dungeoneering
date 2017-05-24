@@ -1,4 +1,5 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
+import thunk from 'redux-thunk';
 import powersReducer from './reducers/powers-reducer';
 import weaponsReducer from './reducers/weapons-reducer';
 import dungeonsReducer from './reducers/dungeons-reducer';
@@ -15,7 +16,7 @@ const rootReducer = combineReducers({
 
 const store = createStore(
   rootReducer,
-  applyMiddleware(logger)
+  applyMiddleware(logger, thunk)
 );
 
 export default store;

@@ -101,6 +101,11 @@ describe('UPDATE_EXISTING_DUNGEON', function() {
   it('powersReducer:UPDATE_EXISTING_DUNGEON |-| Element[0].title should equal `Clearing`', function() {
     assert.equal('Clearing', _state.availableDungeons[0].title); // with optional message
   });
+  it('powersReducer:UPDATE_EXISTING_DUNGEON |-| Element[0].title should equal `Pitfall`', function() {
+    action = updateExistingDungeon(false, 'Pitfall' );
+    _state = dungeonsReducer(_state, action);
+    assert.equal('Pitfall', _state.availableDungeons[1].title); // with optional message
+  });
 });
 
 describe('UPDATE_MOUSEOVER', function() {

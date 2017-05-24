@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize, EntityRace, EntityClass, 
-  EntityShield, calcWeightPrice,
-  getInitialHitPoints, EntityArmor, calculateArmorClass, calculateDefense, saveEntity, EntityIcons, 
-  findEntity, calculateInitiative} from './EntityTemplate';
 
 import {Variables} from '../lib/Variables';
 import {Powers} from '../lib/Powers';
+import * as Entity from '../lib/Entity';
+import * as entitiesApi from '../api/entities-api';
 import * as weaponsApi from '../api/weapons-api';
 import * as powersApi from '../api/powers-api';
 import PowersForm from './PowersForm';
@@ -25,12 +23,13 @@ import Toggle from 'material-ui/Toggle';
 
 import '../css/EntityForm.css';
 
-import store from '../store';
-
 class EntityForm extends Component {
   
   constructor(props){
     super(props);
+
+    this.boundEntityAC = this.props.boundEntityAC;
+    this.rState = this.props.entitiesState;
 
     this.EntityType = this.props.type;
     this.input = [];
@@ -46,7 +45,6 @@ class EntityForm extends Component {
     this.handleLevelChange = this.handleLevelChange.bind(this);
     this.changeAbility = this.changeAbility.bind(this);
     this.changeIcon = this.changeIcon.bind(this);
-    this.calcRemainingPoints = this.calcRemainingPoints.bind(this);
     this.calculateAbility = this.calculateAbility.bind(this);
     this._setEntityState = this._setEntityState.bind(this);
     this.handleEntitySave = this.handleEntitySave.bind(this);
@@ -66,7 +64,6 @@ class EntityForm extends Component {
     this.loadPowersForm = this.loadPowersForm.bind(this);
     this.loadWeaponTooltip = this.loadWeaponTooltip.bind(this);
 
-    this.findPowers = this.findPowers.bind(this);
     this.includePower = this.includePower.bind(this);
     this.loadPowersField = this.loadPowersField.bind(this);
     this.loadWeaponsField = this.loadWeaponsField.bind(this);
@@ -89,10 +86,12 @@ class EntityForm extends Component {
     state.entity = Variables.clone(EntityTemplate);
     state.entity._type = this.EntityType;
     state.entity.coin_purse = (this.EntityType === 'character') ? 200 : 0;
-    
-    
-    state.totalRacePoints = 0;
-    state.usedPoints = 0;
+
+    state.points = {
+      totalRacePoints: 0,
+      usedPoints: 0,
+      remainingPoints: 0
+    };
     state.snackbarOpen = false;
     state.snackbarMsg = '';
     state.existingPowers = [];
@@ -101,25 +100,6 @@ class EntityForm extends Component {
     state.availableWeapons = [];
     state.selectedEntity = false;
     this.state = state;
-  }
-
-  componentDidMount(){
-    weaponsApi.findWeapons();
-
-    let state = this.calcRemainingPoints(this.state);
-    
-    this.setState( state );
-    if(this.EntityType === 'character'){
-      this.findPowers();
-    }
-    findEntity(this);
-    
-    let _this = this;
-    setTimeout( function() {
-        let _state = store.getState();
-        _this.setState( {availableWeapons: _state.weaponsState.availableWeapons});
-    }, 2000);
-
   }
 
   handleObjMouseOver = (obj, _type, eve) => {
@@ -132,7 +112,6 @@ class EntityForm extends Component {
     state.mouse.clientY = eve.pageY;
     this.setState(state);
   }
-
 
   resetForm(){
     let state = this.state;
@@ -148,17 +127,6 @@ class EntityForm extends Component {
     state.entity = state[key][index];
 
     this.setState(state);
-  }
-
-  findPowers(){
-    powersApi.findPowers(this);
-
-    let _this = this;
-    setTimeout( function() {
-        let _state = store.getState();
-        _this.setState( {existingPowers: _state.powersState.existingPowers});
-    }, 2000);
-
   }
 
   handleSnackBarClose = () => {
@@ -374,24 +342,6 @@ class EntityForm extends Component {
     state.entity.abilities[ label ].abilityMod = AbilityModifier(score);
     state.entity.abilities[ label ].AttackModifier = AttackModifier(level, score, state.entity._type);
 
-    return state;
-  }
-
-  calcRemainingPoints(state, target){
-    if(target === undefined){
-      state.remainingPoints = 4 + ((state.entity.level-1)*2);
-    } else {
-      state.usedPoints = 0;
-      for(let a in state.entity.abilities){
-        if(state.entity.abilities.hasOwnProperty(a)){
-          if(target.name === a){
-            state.usedPoints += parseInt( target.value, 10 );
-          } else {
-            state.usedPoints += parseInt( state.entity.abilities[ a ].score, 10 );
-          }          
-        }
-      }
-    }
     return state;
   }
 
@@ -680,7 +630,6 @@ class EntityForm extends Component {
         />
 			</div>
 		);
-//<PowersForm entityType={this.EntityType} existingPowers={this.state.existingPowers} onFindPowers={this.findPowers} onIncludePower={this.includePower}/>   
 	}
 
 }
