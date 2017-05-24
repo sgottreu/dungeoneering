@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import DungeonMaker from '../components/DungeonMaker';
 import TileOptions from '../lib/TileOptions';
 import * as dungeonsApi from '../api/dungeons-api';
-
+import * as entitiesApi from '../api/entities-api';
 import * as DungeonActionCreators from '../actions/dungeons-actions';
+import * as EntityActionCreators from '../actions/entities-actions';
 
 class AddDungeonsContainer extends Component {
   constructor(props){
@@ -17,6 +18,7 @@ class AddDungeonsContainer extends Component {
   componentDidMount() {
     window.addEventListener("click", this.handleMyEvent);
     dungeonsApi.findDungeons();
+    entitiesApi.findMonsters();
   }
 
   componentWillUnmount() {
@@ -33,12 +35,7 @@ class AddDungeonsContainer extends Component {
     let { selectedTile, selectedEntity } = this.props.dungeonsState;
 
     if(selectedEntity){
-      this.boundDungeonAC.setSlotEntity(selectedEntity, slot);
-    }
-
-    if(selectedTile){
-      let tileType = TileOptions.find( function(val) { return val.id === selectedTile });
-      this.boundDungeonAC.updateKey('selectedTile', tileType);
+      this.props.boundDungeonAC.setSlotEntity(selectedEntity, slot);
     }
   }
 
@@ -50,17 +47,17 @@ class AddDungeonsContainer extends Component {
 }
 
 const mapStateToProps = function(store) {
-  // return store.dungeonsState;
   return {
-    availableMonsters: [],//store.monstersState.availableMonsters,
-    availableCharacters: [],//store.charactersState.availableCharacters,
+    availableMonsters: store.entitiesState.availableMonsters,
+    availableCharacters: store.entitiesState.availableCharacters,
     dungeonsState: store.dungeonsState
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return({
-    boundDungeonAC: bindActionCreators(DungeonActionCreators, dispatch)
+    boundDungeonAC: bindActionCreators(DungeonActionCreators, dispatch),
+    boundEntityAC: bindActionCreators(EntityActionCreators, dispatch)
   })
 }
 

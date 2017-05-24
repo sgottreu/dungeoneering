@@ -21,7 +21,7 @@ const state = {
 };
 
 const availableCharacters = [ {_id: 123, name: 'Steelhorn'}, {_id: 456, name: 'Jarim'} ];
-const availableMonsters = [ {_id: 123, name: 'Goblin'}, {_id: 456, name: 'Wolf'} ];
+const availableMonsters = [ {_id: 123, name: 'Wolf'}, {_id: 456, name: 'Goblin'} ];
 
 describe('entitiesReducer', function() {
   describe('initilization', function() {
@@ -61,6 +61,23 @@ describe('LOAD_CHARACTERS', function() {
   });
 });
 
+describe('LOAD_MONSTERS', function() {
+  let action, _state;
+  beforeEach(function() {
+    action = loadMonsters( availableMonsters );
+    _state = entitiesReducer(Variables.clone(state), action);
+  });
+
+  it('powersReducer:LOAD_MONSTERS |-| availableMonsters should be an array', function() {
+    assert.isArray(_state.availableMonsters); // with optional message
+  });
+  it('powersReducer:LOAD_MONSTERS |-| availableMonsters should have length of 2', function() {
+    assert.lengthOf(_state.availableMonsters, 2, 'array has length of 2')
+  });
+  it('powersReducer:LOAD_MONSTERS |-| Element[0]._id should equal 456', function() {
+    assert.equal(456, _state.availableMonsters[0]._id); // with optional message
+  });
+});
 
 // describe('UPDATE_MOUSEOVER', function() {
 //   let action, _state, entity, entityType, event;

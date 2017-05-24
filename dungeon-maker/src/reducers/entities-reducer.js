@@ -23,10 +23,6 @@ const initialState = {
 };
 
 const entitiesReducer = function(state = initialState, action) {
-  let dungeon = false;
-  let slots = Variables.clone(state.dungeon.slots);
-  let s;
-
   if(action === undefined){
     return state;
   }
@@ -38,6 +34,11 @@ const entitiesReducer = function(state = initialState, action) {
         availableCharacters: action.entities
       });
 
+    case types.LOAD_MONSTERS:
+      action.entities.sort(SortByKey('name'));
+      return Object.assign({}, state, {
+        availableMonsters: action.entities
+      });
 
 
     // case types.UPDATE_MOUSEOVER:

@@ -19,11 +19,11 @@ describe('loadCharacters', function() {
     });
   });
   describe('availableCharacters', function() {
-    it('entitiesActions:loadCharacters.availableCharacters |-| should be an Array()', function() {
-      assert.isArray(state.availableCharacters); // with optional message
+    it('entitiesActions:loadCharacters.entities |-| should be an Array()', function() {
+      assert.isArray(state.entities); // with optional message
     });
-    it('entitiesActions:loadCharacters.availableCharacters |-| Element[0]._id should equal 123', function() {
-      assert.isNumber(123, state.availableCharacters[0]._id); // with optional message
+    it('entitiesActions:loadCharacters.entities |-| Element[0]._id should equal 123', function() {
+      assert.isNumber(123, state.entities[0]._id); // with optional message
     });
   });
 });
@@ -40,11 +40,11 @@ describe('loadMonsters', function() {
     });
   });
   describe('availableMonsters', function() {
-    it('entitiesActions:loadMonsters.availableMonsters |-| should be an Array()', function() {
-      assert.isArray(state.availableMonsters); // with optional message
+    it('entitiesActions:loadMonsters.entities |-| should be an Array()', function() {
+      assert.isArray(state.entities); // with optional message
     });
-    it('entitiesActions:loadMonsters.availableMonsters |-| Element[0]._id should equal 123', function() {
-      assert.isNumber(123, state.availableMonsters[0]._id); // with optional message
+    it('entitiesActions:loadMonsters.entities |-| Element[0]._id should equal 123', function() {
+      assert.isNumber(123, state.entities[0]._id); // with optional message
     });
   });
 });
