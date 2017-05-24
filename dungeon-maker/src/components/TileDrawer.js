@@ -5,7 +5,7 @@ import TileOptions from '../lib/TileOptions';
 import TilePool from './TilePool';
 import '../css/TileDrawer.css';
 
-const TileDrawer = ({ onSelectTile, selectedTile, onOpenDrawer, open, onUpdateKey, selectedEntity }) => {
+const TileDrawer = ({ selectedTile, onOpenDrawer, open, onUpdateKey, selectedEntity }) => {
 
   const toggleWithKey = (e) => {
     if(e.keyCode === 84 && e.altKey){
