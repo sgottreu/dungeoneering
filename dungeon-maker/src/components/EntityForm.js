@@ -90,8 +90,7 @@ class EntityForm extends Component {
   }
 
   resetForm(){
-    let {boundEntityAC} = this.props;
-    boundEntityAC.updateKey('selectedEntity', false);
+    this.boundEntityAC.updateKey('selectedEntity', false);
     this.boundEntityAC.updateKey('entity', Variables.clone(Entity.Template));
   }
 
@@ -138,7 +137,7 @@ class EntityForm extends Component {
   }
 
   handleShieldChoice = (event, isInputChecked) => {
-    let state = this.state;  
+    let {entity} = this.props;  
     let shield = (isInputChecked === true && state.entity.shield !== event.target.dataset.shield) ? parseInt(event.target.dataset.shield, 10) : false;
 
     state.entity.shield = shield;
