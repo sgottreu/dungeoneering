@@ -14,15 +14,7 @@ const initialState = {
   selectedTile: false,
   tileType: false,
   selectedEntity: false,
-  selectedDungeon: false,
-  hoverObj: {
-    obj: false,
-    type: false
-  },
-  mouse: {
-    clientX: false,
-    clientY: false
-  }
+  selectedDungeon: false
 };
 
 const dungeonsReducer = function(state = initialState, action) {
@@ -78,18 +70,6 @@ const dungeonsReducer = function(state = initialState, action) {
       
       return Object.assign({}, state, {
         dungeon: dungeon
-      });
-
-    case types.UPDATE_MOUSEOVER:
-      return Object.assign({}, state, {
-        hoverObj: {
-          obj: action.entity,
-          type: action.entityType
-        },
-        mouse: {
-          clientX: action.mouse.clientX,
-          clientY: action.mouse.clientY
-        }
       });
 
     case types.SET_SLOT_ENTITY:

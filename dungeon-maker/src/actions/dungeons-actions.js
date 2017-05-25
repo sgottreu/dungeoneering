@@ -38,14 +38,7 @@ export function updateDungeonKey(key, value) {
   };
 }
 
-export function updateMouseover(entity, entityType, event) {
-  return {
-    type: types.UPDATE_MOUSEOVER,
-    entityType: entityType,
-    entity: entity,
-    mouse: event
-  };
-}
+
 
 export function setSlotEntity(id, slot) {
   return {

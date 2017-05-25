@@ -15,7 +15,6 @@ const initialState = {
     remainingPoints: 0
   },
   selectedEntity: false,
-  
   hoverObj: {
     obj: false,
     type: false
@@ -73,18 +72,26 @@ const entitiesReducer = function(state = initialState, action) {
 
       return Object.assign({}, state, _state);
 
-    // case types.UPDATE_MOUSEOVER:
-    //   return Object.assign({}, state, {
-    //     hoverObj: {
-    //       obj: action.entity,
-    //       type: action.entityType
-    //     },
-    //     mouse: {
-    //       clientX: action.mouse.clientX,
-    //       clientY: action.mouse.clientY
-    //     }
-    //   });
+    case types.UPDATE_MOUSEOVER:
+      return Object.assign({}, state, {
+        hoverObj: {
+          obj: action.entity,
+          type: action.entityType
+        },
+        mouse: {
+          clientX: action.mouse.clientX,
+          clientY: action.mouse.clientY
+        }
+      });
 
+    case types.UPDATE_ENTITY_WEAPON:
+      if( _state.entity.weapons.includes(action.id) ){
+        let _i = _state.entity.weapons.findIndex(function(w) { return w === action.id});
+        _state.entity.weapons.splice(_i, 1);
+      } else {
+        _state.entity.weapons.push(action.id);  
+      }
+      return Object.assign({}, state, _state);
 
     default:
       return state;

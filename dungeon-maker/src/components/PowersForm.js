@@ -17,7 +17,7 @@ class PowersForm extends Component {
 
 	constructor(props){
 		super(props);
-console.log(this.props);
+
 		this.abilities = Variables.mapObj(EntityTemplate.abilities);
 		this.defense = Variables.mapObj(EntityTemplate.defense);
 
@@ -66,10 +66,12 @@ console.log(this.props);
   }
 
   handleTypeChange = (event, index) => {
-  	this.boundPowerAC.updateAttack( 'for', Powers.powerType[index].attack.for );
-    this.boundPowerAC.updateAttack( 'against', Powers.powerType[index].attack.against );
-  	this.boundPowerAC.updateKey( 'class', Powers.powerType[index].class);
-    this.boundPowerAC.updateKey( 'type', index );
+      Promise.all([
+        this.boundPowerAC.updateAttack( 'for', Powers.powerType[index].attack.for ),
+        this.boundPowerAC.updateAttack( 'against', Powers.powerType[index].attack.against ),
+        this.boundPowerAC.updateKey( 'class', Powers.powerType[index].class),
+        this.boundPowerAC.updateKey( 'type', index )
+      ]);
   }
 
   handleActionChange = (event, index) => {
@@ -78,17 +80,15 @@ console.log(this.props);
 
   handleWeaponChange = (event, index) => {
     let weapons = this.props.weapons;
-    let power = this.props.power;
-    power.weapon = index;
     let _weapon = this.props.availableWeapons.find(function(w, i){ return w._id === weapons[index] });
-
+    let {boundPowerAC} = this.props;
     if(_weapon.damage.die === undefined) {
       let damage = _weapon.damage.split('d');
       this.boundPowerAC.changeDieType( `d${damage[1]}` );
       this.boundPowerAC.changeDieNumber( damage[0] );
     } else {
-      this.boundPowerAC.changeDieType( _weapon.damage.die );
-      this.boundPowerAC.changeDieNumber( _weapon.damage.num );
+      boundPowerAC.changeDieType( _weapon.damage.die );
+      boundPowerAC.changeDieNumber( _weapon.damage.num );
     }
   }
 
@@ -212,7 +212,7 @@ console.log(this.props);
 
 	render(){
 		let { entityType, weapons, power } = this.props;
-
+console.log(this.props.power);
 		return (
 			<div className={'PowersForm inset'}>
 				

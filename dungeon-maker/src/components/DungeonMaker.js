@@ -52,7 +52,7 @@ class DungeonMaker extends Component {
             slots={dungeon.slots} 
             onAddTile={this.boundDungeonAC.addTile} 
             selectedDungeon={selectedDungeon} 
-            onHandleObjMouseOver={ this.boundDungeonAC.updateMouseover }
+            onHandleObjMouseOver={ this.boundEntityAC.updateMouseover }
           />
           <TileDrawer 
             onOpenDrawer={this.openDrawer}

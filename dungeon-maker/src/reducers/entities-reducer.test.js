@@ -5,7 +5,7 @@ import {Variables} from '../lib/Variables';
 import Slots from '../lib/Slots.js';
 import TileOptions from '../lib/TileOptions';
 import entitiesReducer from './entities-reducer';
-import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey } from '../actions/entities-actions';
+import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey, updateMouseover, updateEntityWeapon } from '../actions/entities-actions';
 import * as Entity from '../lib/Entity';
 
 const state = {
@@ -88,28 +88,28 @@ describe('LOAD_MONSTERS', function() {
   });
 });
 
-// describe('UPDATE_MOUSEOVER', function() {
-//   let action, _state, entity, entityType, event;
-//   beforeEach(function() {
-//     let entity = { _id: 123, name: 'Goblin' };
-//     let event = { clientX: 10, clientY: 20 };
-//     action = updateMouseover( entity, 'entity', event);
-//     _state = entitiesReducer(Variables.clone(state), action);
-//   });
+describe('UPDATE_MOUSEOVER', function() {
+  let action, _state, entity, entityType, event;
+  beforeEach(function() {
+    let entity = { _id: 123, name: 'Goblin' };
+    let event = { clientX: 10, clientY: 20 };
+    action = updateMouseover( entity, 'entity', event);
+    _state = entitiesReducer(Variables.clone(state), action);
+  });
 
-//   it('entitiesReducer:UPDATE_MOUSEOVER |-| mouse.clientX should equal `10`', function() {
-//     assert.equal(_state.mouse.clientX, 10); // with optional message
-//   });
-//   it('entitiesReducer:UPDATE_MOUSEOVER |-| entity should be object', function() {
-//     assert.isObject(_state.hoverObj.obj); // with optional message
-//   });
-//   it('entitiesReducer:UPDATE_MOUSEOVER |-| entity.name should equal `Goblin`', function() {
-//     assert.equal(_state.hoverObj.obj.name, 'Goblin'); // with optional message
-//   });
-//   it('entitiesReducer:UPDATE_MOUSEOVER |-| entityType should equal `entity`', function() {
-//     assert.equal(_state.hoverObj.type, 'entity'); // with optional message
-//   });
-// });
+  it('powersReducer:UPDATE_MOUSEOVER |-| mouse.clientX should equal `10`', function() {
+    assert.equal(_state.mouse.clientX, 10); // with optional message
+  });
+  it('powersReducer:UPDATE_MOUSEOVER |-| entity should be object', function() {
+    assert.isObject(_state.hoverObj.obj); // with optional message
+  });
+  it('powersReducer:UPDATE_MOUSEOVER |-| entity.name should equal `Goblin`', function() {
+    assert.equal(_state.hoverObj.obj.name, 'Goblin'); // with optional message
+  });
+  it('powersReducer:UPDATE_MOUSEOVER |-| entityType should equal `entity`', function() {
+    assert.equal(_state.hoverObj.type, 'entity'); // with optional message
+  });
+});
 
 describe('UPDATE_KEY', function() {
   let action, _state;
@@ -156,4 +156,41 @@ describe('UPDATE_POINTS_KEY', function() {
   it('entitiesReducer:UPDATE_POINTS_KEY |-| points.usedPoints should equal 16', function() {
     assert.equal(_state.points.usedPoints, 16); // with optional message
   });
+});
+
+describe('UPDATE_ENTITY_WEAPON', function() {
+  let action, _state;
+  
+  describe('Adding new weapon', function() {
+    beforeEach(function() {
+      action = updateEntityWeapon( 34 );
+      _state = entitiesReducer(Variables.clone(state), action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons array length of 1', function() {
+      assert.lengthOf(_state.entity.weapons, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons[2] should equal 34', function() {
+      assert.equal(_state.entity.weapons[0], 34); // with optional message
+    });
+  });
+
+  describe('removing weapon', function() {
+    beforeEach(function() {
+      action = updateEntityWeapon( 34 );
+      _state = entitiesReducer(Variables.clone(state), action);
+      action = updateEntityWeapon( 12 );
+      _state = entitiesReducer(Variables.clone(_state), action);
+      action = updateEntityWeapon( 34 );
+      _state = entitiesReducer(Variables.clone(_state), action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons array length of 1', function() {
+      assert.lengthOf(_state.entity.weapons, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons[2] should equal 34', function() {
+      assert.equal(_state.entity.weapons[0], 12); // with optional message
+    });
+  });
+
 });

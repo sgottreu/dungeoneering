@@ -1,7 +1,7 @@
 var assert = require('chai').assert;
 
 import * as types from './action-types';
-import { loadDungeons, updateExistingDungeon, setDungeon, updateKey, updateDungeonKey, updateMouseover, setSlotEntity, addTile, duplicateDungeon } from './dungeons-actions';
+import { loadDungeons, updateExistingDungeon, setDungeon, updateKey, updateDungeonKey, setSlotEntity, addTile, duplicateDungeon } from './dungeons-actions';
 
 var dungeons = [ {_id: 123}, {_id: 456} ];
 var dungeon = { _id: 123 };
@@ -129,42 +129,6 @@ describe('updateDungeonKey', function() {
   describe('value', function() {
     it('dungeonsActions:updateDungeonKey.value |-| value should equal `Shooting Gallery`', function() {
       assert.equal(state.value, 'Shooting Gallery'); // with optional message
-    });
-  });
-});
-
-describe('updateMouseover', function() {
-  var entity = { _id: 123, name: 'Dire Wolf' };
-  var event = { clientX: 5, clientY: 5 };
-  var state = updateMouseover(entity, 'entity', event);
-
-  describe('type', function() {
-    it('dungeonsActions:updateMouseover.type |-| should exist', function() {
-      assert.isString(state.type, 'Is a string'); // with optional message
-    });
-    it('dungeonsActions:updateMouseover.type |-| should equal = UPDATE_MOUSEOVER', function() {
-      assert.equal(state.type, 'UPDATE_MOUSEOVER'); // with optional message
-    });
-  });
-  describe('entity', function() {
-    it('dungeonsActions:updateMouseover.entity |-| entity is object', function() {
-      assert.isObject(state.entity, 'title'); // with optional message
-    });
-    it('dungeonsActions:updateMouseover.entity |-| entity.name should equal `Dire Wolf`', function() {
-      assert.equal(state.entity.name, 'Dire Wolf'); // with optional message
-    });
-  });
-  describe('entityType', function() {
-    it('dungeonsActions:updateMouseover.entityType |-| entityType should equal `entity`', function() {
-      assert.equal(state.entityType, 'entity'); // with optional message
-    });
-  });
-  describe('mouse', function() {
-    it('dungeonsActions:updateMouseover.entityType |-| mouse should be object', function() {
-      assert.isObject(state.mouse); // with optional message
-    });
-    it('dungeonsActions:updateMouseover.mouse |-| mouse.clientX should equal `5`', function() {
-      assert.equal(state.mouse.clientX, 5); // with optional message
     });
   });
 });
