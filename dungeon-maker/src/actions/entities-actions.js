@@ -37,3 +37,19 @@ export function updatePointsKey(key, value) {
     value: value
   };
 }
+
+export function updateMouseover(entity, entityType, event) {
+  return {
+    type: types.UPDATE_MOUSEOVER,
+    entityType: entityType,
+    entity: entity,
+    mouse: event
+  };
+}
+
+export function updateEntityWeapon(id) {
+  return {
+    type: types.UPDATE_ENTITY_WEAPON,
+    id: id
+  };
+}

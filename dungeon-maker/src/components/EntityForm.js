@@ -46,7 +46,7 @@ class EntityForm extends Component {
     this.changeAbility = this.changeAbility.bind(this);
     this.changeIcon = this.changeIcon.bind(this);
     this.calculateAbility = this.calculateAbility.bind(this);
-    this._setEntityState = this._setEntityState.bind(this);
+    this.boundEntityAC.updateKey = this.boundEntityAC.updateKey.bind(this);
     this.handleEntitySave = this.handleEntitySave.bind(this);
     this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
     this.handleInitiativeChange = this.handleInitiativeChange.bind(this);
@@ -83,50 +83,22 @@ class EntityForm extends Component {
       }
     };
 
-    state.entity = Variables.clone(EntityTemplate);
-    state.entity._type = this.EntityType;
-    state.entity.coin_purse = (this.EntityType === 'character') ? 200 : 0;
-
-    state.points = {
-      totalRacePoints: 0,
-      usedPoints: 0,
-      remainingPoints: 0
+    this.state = {
+      snackbarOpen: false,
+      snackbarMsg: ''
     };
-    state.snackbarOpen = false;
-    state.snackbarMsg = '';
-    state.existingPowers = [];
-    state.availableMonsters = [];
-    state.availableCharacters = [];
-    state.availableWeapons = [];
-    state.selectedEntity = false;
-    this.state = state;
-  }
-
-  handleObjMouseOver = (obj, _type, eve) => {
-    let state = this.state;
-    state.hoverObj = {
-      obj: obj,
-      type: _type
-    };
-    state.mouse.clientX = eve.pageX;
-    state.mouse.clientY = eve.pageY;
-    this.setState(state);
   }
 
   resetForm(){
-    let state = this.state;
-    state.selectedEntity = false;
-    state.entity = Variables.clone(EntityTemplate);
-    this.setState(state);
+    let {boundEntityAC} = this.props;
+    boundEntityAC.updateKey('selectedEntity', false);
+    this.boundEntityAC.updateKey('entity', Variables.clone(Entity.Template));
   }
 
   handleSelectedEntity = (event, index) => {
-    let state = this.state;
-    state.selectedEntity = index;
+    this.boundEntityAC.updateKey('selectedEntity', index);
     let key = (this.EntityType === 'monster') ? 'availableMonsters' : 'availableCharacters';
-    state.entity = state[key][index];
-
-    this.setState(state);
+    this.boundEntityAC.updateKey( 'entity', Variables.clone( this.props.entity[key][index] ) );
   }
 
   handleSnackBarClose = () => {
@@ -136,32 +108,23 @@ class EntityForm extends Component {
   };
 
   selectWeapon = (id) => {
-    let state = this.state;
-    if( state.entity.weapons.includes(id) ){
-      let _i = state.entity.weapons.findIndex(function(w) { return w === id});
-      let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state.entity = calcWeightPrice(state.entity, weapon, 'weapons', 'item', false);
-      state.entity.weapons.splice(_i, 1);
-    } else {
-      let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state.entity = calcWeightPrice(state.entity, weapon, 'weapons');
-      state.entity.weapons.push(id);  
-    }
-    this.setState( state ); 
-  }
+    let { entity, availableWeapons } = this.props;
+    let weapon = availableWeapons.find(function(val){ return id === val._id});
 
-  _setEntityState(key, value){
-		let state = this.state;
-		state.entity[ key ] = value;
-		this.setState( state );
+    if( entity.weapons.includes(id) ){
+      entity = calcWeightPrice(entity, weapon, 'weapons', 'item', false);
+    } else { 
+      entity = calcWeightPrice(entity, weapon, 'weapons');
+    }
+    this.boundEntityAC.updateEntityWeapon(id);
   }
 
   handleChange = (event) => {
-    this._setEntityState( event.target.name, event.target.value);
+    this.boundEntityAC.updateKey( event.target.name, event.target.value);
   }
 
 	handleRoleChange = (event, index) => {
-		this._setEntityState('role', index);
+		this.boundEntityAC.updateKey('role', index);
 	}
 
   handleArmorChange = (event, index) => {
@@ -188,7 +151,7 @@ class EntityForm extends Component {
   }
 
 	handleSizeChange = (event, index) => {
-		this._setEntityState('size', EntitySize[index].label);
+		this.boundEntityAC.updateKey('size', EntitySize[index].label);
 	}
 
   handleClassChange = (event, index) => {    
@@ -496,7 +459,7 @@ class EntityForm extends Component {
       return _this.state.entity.weapons.includes(val._id);
     });
     let remWeapons = this.state.availableWeapons.filter(function(val){ return !_this.state.entity.weapons.includes(val._id) });
-
+    let {boundEntityAC} = this.props;
     return(
       <div className="container">
         <Subheader>Weapons</Subheader>
@@ -513,8 +476,8 @@ class EntityForm extends Component {
                 onTouchTap={this.selectWeapon.bind(this, weapon._id)}
                 primaryText={<div >{weapon.name}</div>}  
                 leftAvatar={<Avatar className={'icon '+weapon_icon} />}
-                onMouseEnter={this.handleObjMouseOver.bind(this, weapon, 'weapon')} 
-                onMouseLeave={this.handleObjMouseOver.bind(this, false, false)}
+                onMouseEnter={(e,i,v) => { boundDungeonAC.updateMouseover(weapon, 'weapon', e) } } 
+                onMouseLeave={(e,i,v) => { boundDungeonAC.updateMouseover(false, false, e) } }
               />
             );
           })}

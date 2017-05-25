@@ -1,11 +1,11 @@
 var assert = require('chai').assert;
 
 import * as types from './action-types';
-import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey } from './entities-actions';
+import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updateMouseover, updatePointsKey, updateEntityWeapon } from './entities-actions';
 
 var availableCharacters = [ {_id: 123, name: 'Steelhorn'}, {_id: 456, name: 'Jarim'} ];
 var availableMonsters = [ {_id: 123, name: 'Goblin'}, {_id: 456, name: 'Wolf'} ];
-var entity = { _id: 123 };
+var entity = { _id: 123, weapons: [12, 25] };
 
 describe('loadCharacters', function() {
   var state = loadCharacters(availableCharacters);
@@ -128,4 +128,60 @@ describe('updatePointsKey', function() {
       assert.equal(state.value, 16); // with optional message
     });
   });
+});
+
+describe('updateMouseover', function() {
+  var entity = { _id: 123, name: 'Dire Wolf' };
+  var event = { clientX: 5, clientY: 5 };
+  var state = updateMouseover(entity, 'entity', event);
+
+  describe('type', function() {
+    it('entitiesActions:updateMouseover.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateMouseover.type |-| should equal = UPDATE_MOUSEOVER', function() {
+      assert.equal(state.type, 'UPDATE_MOUSEOVER'); // with optional message
+    });
+  });
+  describe('entity', function() {
+    it('entitiesActions:updateMouseover.entity |-| entity is object', function() {
+      assert.isObject(state.entity, 'title'); // with optional message
+    });
+    it('entitiesActions:updateMouseover.entity |-| entity.name should equal `Dire Wolf`', function() {
+      assert.equal(state.entity.name, 'Dire Wolf'); // with optional message
+    });
+  });
+  describe('entityType', function() {
+    it('entitiesActions:updateMouseover.entityType |-| entityType should equal `entity`', function() {
+      assert.equal(state.entityType, 'entity'); // with optional message
+    });
+  });
+  describe('mouse', function() {
+    it('entitiesActions:updateMouseover.entityType |-| mouse should be object', function() {
+      assert.isObject(state.mouse); // with optional message
+    });
+    it('entitiesActions:updateMouseover.mouse |-| mouse.clientX should equal `5`', function() {
+      assert.equal(state.mouse.clientX, 5); // with optional message
+    });
+  });
+});
+
+describe('updateEntityWeapon', function() {
+  var entity = { _id: 123, weapons: [12, 25] };
+  var state = updateEntityWeapon(12);
+  
+  describe('type', function() {
+    it('entitiesActions:updateEntityWeapon.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityWeapon.type |-| should equal = UPDATE_ENTITY_WEAPON', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_WEAPON'); // with optional message
+    });
+  });
+  describe('id', function() {
+    it('entitiesActions:updateEntityWeapon.id |-| state.id should equal 12', function() {
+      assert.equal(state.id, 12); // with optional message
+    });
+  });
+  
 });

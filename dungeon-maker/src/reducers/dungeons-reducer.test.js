@@ -7,7 +7,7 @@ import TileOptions from '../lib/TileOptions';
 
 import dungeonsReducer from './dungeons-reducer';
 
-import { loadDungeons, updateExistingDungeon, setDungeon, updateKey, updateDungeonKey, updateMouseover, setSlotEntity, addTile, duplicateDungeon } from '../actions/dungeons-actions';
+import { loadDungeons, updateExistingDungeon, setDungeon, updateKey, updateDungeonKey, setSlotEntity, addTile, duplicateDungeon } from '../actions/dungeons-actions';
 
 const state = {
   availableDungeons: [],
@@ -105,29 +105,6 @@ describe('UPDATE_EXISTING_DUNGEON', function() {
     action = updateExistingDungeon(false, 'Pitfall' );
     _state = dungeonsReducer(_state, action);
     assert.equal('Pitfall', _state.availableDungeons[1].title); // with optional message
-  });
-});
-
-describe('UPDATE_MOUSEOVER', function() {
-  let action, _state, entity, entityType, event;
-  beforeEach(function() {
-    let entity = { _id: 123, name: 'Goblin' };
-    let event = { clientX: 10, clientY: 20 };
-    action = updateMouseover( entity, 'entity', event);
-    _state = dungeonsReducer(Variables.clone(state), action);
-  });
-
-  it('powersReducer:UPDATE_MOUSEOVER |-| mouse.clientX should equal `10`', function() {
-    assert.equal(_state.mouse.clientX, 10); // with optional message
-  });
-  it('powersReducer:UPDATE_MOUSEOVER |-| entity should be object', function() {
-    assert.isObject(_state.hoverObj.obj); // with optional message
-  });
-  it('powersReducer:UPDATE_MOUSEOVER |-| entity.name should equal `Goblin`', function() {
-    assert.equal(_state.hoverObj.obj.name, 'Goblin'); // with optional message
-  });
-  it('powersReducer:UPDATE_MOUSEOVER |-| entityType should equal `entity`', function() {
-    assert.equal(_state.hoverObj.type, 'entity'); // with optional message
   });
 });
 
