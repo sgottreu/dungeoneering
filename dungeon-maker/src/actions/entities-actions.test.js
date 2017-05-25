@@ -185,3 +185,24 @@ describe('updateEntityWeapon', function() {
   });
   
 });
+
+
+// describe('updateEntityArmor', function() {
+//   var entity = { _id: 123, weapons: [12, 25] };
+//   var state = updateEntityWeapon(12);
+  
+//   describe('type', function() {
+//     it('entitiesActions:updateEntityWeapon.type |-| should exist', function() {
+//       assert.isString(state.type, 'Is a string'); // with optional message
+//     });
+//     it('entitiesActions:updateEntityWeapon.type |-| should equal = UPDATE_ENTITY_ARMOR', function() {
+//       assert.equal(state.type, 'UPDATE_ENTITY_ARMOR'); // with optional message
+//     });
+//   });
+//   describe('id', function() {
+//     it('entitiesActions:updateEntityWeapon.id |-| state.id should equal 12', function() {
+//       assert.equal(state.id, 12); // with optional message
+//     });
+//   });
+  
+// });

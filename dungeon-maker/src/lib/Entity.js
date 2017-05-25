@@ -158,6 +158,95 @@ export var calcRemainingPoints = (points, entity, target) => {
   return points;
 }
 
+export var updateEncumbrance = (encumbered, coin_purse, item, action) => {
+  if(action === 'add'){
+    if(coin_purse < item.price){
+      return encumbered;
+    }
+    encumbered += parseFloat(item.weight, 10);
+  } else {
+    encumbered -= parseFloat(item.weight, 10);
+  }
+  return encumbered;
+}
+
+export var updateCoinPurse = (coin_purse, item, action) => {
+  if(action === 'add'){
+    if(coin_purse < item.price){
+      return coin_purse;
+    }
+    coin_purse -= parseFloat(item.price, 10);
+  } else {
+    coin_purse += parseFloat(item.price, 10);
+  }
+  return coin_purse;
+}
+
+export var removeInventoryCategory = (category, inventory) => {
+  let _i = inventory.findIndex((inv, i) => { return inv.category === category});
+  if(_i !== -1){
+    inventory.splice(_i, 1);
+  }
+  return inventory;
+}
+
+export var removeInventoryItem = (purchasedItem, category, inventory) => {
+  let _i = inventory.findIndex((inv, i) => { return inv.item._id === purchasedItem._id});
+  if(_i !== -1 && inventory[_i].item.quantity > 0){
+    inventory[_i].item.quantity -= purchasedItem.quantity;
+  }
+  return inventory;
+}
+
+export var addInventory = (purchasedItem, category, inventory) => {
+  let tmpItem = Variables.clone(purchasedItem);
+  tmpItem.quantity = (tmpItem.quantity === undefined) ? 1 : tmpItem.quantity;
+  let _i = -1;
+
+  if(inventory.length > 0){
+    _i = inventory.findIndex((inv, i) => { return inv.item._id === tmpItem._id });
+  }
+  
+  if(_i === -1){
+    inventory.push( { category: category, item: tmpItem } );
+  } else {
+    inventory[_i].item.quantity += tmpItem.quantity;
+  }
+  return inventory;
+}
+
+export var addInventoryLog = (purchasedItem, category, inventory_log) => {
+  inventory_log.splice(0, 0, { category: category, item: purchasedItem } );
+  return inventory_log;
+}
+
+export var removeInventoryLog = (purchasedItem, category, inventory_log) => {
+  let _i = inventory_log.findIndex((item, index) => { return item.category === category} );
+  inventory_log.splice(_i, 1);
+
+  return inventory_log;
+}
+export function getDefenseModifier(entity, defense)
+{
+  var abl = entity.abilities;
+  var aM = 'abilityMod';
+  var score = 0;
+
+  switch(defense) {
+    case 'fortitude':
+      score = (abl.strength[aM] >= abl.constitution[aM]) ? abl.strength[aM] : abl.constitution[aM];
+      break;
+    case 'reflex':
+      score = (abl.dexterity[aM] >= abl.intelligence[aM]) ? abl.dexterity[aM] : abl.intelligence[aM];
+      break;
+    case 'willpower':
+      score = (abl.wisdom[aM] >= abl.charisma[aM]) ? abl.wisdom[aM] : abl.charisma[aM];
+      break;
+  }
+  return score;
+}
+
+
 
 /// Left to migrate
 
@@ -252,23 +341,23 @@ export var calculateDefense = function(state, _defense=false,value=false){
   return state;
 }
 
-function getDefenseModifier(state, defense)
-{
-  let abl = state.entity.abilities;
-  let aM = 'abilityMod';
-  let score = 0;
-  if(defense === 'fortitude'){
-    score = (abl.strength[aM] >= abl.constitution[aM]) ? abl.strength[aM] : abl.constitution[aM];
-  }
-  if(defense === 'reflex'){
-    score = (abl.dexterity[aM] >= abl.intelligence[aM]) ? abl.dexterity[aM] : abl.intelligence[aM];
-  }
-  if(defense === 'willpower'){
-    score = (abl.wisdom[aM] >= abl.charisma[aM]) ? abl.wisdom[aM] : abl.charisma[aM];
-  }
+// function getDefenseModifier(state, defense)
+// {
+//   let abl = state.entity.abilities;
+//   let aM = 'abilityMod';
+//   let score = 0;
+//   if(defense === 'fortitude'){
+//     score = (abl.strength[aM] >= abl.constitution[aM]) ? abl.strength[aM] : abl.constitution[aM];
+//   }
+//   if(defense === 'reflex'){
+//     score = (abl.dexterity[aM] >= abl.intelligence[aM]) ? abl.dexterity[aM] : abl.intelligence[aM];
+//   }
+//   if(defense === 'willpower'){
+//     score = (abl.wisdom[aM] >= abl.charisma[aM]) ? abl.wisdom[aM] : abl.charisma[aM];
+//   }
   
-  return score;
-}
+//   return score;
+// }
 
 export var updateWeightPrice = (state, item, action) => {
   if(state._type === 'character'){
@@ -285,6 +374,8 @@ export var updateWeightPrice = (state, item, action) => {
   }
   return state;
 }
+
+
 
 export var updateInventory = (state, item, category, action, index=false) => {
   let inventory_id = item._id;
@@ -337,10 +428,7 @@ export var updateInventory = (state, item, category, action, index=false) => {
 }
 
 export var calcWeightPrice = (state, purchasedItem, category, bolRemove=false, bolAddItem=true) => {
-  if(state.inventory === undefined){
-    state.inventory = [];
-    state.inventory_log = [];
-  }
+
   if(bolRemove){
     let log = state.inventory_log;
     if(bolRemove === 'category'){      
