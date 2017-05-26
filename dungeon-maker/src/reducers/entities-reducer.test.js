@@ -5,12 +5,29 @@ import {Variables} from '../lib/Variables';
 import Slots from '../lib/Slots.js';
 import TileOptions from '../lib/TileOptions';
 import entitiesReducer from './entities-reducer';
-import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey, updateMouseover, updateEntityWeapon } from '../actions/entities-actions';
+import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey, updateMouseover, 
+          updateEntityWeapon, updateEntityArmor, updateEntityShield, updateEntityDefense
+        
+      } from '../actions/entities-actions';
 import * as Entity from '../lib/Entity';
 
 const state = {
   availableCharacters: [],
   availableMonsters: [],
+  availableWeapons: [
+    {
+      "_id": "58b4a82b779af027180006a3",
+      "category": "Military",
+      "type": "melee",
+      "name": "Maul",
+      "range": false,
+      "prof": 2,
+      "damage": "1d6",
+      "price": 5,
+      "weight": 2,
+      "_type": "weapon"
+    }
+  ],
   entity: Variables.clone(Entity.Template),
   points: {
     totalRacePoints: 0,
@@ -163,34 +180,365 @@ describe('UPDATE_ENTITY_WEAPON', function() {
   
   describe('Adding new weapon', function() {
     beforeEach(function() {
-      action = updateEntityWeapon( 34 );
-      _state = entitiesReducer(Variables.clone(state), action);
+      _state = Variables.clone( state );
+
+      _state.entity.coin_purse = 100;
+      _state.entity.encumbered = 0;
+
+      action = updateEntityWeapon( '58b4a82b779af027180006a3' );
+      _state = entitiesReducer(_state, action);
     });
+
 
     it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons array length of 1', function() {
       assert.lengthOf(_state.entity.weapons, 1); // with optional message
     });
     it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons[2] should equal 34', function() {
-      assert.equal(_state.entity.weapons[0], 34); // with optional message
+      assert.equal(_state.entity.weapons[0], '58b4a82b779af027180006a3'); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| coin_purse = 95', function() {
+      assert.equal(_state.entity.coin_purse, 95); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| encumbered should =258', function() {
+      assert.equal(_state.entity.encumbered, 2); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory[0].name = Maul', function() {
+      assert.equal(_state.entity.inventory[0].item.name, 'Maul'); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory_log[0].item.name should = Maul', function() {
+      assert.equal(_state.entity.inventory_log[0].item.name, 'Maul'); // with optional message
+    });
+
+  });
+
+});
+
+
+describe('UPDATE_ENTITY_ARMOR', function() {
+  let action, _state;
+  
+  describe('Adding Hide Armor to lvl 6 Ranger with +4 Con mod', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 6;
+      _state.entity.class = 3; // Ranger
+      _state.entity.armor = 2; // Leather 
+
+      _state.entity.abilities = {
+          strength: { abilityMod: 5 }, constitution: { abilityMod: 4 },
+          dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+          wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+      };
+
+      _state.entity.inventory = [ { category: 'armor' , item: {"name":"Leather","score":2,"check":0,"speed":0,"price":25,"weight":15,"_id":"58d18cd2481cfb2b38b54bc3"} }];
+      _state.entity.inventory_log = [ { category: 'armor' , item: {"name":"Leather","score":2,"check":0,"speed":0,"price":25,"weight":15,"_id":"58d18cd2481cfb2b38b54bc3"} }];
+      _state.entity.coin_purse = 75;
+      _state.entity.encumbered = 50;
+
+      action = updateEntityArmor( 3 );
+      _state = entitiesReducer(_state, action);
+
+       let bedroll = { "_id": "58d18bcf05bd3e1a9c3cf4c0", "category": "Adventurer Kit", "name": "Bedroll", "price": 1,  "weight": 2,  "quantity": 1, "_type": "gear" };
+
+      _state.entity.inventory = Entity.addInventory(bedroll, 'gear', _state.entity.inventory);
+      _state.entity.inventory_log = Entity.addInventoryLog(bedroll, 'gear', _state.entity.inventory_log);
+      _state.entity.coin_purse = _state.entity.coin_purse - bedroll.price;
+      _state.entity.encumbered = _state.entity.encumbered - bedroll.weight;
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| coin_purse = 69', function() {
+      assert.equal(_state.entity.coin_purse, 69); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| encumbered should = 58', function() {
+      assert.equal(_state.entity.encumbered, 58); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory[0].name = Hide', function() {
+      assert.equal(_state.entity.inventory[0].item.name, 'Hide'); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory_log[0].item.name should = Bedroll', function() {
+      assert.equal(_state.entity.inventory_log[0].item.name, 'Bedroll'); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| armorClass.total = 20', function() {
+      assert.equal(_state.entity.defense.armorClass.total, 20); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| armorClass.armorBonus = 3', function() {
+      assert.equal(_state.entity.defense.armorClass.armorBonus, 3); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| armorClass.abilityMod = 4', function() {
+      assert.equal(_state.entity.defense.armorClass.abilityMod, 4); // with optional message
     });
   });
 
-  describe('removing weapon', function() {
+  describe('Adding Plate Armor to lvl 8 Monster with +6 Con mod w/ Heavy Shield', function() {
     beforeEach(function() {
-      action = updateEntityWeapon( 34 );
-      _state = entitiesReducer(Variables.clone(state), action);
-      action = updateEntityWeapon( 12 );
-      _state = entitiesReducer(Variables.clone(_state), action);
-      action = updateEntityWeapon( 34 );
-      _state = entitiesReducer(Variables.clone(_state), action);
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'monster';
+      _state.entity.level = 8;
+      _state.entity.armor = 6; // Leather 
+      _state.entity.defense.armorClass.shield = 2; // Heavy Shield
+
+      _state.entity.abilities = {
+          strength: { abilityMod: 5 }, constitution: { abilityMod: 6 },
+          dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+          wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+      };
+
+      action = updateEntityArmor( 6 );
+      _state = entitiesReducer(_state, action);
+
+       let bedroll = { "_id": "58d18bcf05bd3e1a9c3cf4c0", "category": "Adventurer Kit", "name": "Bedroll", "price": 1,  "weight": 2,  "quantity": 1, "_type": "gear" };
+
+      _state.entity.inventory = Entity.addInventory(bedroll, 'gear', _state.entity.inventory);
+      _state.entity.inventory_log = Entity.addInventoryLog(bedroll, 'gear', _state.entity.inventory_log);
+
     });
 
-    it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons array length of 1', function() {
-      assert.lengthOf(_state.entity.weapons, 1); // with optional message
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| entity.armor = 6', function() {
+      assert.equal(_state.entity.armor, 6); // with optional message
     });
-    it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons[2] should equal 34', function() {
-      assert.equal(_state.entity.weapons[0], 12); // with optional message
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| coin_purse = 0', function() {
+      assert.equal(_state.entity.coin_purse, 0); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| encumbered should = 0', function() {
+      assert.equal(_state.entity.encumbered, 0); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory[0].name = Plate', function() {
+      assert.equal(_state.entity.inventory[0].item.name, 'Plate'); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory_log[0].item.name should = Bedroll', function() {
+      assert.equal(_state.entity.inventory_log[0].item.name, 'Bedroll'); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| armorClass.total = 34', function() {
+      assert.equal(_state.entity.defense.armorClass.total, 34); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| armorClass.armorBonus = 8', function() {
+      assert.equal(_state.entity.defense.armorClass.armorBonus, 8); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| armorClass.abilityMod = 6', function() {
+      assert.equal(_state.entity.defense.armorClass.abilityMod, 6); // with optional message
     });
   });
 
 });
+
+describe('UPDATE_ENTITY_SHIELD', function() {
+  let action, _state;
+  
+  describe('Adding Heavy Shield to lvl 6 Paladin with +4 Con mod', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 6;
+      _state.entity.class = 2; // Paladin
+      _state.entity.armor = 6; // Plate 
+
+      _state.entity.abilities = {
+          strength: { abilityMod: 5 }, constitution: { abilityMod: 4 },
+          dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+          wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+      };
+
+      _state.entity.coin_purse = 100;
+      _state.entity.encumbered = 20;
+
+      action = updateEntityArmor( 6 );
+      _state = entitiesReducer(_state, action);
+
+      action = updateEntityShield( 2 );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| coin_purse = 40', function() {
+      assert.equal(_state.entity.coin_purse, 40); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| encumbered should = 85', function() {
+      assert.equal(_state.entity.encumbered, 85); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| inventory_log[0].item.name should = Heavy Shield', function() {
+      assert.equal(_state.entity.inventory_log[0].item.name, 'Heavy Shield'); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| armorClass.total = 27', function() {
+      assert.equal(_state.entity.defense.armorClass.total, 27); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| shield = 2', function() {
+      assert.equal(_state.entity.shield, 2); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| armorClass.shield = 2', function() {
+      assert.equal(_state.entity.defense.armorClass.shield, 2); // with optional message
+    });
+  });
+
+  describe('Adding Light Shield to lvl 6 Paladin with +4 Con mod', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 6;
+      _state.entity.class = 2; // Paladin
+      _state.entity.armor = 6; // Plate 
+
+      _state.entity.abilities = {
+          strength: { abilityMod: 5 }, constitution: { abilityMod: 4 },
+          dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+          wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+      };
+
+      _state.entity.coin_purse = 100;
+      _state.entity.encumbered = 20;
+
+      action = updateEntityArmor( 6 );
+      _state = entitiesReducer(_state, action);
+
+      action = updateEntityShield( 2 );
+      _state = entitiesReducer(_state, action);
+
+      action = updateEntityShield( 1 );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| coin_purse = 45', function() {
+      assert.equal(_state.entity.coin_purse, 45); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| encumbered should = 76', function() {
+      assert.equal(_state.entity.encumbered, 76); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| inventory[1].item.name should = Light Shield', function() {
+      assert.equal(_state.entity.inventory[1].item.name, 'Light Shield'); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| inventory_log[0].item.name should = Light Shield', function() {
+      assert.equal(_state.entity.inventory_log[0].item.name, 'Light Shield'); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| armorClass.total = 26', function() {
+      assert.equal(_state.entity.defense.armorClass.total, 26); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| shield = 1', function() {
+      assert.equal(_state.entity.shield, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_SHIELD |-| armorClass.shield = 1', function() {
+      assert.equal(_state.entity.defense.armorClass.shield, 1); // with optional message
+    });
+  });
+
+});
+
+describe('UPDATE_ENTITY_DEFENSE', function() {
+  let action, _state;
+  
+  describe('Adding Fortitude to lvl 10 Paladin with +6 Str mod', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 10;
+      _state.entity.class = 2; // Paladin
+      _state.entity.armor = 6; // Plate 
+
+      _state.entity.abilities = {
+          strength: { abilityMod: 6 }, constitution: { abilityMod: 4 },
+          dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+          wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+      };
+      _state.entity.defense.fortitude = { total: 0, default: 10, abilityMod: 0, classBonus: 1, raceBonus: 0, misc: 0 };
+
+      action = updateEntityShield( 2 );
+      _state = entitiesReducer(_state, action);
+
+      action = updateEntityDefense( 'fortitude' );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.fortitude.total = 22', function() {
+      assert.equal(_state.entity.defense.fortitude.total, 22); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.fortitude.abilityMod = 6', function() {
+      assert.equal(_state.entity.defense.fortitude.abilityMod, 6); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.fortitude.halfLvl = 5', function() {
+      assert.equal(_state.entity.defense.fortitude.halfLvl, 5); // with optional message
+    });
+  });
+
+  describe('Adding Reflex to lvl 10 Paladin with +3 Dex mod', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 10;
+      _state.entity.class = 2; // Paladin
+      _state.entity.armor = 6; // Plate 
+
+      _state.entity.abilities = {
+          strength: { abilityMod: 6 }, constitution: { abilityMod: 4 },
+          dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+          wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+      };
+      _state.entity.defense.reflex = { total: 0, default: 10, abilityMod: 0, classBonus: 1, raceBonus: 0, misc: 0 };
+
+      action = updateEntityShield( 2 );
+      _state = entitiesReducer(_state, action);
+
+      action = updateEntityDefense( 'reflex' );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.reflex.total = 21', function() {
+      assert.equal(_state.entity.defense.reflex.total, 21); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.reflex.abilityMod = 3', function() {
+      assert.equal(_state.entity.defense.reflex.abilityMod, 3); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.reflex.halfLvl = 5', function() {
+      assert.equal(_state.entity.defense.reflex.halfLvl, 5); // with optional message
+    });
+  });
+
+  describe('Adding willpower to lvl 12 Monster with +3 Dex mod', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'monster';
+      _state.entity.level = 12;
+
+      _state.entity.abilities = {
+          strength: { abilityMod: 6 }, constitution: { abilityMod: 4 },
+          dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+          wisdom: { abilityMod: 7 }, charisma: { abilityMod: 3 }
+      };
+      _state.entity.defense.willpower = { total: 0, default: 10, abilityMod: 0, classBonus: 0, raceBonus: 0, misc: 0 };
+
+      action = updateEntityDefense( 'willpower', 35 );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.willpower.total = 35', function() {
+      assert.equal(_state.entity.defense.willpower.total, 35); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.willpower.abilityMod = 7', function() {
+      assert.equal(_state.entity.defense.willpower.abilityMod, 7); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.willpower.halfLvl = 12', function() {
+      assert.equal(_state.entity.defense.willpower.halfLvl, 12); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.willpower.misc = 6', function() {
+      assert.equal(_state.entity.defense.willpower.misc, 6); // with optional message
+    });
+  });
+
+});
+

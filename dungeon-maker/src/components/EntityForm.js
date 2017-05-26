@@ -119,38 +119,26 @@ class EntityForm extends Component {
   }
 
   handleChange = (event) => {
-    this.boundEntityAC.updateKey( event.target.name, event.target.value);
+    this.boundEntityAC.updateEntityKey( event.target.name, event.target.value);
   }
 
 	handleRoleChange = (event, index) => {
-		this.boundEntityAC.updateKey('role', index);
+		this.boundEntityAC.updateEntityKey('role', index);
 	}
 
   handleArmorChange = (event, index) => {
-    let state = this.state;
-
-    state.entity = calcWeightPrice(state.entity, EntityArmor[index], 'armor', 'category');
-
-    state.entity.armor = index;
-    state = calculateArmorClass(state);
-    this.setState( state );
+    this.boundEntityAC.updateEntityArmor( index );
   }
 
   handleShieldChoice = (event, isInputChecked) => {
     let {entity} = this.props;  
-    let shield = (isInputChecked === true && state.entity.shield !== event.target.dataset.shield) ? parseInt(event.target.dataset.shield, 10) : false;
+    let shield = (isInputChecked === true && entity.shield !== event.target.dataset.shield) ? parseInt(event.target.dataset.shield, 10) : false;
 
-    state.entity.shield = shield;
-    let _i = EntityShield.findIndex((shd, s) => { return shd.score === shield});
-    state.entity = calcWeightPrice(state.entity, EntityShield[_i], 'shield', 'category', (shield === false) ? false : true);
-
-    state.entity.defense.armorClass.shield = (!shield) ? 0 : shield;
-    state = calculateArmorClass(state);
-    this.setState( state );
+    this.boundEntityAC.updateEntityShield( shield );
   }
 
 	handleSizeChange = (event, index) => {
-		this.boundEntityAC.updateKey('size', EntitySize[index].label);
+		this.boundEntityAC.updateEntityKey('size', EntitySize[index].label);
 	}
 
   handleClassChange = (event, index) => {    
@@ -160,13 +148,13 @@ class EntityForm extends Component {
     state.entity.bloodied = Math.floor( state.entity.hp / 2 );
     state.entity.healingSurge = Math.floor( state.entity.hp / 4 );
 
-    state.entity.surgesPerDay = parseInt(EntityClass[index].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
+    state.entity.surgesPerDay = parseInt(Entity._Class[index].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
 
-    state.entity.iconClass = EntityClass[ index ].name.toLowerCase();
+    state.entity.iconClass = Entity._Class[ index ].name.toLowerCase();
 
-    for(let c in EntityClass[index].defenseMod){
-      if(EntityClass[index].defenseMod.hasOwnProperty(c)){
-        state.entity.defense[ c ].classBonus = parseInt(EntityClass[index].defenseMod[c], 10);
+    for(let c in Entity._Class[index].defenseMod){
+      if(Entity._Class[index].defenseMod.hasOwnProperty(c)){
+        state.entity.defense[ c ].classBonus = parseInt(Entity._Class[index].defenseMod[c], 10);
       }
     }
 
@@ -174,9 +162,7 @@ class EntityForm extends Component {
   }
 
   changeIcon = (event) => {
-    let state = this.state;
-    state.entity.iconClass = event.target.dataset.icon;
-    this.setState(state);
+    this.boundEntityAC.updateEntityKey('iconClass', event.target.dataset.icon);
   }
 
   includePower = (power, current_power=false) => {
@@ -249,16 +235,13 @@ class EntityForm extends Component {
   }
 
   handleFortitudeChange(event){
-    let state = calculateDefense(this.state, 'fortitude', event.target.value);
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityDefense('fortitude', event.target.value);
   }
   handleReflexChange(event){
-    let state = calculateDefense(this.state, 'reflex', event.target.value);
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityDefense('reflex', event.target.value);
   }
   handleWillpowerChange(event){
-    let state = calculateDefense(this.state, 'willpower', event.target.value);
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityDefense('willpower', event.target.value);
   }
 
 
@@ -289,7 +272,7 @@ class EntityForm extends Component {
     state = this.calculateAbility(state, event.target.name, this.state.entity.level, event.target.value);
     
     if(state.entity.class){
-      state.entity.surgesPerDay = parseInt(EntityClass[ state.entity.class ].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
+      state.entity.surgesPerDay = parseInt(Entity._Class[ state.entity.class ].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
       state.entity.hp = getInitialHitPoints(state, state.entity.class);
     }
     state.entity.initiative = calculateInitiative(state);
@@ -330,7 +313,7 @@ class EntityForm extends Component {
   loadClassField(){
     return (
       <SelectField   floatingLabelText="Class" value={this.state.entity.class} onChange={this.handleClassChange} >
-        {EntityClass.map( (_class, index) => (
+        {Entity._Class.map( (_class, index) => (
           <MenuItem key={index} value={index} primaryText={_class.name} />
         ))}
       </SelectField>
@@ -427,7 +410,7 @@ class EntityForm extends Component {
                 />
               );
             } else {
-              if(EntityClass[this.state.entity.class].name !== power.class.name){
+              if(Entity._Class[this.state.entity.class].name !== power.class.name){
                 return false;
               }
 
@@ -523,8 +506,8 @@ class EntityForm extends Component {
             <MenuItem key={index} value={index} primaryText={`${size.label}`} />
           ))}
         </SelectField>
-        <SelectField style={Variables.getSelectListStyle(this.state.entity.armor, EntityArmor.map( (armor, index) => {return index}) )} floatingLabelText="Armor" value={this.state.entity.armor} onChange={this.handleArmorChange} >
-          {EntityArmor.map( (armor, index) => (
+        <SelectField style={Variables.getSelectListStyle(this.state.entity.armor, Entity._Armor.map( (armor, index) => {return index}) )} floatingLabelText="Armor" value={this.state.entity.armor} onChange={this.handleArmorChange} >
+          {Entity._Armor.map( (armor, index) => (
             <MenuItem key={index} value={index} primaryText={`${armor.name}`} />
           ))}
         </SelectField>
@@ -567,7 +550,7 @@ class EntityForm extends Component {
         <br/>
         <div className="shields">
           <Subheader>Shield</Subheader>
-          {EntityShield.map( (shield, index) => {
+          {Entity._Shield.map( (shield, index) => {
             return (
               <Toggle key={index}
                 label={shield.name}
