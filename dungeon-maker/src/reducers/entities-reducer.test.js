@@ -184,6 +184,8 @@ describe('UPDATE_ENTITY_WEAPON', function() {
 
       _state.entity.coin_purse = 100;
       _state.entity.encumbered = 0;
+      _state.entity._type = 'character';
+
 
       action = updateEntityWeapon( '58b4a82b779af027180006a3' );
       _state = entitiesReducer(_state, action);
@@ -200,7 +202,7 @@ describe('UPDATE_ENTITY_WEAPON', function() {
     it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| coin_purse = 95', function() {
       assert.equal(_state.entity.coin_purse, 95); // with optional message
     });
-    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| encumbered should =258', function() {
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| encumbered should = 2', function() {
       assert.equal(_state.entity.encumbered, 2); // with optional message
     });
 
@@ -209,6 +211,47 @@ describe('UPDATE_ENTITY_WEAPON', function() {
     });
     it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory_log[0].item.name should = Maul', function() {
       assert.equal(_state.entity.inventory_log[0].item.name, 'Maul'); // with optional message
+    });
+
+  });
+
+  describe('removing weapon', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity.coin_purse = 100;
+      _state.entity.encumbered = 0;
+      _state.entity._type = 'character';
+
+
+      action = updateEntityWeapon( '58b4a82b779af027180006a3' );
+      _state = entitiesReducer(_state, action);
+
+      action = updateEntityWeapon( '58b4a82b779af027180006a3' );
+      _state = entitiesReducer(_state, action);
+    });
+
+
+    it('entitiesReducer:UPDATE_ENTITY_WEAPON |-| weapons array length of 0', function() {
+      assert.lengthOf(_state.entity.weapons, 0); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| coin_purse = 100', function() {
+      assert.equal(_state.entity.coin_purse, 100); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| encumbered should = 0', function() {
+      assert.equal(_state.entity.encumbered, 0); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory length of 1', function() {
+      assert.lengthOf(_state.entity.inventory, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory[0].quantity = 0', function() {
+      assert.equal(_state.entity.inventory[0].item.quantity, 0); // with optional message
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ARMOR |-| inventory_log length of 1', function() {
+      assert.lengthOf(_state.entity.inventory_log, 1); // with optional message
     });
 
   });
