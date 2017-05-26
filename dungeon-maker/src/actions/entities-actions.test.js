@@ -1,7 +1,10 @@
 var assert = require('chai').assert;
 
 import * as types from './action-types';
-import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updateMouseover, updatePointsKey, updateEntityWeapon } from './entities-actions';
+import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updateMouseover, 
+          updatePointsKey, updateEntityWeapon, updateEntityArmor, updateEntityShield,
+          updateEntityDefense
+        } from './entities-actions';
 
 var availableCharacters = [ {_id: 123, name: 'Steelhorn'}, {_id: 456, name: 'Jarim'} ];
 var availableMonsters = [ {_id: 123, name: 'Goblin'}, {_id: 456, name: 'Wolf'} ];
@@ -167,7 +170,6 @@ describe('updateMouseover', function() {
 });
 
 describe('updateEntityWeapon', function() {
-  var entity = { _id: 123, weapons: [12, 25] };
   var state = updateEntityWeapon(12);
   
   describe('type', function() {
@@ -187,22 +189,60 @@ describe('updateEntityWeapon', function() {
 });
 
 
-// describe('updateEntityArmor', function() {
-//   var entity = { _id: 123, weapons: [12, 25] };
-//   var state = updateEntityWeapon(12);
+describe('updateEntityArmor', function() {
+  var state = updateEntityArmor(3);
   
-//   describe('type', function() {
-//     it('entitiesActions:updateEntityWeapon.type |-| should exist', function() {
-//       assert.isString(state.type, 'Is a string'); // with optional message
-//     });
-//     it('entitiesActions:updateEntityWeapon.type |-| should equal = UPDATE_ENTITY_ARMOR', function() {
-//       assert.equal(state.type, 'UPDATE_ENTITY_ARMOR'); // with optional message
-//     });
-//   });
-//   describe('id', function() {
-//     it('entitiesActions:updateEntityWeapon.id |-| state.id should equal 12', function() {
-//       assert.equal(state.id, 12); // with optional message
-//     });
-//   });
+  describe('type', function() {
+    it('entitiesActions:updateEntityArmor.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityArmor.type |-| should equal = UPDATE_ENTITY_ARMOR', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_ARMOR'); // with optional message
+    });
+  });
+  describe('index', function() {
+    it('entitiesActions:updateEntityArmor.index |-| state.index should equal 3', function() {
+      assert.equal(state.index, 3); // with optional message
+    });
+  });
+});
+
+describe('updateEntityShield', function() {
+  var state = updateEntityShield(2);
+  describe('type', function() {
+    it('entitiesActions:updateEntityShield.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityShield.type |-| should equal = UPDATE_ENTITY_ARMOR', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_SHIELD'); // with optional message
+    });
+  });
+  describe('score', function() {
+    it('entitiesActions:updateEntityShield.score |-| state.score should equal 2', function() {
+      assert.equal(state.score, 2); // with optional message
+    });
+  });
   
-// });
+});
+
+describe('updateEntityDefense', function() {
+  var state = updateEntityDefense('fortitude', 12);
+  describe('type', function() {
+    it('entitiesActions:updateEntityDefense.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityDefense.type |-| should equal = UPDATE_ENTITY_DEFENSE', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_DEFENSE'); // with optional message
+    });
+  });
+  describe('defense', function() {
+    it('entitiesActions:updateEntityDefense.defense |-| state.defense should equal fortitude', function() {
+      assert.equal(state.defense, 'fortitude'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('entitiesActions:updateEntityDefense.value |-| state.value should equal 12', function() {
+      assert.equal(state.value, 12); // with optional message
+    });
+  });
+});

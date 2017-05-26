@@ -53,3 +53,25 @@ export function updateEntityWeapon(id) {
     id: id
   };
 }
+
+export function updateEntityArmor(index) {
+  return {
+    type: types.UPDATE_ENTITY_ARMOR,
+    index: index
+  };
+}
+
+export function updateEntityShield(score) {
+  return {
+    type: types.UPDATE_ENTITY_SHIELD,
+    score: score
+  };
+}
+
+export function updateEntityDefense(defense, value=false) {
+  return {
+    type: types.UPDATE_ENTITY_DEFENSE,
+    defense: defense,
+    value: value
+  };
+}

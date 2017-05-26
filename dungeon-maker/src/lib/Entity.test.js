@@ -445,7 +445,6 @@ describe('Entity', function() {
 
   describe('getDefenseModifier ', function() {
     let action, _state;
-     
 
     describe('get fortitude with strength', function() {
       beforeEach(function(){
@@ -542,10 +541,148 @@ describe('Entity', function() {
 
   }); // getDefenseModifier
 
+  describe('HalfLevelModifier ', function() {
+    let action, _state;     
+    it('Entity:HalfLevelModifier  |-| half level of character - half of 5 rounded down = 2', function() {
+      let half = Entity.HalfLevelModifier(5, 'character');
+      assert.equal(half, 2, 'half level of 5 rounded down = 2'); // with optional message
+    });
+    it('Entity:HalfLevelModifier  |-| half level of character - half of 10 = 5', function() {
+      let half = Entity.HalfLevelModifier(10, 'character');
+      assert.equal(half, 5, 'half of 10 = 5'); // with optional message
+    });
+
+    it('Entity:HalfLevelModifier  |-| half level of monster - half of 5 rounded down * 2 = 4', function() {
+      let half = Entity.HalfLevelModifier(5, 'monster');
+      assert.equal(half, 4, 'half level of 5 rounded down * 2 = 4'); // with optional message
+    });
+    it('Entity:HalfLevelModifier  |-| half level of monster - half of 10 * 2 = 10', function() {
+      let half = Entity.HalfLevelModifier(10, 'monster');
+      assert.equal(half, 10, 'half of 10 * 2 = 10'); // with optional message
+    });
+
+  }); // HalfLevelModifier
 
 
+  describe('calculateArmorClass ', function() {
+    let action, _state;
+
+    describe('Lvl 5 Cleric with Con mod of 1 & Cloth Armor & +1 def from reflex', function() {
+      beforeEach(function(){
+        _state = Variables.clone(state);
+        _state.entity._type = 'character';
+        _state.entity.level = 5;
+        _state.entity.class = 0; //Cleric
+        _state.entity.armor = 1; //Cloth 
+        _state.entity.abilities = {
+            strength: { abilityMod: 0 }, constitution: { abilityMod: 1 },
+            dexterity: { abilityMod: 1 }, intelligence: { abilityMod: 3 },
+            wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+        };
+      });
+
+      it('Entity:calculateArmorClass  |-| armorClass.total = 16', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.total, 16); // with optional message
+      });
+      it('Entity:calculateArmorClass  |-| armorClass.armorBonus = 3', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.armorBonus, 3); // with optional message
+      });
+      it('Entity:calculateArmorClass  |-| armorClass.abilityMod = 1', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.abilityMod, 1); // with optional message
+      });
+      it('Entity:calculateArmorClass  |-| armorClass.shield = 0', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.shield, 0); // with optional message
+      });
+    });
+
+    describe('Lvl 8 Paladin with Con mod of 4 & Plate Armor & Heavy Shield', function() {
+      beforeEach(function(){
+        _state = Variables.clone(state);
+        _state.entity._type = 'character';
+        _state.entity.level = 8;
+        _state.entity.class = 2; // Paladin
+        _state.entity.armor = 6; // Plate 
+        _state.entity.defense.armorClass.shield = 2; // Heavy Shield
+
+        _state.entity.abilities = {
+            strength: { abilityMod: 5 }, constitution: { abilityMod: 4 },
+            dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+            wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+        };
+      });
+
+      it('Entity:calculateArmorClass  |-| armorClass.total = 28', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.total, 28); // with optional message
+      });
+      it('Entity:calculateArmorClass  |-| armorClass.armorBonus = 8', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.armorBonus, 8); // with optional message
+      });
+      it('Entity:calculateArmorClass  |-| armorClass.abilityMod = 4', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.abilityMod, 4); // with optional message
+      });
+      it('Entity:calculateArmorClass  |-| armorClass.shield = 2', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.shield, 2); // with optional message
+      });
+    });
 
 
+    describe('Lvl 8 Paladin Monster with Con mod of 4 & Plate Armor & Heavy Shield', function() {
+      beforeEach(function(){
+        _state = Variables.clone(state);
+        _state.entity._type = 'monster';
+        _state.entity.level = 8;
+        _state.entity.class = false; //Monster
+        _state.entity.armor = 6; // Plate 
+        _state.entity.defense.armorClass.shield = 2; // Heavy Shield
+
+        _state.entity.abilities = {
+            strength: { abilityMod: 5 }, constitution: { abilityMod: 4 },
+            dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+            wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+        };
+      });
+
+      it('Entity:calculateArmorClass  |-| armorClass.total = 32', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity);
+        assert.equal(armorClass.total, 32); // with optional message
+      });
+    });
+
+    describe('Lvl 8 Paladin Monster with Total AC of 35', function() {
+      beforeEach(function(){
+        _state = Variables.clone(state);
+        _state.entity._type = 'monster';
+        _state.entity.level = 8;
+        _state.entity.class = false; //Monster
+        _state.entity.armor = 6; // Plate 
+        _state.entity.defense.armorClass.shield = 2; // Heavy Shield
+
+        _state.entity.abilities = {
+            strength: { abilityMod: 5 }, constitution: { abilityMod: 4 },
+            dexterity: { abilityMod: 3 }, intelligence: { abilityMod: 2 },
+            wisdom: { abilityMod: 2 }, charisma: { abilityMod: 0 }
+        };
+      });
+
+      it('Entity:calculateArmorClass  |-| armorClass.total = 35', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity, 35);
+        assert.equal(armorClass.total, 35); // with optional message
+      });
+      it('Entity:calculateArmorClass  |-| armorClass.misc = 3', function() {
+        let armorClass = Entity.calculateArmorClass(_state.entity, 35);
+        assert.equal(armorClass.misc, 3); // with optional message
+      });
+    });
+
+  });
 
 
 
