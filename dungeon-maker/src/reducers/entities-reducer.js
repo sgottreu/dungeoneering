@@ -91,22 +91,20 @@ const entitiesReducer = function(state = initialState, action) {
 
       if( _entity.weapons.includes(action.id) ){
         _i = _entity.weapons.findIndex(function(w) { return w === action.id});
-  console.log(_i);
         if(_entity._type === 'character'){
-          _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, _entity.weapons[_i], 'remove') 
-          _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, _entity.weapons[_i], 'remove') 
+          _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'remove') 
+          _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'remove') 
         }
-        _entity.inventory = Entity.removeInventoryItem(_entity.weapons[_i],'weapon', _entity.inventory)
-        _entity.inventory_log = Entity.removeInventoryLog(_entity.weapons[_i], 'weapon', _entity.inventory_log) 
-        
-
-        _entity.inventory.foreach((inv, i) => { 
-          if(inv.item._id === item._id){
-             _entity.weapons.splice(_i, 1);
-          }
-        });
-       
+        _entity.inventory = Entity.removeInventoryItem(item, 'weapon', _entity.inventory)     
+        if(_entity.inventory.length > 0){
+          _entity.inventory.forEach((inv, i) => { 
+            if(inv.item._id === item._id){
+              _entity.weapons.splice(_i, 1);
+            }
+          });        
+        }
       } else {
+
         if(_entity._type === 'character'){
           _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'add') 
           _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'add') 

@@ -193,6 +193,9 @@ export var removeInventoryCategory = (category, inventory) => {
 export var removeInventoryItem = (purchasedItem, category, inventory) => {
   let _i = inventory.findIndex((inv, i) => { return inv.item._id === purchasedItem._id});
   if(_i !== -1 && inventory[_i].item.quantity > 0){
+    if(purchasedItem.quantity === undefined){
+      purchasedItem.quantity = 1;
+    }
     inventory[_i].item.quantity -= purchasedItem.quantity;
   }
   return inventory;
@@ -210,6 +213,9 @@ export var addInventory = (purchasedItem, category, inventory) => {
   if(_i === -1){
     inventory.push( { category: category, item: tmpItem } );
   } else {
+    if(inventory[_i].item.quantity === undefined){
+      inventory[_i].item.quantity = 0;
+    }
     inventory[_i].item.quantity += tmpItem.quantity;
   }
   return inventory;
