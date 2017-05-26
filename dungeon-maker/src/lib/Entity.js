@@ -308,11 +308,11 @@ export var calculateArmorClass = function(state, value=false){
   let ability = (!state.entity.class) ? 'constitution' : EntityClass[ state.entity.class ].ability;
   armor.armorBonus = EntityArmor[ state.entity.armor ].score;
   if(EntityArmor[ state.entity.armor ].weight <= 15){
-    armor.armorBonus += getDefenseModifier(state, 'reflex');
+    armor.armorBonus += Entity.getDefenseModifier(state, 'reflex');
   }
   
   armor.abilityMod = state.entity.abilities[ ability ].abilityMod;
-  armor.halfLvl = HalfLevelModifier(state.entity.level);
+  armor.halfLvl = Entity.HalfLevelModifier(state.entity.level);
   let subTotal = armor.default + armor.halfLvl + armor.abilityMod + armor.armorBonus + armor.shield;
   armor.misc = (value) ? value - subTotal : 0;
 
