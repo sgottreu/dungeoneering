@@ -9,7 +9,7 @@ import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import {Die} from '../lib/Die';
-import {calcWeaponDamage} from './EntityTemplate';
+import * as Entity from '../lib/Entity';
 import uuidV4  from 'uuid/v4';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
@@ -200,7 +200,7 @@ class RunEncounter extends Component {
 
       if(_weapon){
         _damage = _weapon.damage;
-        totalDamage += calcWeaponDamage(attacker, AttackMod);
+        totalDamage += Entity.calcWeaponDamage(attacker, AttackMod);
       } else {
         _damage = _power.damage;
         totalDamage += _power.damage.modifier;
