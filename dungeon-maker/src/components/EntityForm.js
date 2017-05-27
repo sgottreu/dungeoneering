@@ -107,14 +107,6 @@ class EntityForm extends Component {
   };
 
   selectWeapon = (id) => {
-    let { entity, availableWeapons } = this.props;
-    let weapon = availableWeapons.find(function(val){ return id === val._id});
-
-    if( entity.weapons.includes(id) ){
-      entity = calcWeightPrice(entity, weapon, 'weapons', 'item', false);
-    } else { 
-      entity = calcWeightPrice(entity, weapon, 'weapons');
-    }
     this.boundEntityAC.updateEntityWeapon(id);
   }
 

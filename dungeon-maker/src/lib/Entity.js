@@ -350,19 +350,6 @@ export var getInitialHitPoints = function(state, classIndex){
   return hitPoints + hitPointsPerLevel + parseInt(state.entity.abilities[ stats.ability ].score, 10); 
 }
 
-
-
-
-export var findEntity = function(_this){
-  axios.get(`${Variables.host}/findEntities`)
-  .then(res => {
-    let state = _this.state;
-    state.availableMonsters = res.data.monster;
-    state.availableCharacters = res.data.character;
-    _this.setState( state );
-  }); 
-}
-
 export var saveEntity = function(_this){
   let state = _this.state;
   state._type = _this.EntityType;
