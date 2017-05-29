@@ -27,7 +27,7 @@ const initialState = {
 
 const entitiesReducer = function(state = initialState, action) {
   let _state = Variables.clone(state);
-  let _entity, _i, item;
+  let _entity, _i, item, _points, _race;
 
   if(action === undefined){
     return state;
@@ -194,6 +194,86 @@ const entitiesReducer = function(state = initialState, action) {
       _state.entity = _entity;
 
       return Object.assign( {}, state, _state );
+
+    case types.UPDATE_ENTITY_ABILITY:
+      _entity = _state.entity;
+      _points = _state.points;
+
+      if( _entity.abilities[ action.ability ].score < parseInt(action.score, 10) ){
+        _points.remainingPoints--;
+      } else {
+        _points.remainingPoints++;
+      }
+      _entity.abilities[ action.ability ] = Entity.calculateAbility(_entity, action.ability, action.score);
+      
+      if(_entity.class){
+        let con = 'constitution', dex = 'dexterity';
+        _entity.abilities[ con ] = Entity.calculateAbility( _entity, con, _entity.abilities[ con ].score );
+        _entity.abilities[ dex ] = Entity.calculateAbility( _entity, dex, _entity.abilities[ dex ].score );
+
+        _entity.surgesPerDay = parseInt(Entity._Class[ _entity.class ].surges, 10) + parseInt( _entity.abilities[ con ].abilityMod, 10);
+        _entity.hp = Entity.getInitialHitPoints(_entity, _entity.class);
+        _entity.bloodied = Math.floor( _entity.hp / 2 );
+        _entity.healingSurge = Math.floor( _entity.hp / 4 );
+        _entity.initiative = Entity.calculateInitiative(_entity);
+      }
+      
+      _entity.defense.fortitude = Entity.calculateDefense(_entity, 'fortitude');
+      _entity.defense.reflex = Entity.calculateDefense(_entity, 'reflex');
+      _entity.defense.willpower = Entity.calculateDefense(_entity, 'willpower');
+      _entity.defense.armorClass = Entity.calculateArmorClass(_entity);
+
+      return Object.assign( {}, state, {
+          points: _points,
+          entity: _entity
+        } 
+      );
+
+    case types.UPDATE_ENTITY_RACE:
+      _entity = _state.entity;
+      _points = _state.points;
+      _race = Entity._Race[ action.index ];
+
+      _entity.race = action.index;
+      _entity.size = _race.size;
+      _entity.speed = _race.speed;
+      _points.totalRacePoints = 0;
+
+      if(action.index !== state.entity.race){
+        _points.remainingPoints = 4 + ((_entity.level-1)*2);
+        for(let a in _entity.abilities){
+          if(_entity.abilities.hasOwnProperty(a)){
+            _entity.abilities[ a ].score = 12;
+          }
+        }
+      }
+
+      if(_race.abilityMod.any === undefined){
+        for(let a in _race.abilityMod){
+          if(_race.abilityMod.hasOwnProperty(a)){
+            let score = _entity.abilities[ a ].score + parseInt(_race.abilityMod[ a ], 10);
+            _points.totalRacePoints += parseInt(_race.abilityMod[ a ], 10);
+            _entity.abilities[ a ] = Entity.calculateAbility(_entity, a, score);
+          }
+        }
+      } else {
+        _points.totalRacePoints = _race.abilityMod.any;
+      }
+
+      if(_race.skillBonus.any === undefined){
+        for(let a in _race.skillBonus){
+          if(_race.skillBonus.hasOwnProperty(a)){
+            _entity.skills[a].raceModifier = parseInt(_race.skillBonus[ a ], 10);
+          }
+        }
+      } 
+ 
+      return Object.assign( {}, state, {
+          points: _points,
+          entity: _entity
+        } 
+      );   
+
 
     default:
       return state;

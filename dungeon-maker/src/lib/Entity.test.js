@@ -684,7 +684,173 @@ describe('Entity', function() {
 
   });
 
+  describe('AbilityModifier ', function() {
+    let action, _state;     
+    it('Entity:AbilityModifier  |-| ability modifier = -5', function() {
+      let abilityMod = Entity.AbilityModifier(0);
+      assert.equal(abilityMod, -5,); // with optional message
+    });
+    it('Entity:AbilityModifier  |-| abilty modifier = 0', function() {
+      let abilityMod = Entity.AbilityModifier(10);
+      assert.equal(abilityMod, 0); // with optional message
+    });
 
+    it('Entity:AbilityModifier  |-| half level of monster - half of 5 rounded down * 2 = 4', function() {
+      let abilityMod = Entity.AbilityModifier(17);
+      assert.equal(abilityMod, 3); // with optional message
+    });
+    it('Entity:AbilityModifier  |-| half level of monster - half of 10 * 2 = 10', function() {
+      let abilityMod = Entity.AbilityModifier(22);
+      assert.equal(abilityMod, 6); // with optional message
+    });
+
+  }); // AbilityModifier
+
+  describe('AttackModifier ', function() {
+    let action, _state;     
+    it('Entity:AttackModifier  |-| equals 9', function() {
+      let abilityMod = Entity.AttackModifier(12, 16, 'character');
+      assert.equal(abilityMod, 9); 
+    });
+    it('Entity:AttackModifier  |-| equals 11', function() {
+      let abilityMod = Entity.AttackModifier(8, 17, 'monster');
+      assert.equal(abilityMod, 11); 
+    });
+
+  }); // AttackModifier
+
+  describe('calculateInitiative ', function() {
+    var entity = {};
+
+    beforeEach(function(){
+       entity = {
+          _type: false,
+          name: '',
+          level: 1,
+          initiative: {total: 0, base: 0, modifier: 0, current: 0},
+          abilities: {
+            dexterity: { score: 12, abilityMod: 0, AttackModifier: 0 }
+          }
+        };
+    });
+    
+    it('Entity:calculateInitiative  |-| character base = 11', function() {
+      entity.level = 14;
+      entity._type = 'character';
+      entity.abilities.dexterity = { score: 18, abilityMod: 4, AttackModifier: 7 }
+      let init = Entity.calculateInitiative(entity);
+      assert.equal(init.base, 11); 
+    });
+    it('Entity:calculateInitiative  |-| character modifier = 0', function() {
+      entity.level = 14;
+      entity._type = 'character';
+      entity.abilities.dexterity = { score: 18, abilityMod: 4, AttackModifier: 7 }
+      let init = Entity.calculateInitiative(entity);
+      assert.equal(init.modifier, 0); 
+    });
+    it('Entity:calculateInitiative  |-| character total = 11', function() {
+      entity.level = 14;
+      entity._type = 'character';
+      entity.abilities.dexterity = { score: 18, abilityMod: 4, AttackModifier: 7 }
+      let init = Entity.calculateInitiative(entity);
+      assert.equal(init.total, 11); 
+    });
+
+    it('Entity:calculateInitiative  |-| monster base = 6', function() {
+      entity.level = 11;
+      entity._type = 'monster';
+      entity.abilities.dexterity = { score: 12, abilityMod: 1, AttackModifier: 6 }
+      let init = Entity.calculateInitiative(entity, 16);
+      assert.equal(init.base, 11); 
+    });
+    it('Entity:calculateInitiative  |-| monster modifier = 0', function() {
+      entity.level = 11;
+      entity._type = 'monster';
+      entity.abilities.dexterity = { score: 12, abilityMod: 1, AttackModifier: 6 }
+      let init = Entity.calculateInitiative(entity, 16);
+      assert.equal(init.modifier, 5); 
+    });
+    it('Entity:calculateInitiative  |-| monster total = 6', function() {
+      entity.level = 11;
+      entity._type = 'monster';
+      entity.abilities.dexterity = { score: 12, abilityMod: 1, AttackModifier: 6 }
+      let init = Entity.calculateInitiative(entity, 16);
+      assert.equal(init.total, 16); 
+    });
+
+  }); // calculateInitiative
+
+  describe('calculateAbility ', function() {
+    var entity = Variables.clone(Entity.Template);
+
+    describe('character ', function() {
+      beforeEach(function(){
+        entity._type = 'character';
+        entity.level = 16;
+      });  
+      it('Entity:calculateAbility  |-| score = 18', function() {
+        let ability = Entity.calculateAbility(entity, 'strength', 18);
+        assert.equal(ability.score, 18); 
+      });
+      it('Entity:calculateAbility  |-| abilityMod equals 4', function() {
+        let ability = Entity.calculateAbility(entity, 'strength', 18);
+        assert.equal(ability.abilityMod, 4); 
+      });
+      it('Entity:calculateAbility  |-| AttackModifier equals 11', function() {
+        let ability = Entity.calculateAbility(entity, 'strength', 18);
+        assert.equal(ability.AttackModifier, 12); 
+      });
+    });
+
+    describe('monster ', function() {
+      beforeEach(function(){
+        entity._type = 'monster';
+        entity.level = 10;
+      });  
+      it('Entity:calculateAbility  |-| score = 15', function() {
+        let ability = Entity.calculateAbility(entity, 'strength', 15);
+        assert.equal(ability.score, 15); 
+      });
+      it('Entity:calculateAbility  |-| abilityMod equals 2', function() {
+        let ability = Entity.calculateAbility(entity, 'strength', 15);
+        assert.equal(ability.abilityMod, 2); 
+      });
+      it('Entity:calculateAbility  |-| AttackModifier equals 12', function() {
+        let ability = Entity.calculateAbility(entity, 'strength', 15);
+        assert.equal(ability.AttackModifier, 12); 
+      });
+    });
+
+  }); // calculateAbility
+
+  describe('getInitialHitPoints ', function() {
+    describe('level 1 Paladin ', function() {
+      let entity = {
+        level: 1,
+        abilities: {
+          constitution: { score: 16, abilityMod: 3, AttackModifier: 11 }
+        }
+      };  
+      it('Entity:getInitialHitPoints  |-| hp equals 31', function() {
+        let initHP = Entity.getInitialHitPoints(entity, 2);
+        assert.equal(initHP, 31); 
+      });
+    }); 
+
+    describe('level 9 Warlock ', function() {
+      let entity = {
+        level: 9,
+        abilities: {
+          constitution: { score: 16, abilityMod: 3, AttackModifier: 11 }
+        }
+      };  
+      it('Entity:getInitialHitPoints  |-| hp equals 68', function() {
+        let initHP = Entity.getInitialHitPoints(entity, 5);
+        assert.equal(initHP, 68); 
+      });
+    }); 
+
+  }); // getInitialHitPoints
 
 });
 

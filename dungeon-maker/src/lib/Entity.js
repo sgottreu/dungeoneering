@@ -24,12 +24,12 @@ export var Template = {
     armor: 0,
     shield: false,
     abilities: {
-      strength: { score: 12, abilityMod: 0, AttackModifier: 0 },
-      constitution: { score: 12, abilityMod: 0, AttackModifier: 0 },
-      dexterity: { score: 12, abilityMod: 0, AttackModifier: 0 },
-      intelligence: { score: 12, abilityMod: 0, AttackModifier: 0 },
-      wisdom: { score: 12, abilityMod: 0, AttackModifier: 0 },
-      charisma: { score: 12, abilityMod: 0, AttackModifier: 0 }
+      strength: { score: 12, abilityMod: 1, AttackModifier: 0 },
+      constitution: { score: 12, abilityMod: 1, AttackModifier: 0 },
+      dexterity: { score: 12, abilityMod: 1, AttackModifier: 0 },
+      intelligence: { score: 12, abilityMod: 1, AttackModifier: 0 },
+      wisdom: { score: 12, abilityMod: 1, AttackModifier: 0 },
+      charisma: { score: 12, abilityMod: 1, AttackModifier: 0 }
     },
     healingSurge: 0,
     surgesPerDay: 0,
@@ -92,7 +92,7 @@ export var EntityRole = [
   'Soldier'
 ];
 
-export var EntitySize = [
+export var _Size = [
   {label: 'Tiny', space: 1, reach: 0},
   {label: 'Small', space: 1, reach: 1},
   {label: 'Medium', space: 1, reach: 1},
@@ -112,11 +112,16 @@ export var _Class = [
   { name: 'Wizard', hitPoints: 10, ability: 'constitution', hitPointsLvl: 4, abilityMod: {}, surges: 6, defenseMod: {willpower: 2} },
 ]; 
 
-export var EntityRace = [
+export var _Race = [
+  { name: 'Dragonborn' },
   { name: 'Dwarf', abilityMod: { constitution: 2, wisdom: 2}, size: 'Medium', speed: 5, skillBonus: {dungeoneering: 2, endurance:2} },
+  { name: 'Eladrin' },
+  { name: 'Dragonborn' },
   { name: 'Elf', abilityMod: { dexterity: 2, wisdom: 2}, size: 'Medium', speed: 7, skillBonus: {nature: 2, perception:2}, defenseMod: {willpower: 1} },
+  { name: 'Half-Elf' },
   { name: 'Halfling', abilityMod: { dexterity: 2, charisma: 2}, size: 'Small', speed: 6, skillBonus: {acrobatics: 2, thievery:2} },
-  { name: 'Human', abilityMod: { any: 2 }, size: 'Medium', speed: 6, skillBonus: 'any', defenseMod: {fortitude: 1, reflex: 1, willpower: 1} }
+  { name: 'Human', abilityMod: { any: 2 }, size: 'Medium', speed: 6, skillBonus: 'any', defenseMod: {fortitude: 1, reflex: 1, willpower: 1} },
+  { name: 'Tiefling' }
 ];
 
 export var _Armor = [
@@ -252,6 +257,22 @@ export function getDefenseModifier(entity, defense)
   return score;
 }
 
+export var AbilityModifier = function(score){
+  let modifier = -5;
+  if(score > 1){
+    if( score % 2 === 0){
+      modifier = (score / 2) + modifier;
+    } else {
+      modifier = ((score - 1) / 2) + modifier;
+    }
+  } 
+  return modifier;
+};
+
+export var AttackModifier = function(level, score, type){
+  return HalfLevelModifier(level, type) + AbilityModifier(score);
+};
+
 export var HalfLevelModifier = function(level, type){
   let mod = Math.floor(level/2);
   mod = (type === 'monster') ? mod * 2 : mod;
@@ -291,51 +312,48 @@ export var calculateDefense = (_entity, defense, value=false) => {
   }
 };
 
-
-
-
-
-
-
-
-
-/// Left to migrate
-
-
-
-
-
-export var AbilityModifier = function(score){
-  let modifier = -5;
-  if(score > 1){
-    if( score % 2 === 0){
-      modifier = (score / 2) + modifier;
-    } else {
-      modifier = ((score - 1) / 2) + modifier;
-    }
-  } 
-  return modifier;
-};
-
-
-
-export var AttackModifier = function(level, score, type){
-  return HalfLevelModifier(level, type) + AbilityModifier(score);
-};
-
-export var calculateInitiative = function(state, value=false){
-  let base = HalfLevelModifier(state.entity.level, state._type) + state.entity.abilities.dexterity.abilityMod;
-  let mod = (value) ? value - base : state.entity.initiative.modifier;
+export var calculateInitiative = function(entity, value=false){
+  let abl = entity.abilities;
+  let base = HalfLevelModifier(entity.level, entity._type) + abl.dexterity.abilityMod;
+  let mod = (value) ? value - base : entity.initiative.modifier;
   return {
-    base: HalfLevelModifier(state.entity.level, state._type) + state.entity.abilities.dexterity.abilityMod,
+    base: base,
     modifier: mod,
     total: base+mod,
     current: 0
   }
 };
 
+export var calculateAbility = (entity, label, score) => {
+  let abl = entity.abilities[ label ];
+  abl.score = score;
+  abl.abilityMod = AbilityModifier(score);
+  abl.AttackModifier = AttackModifier(entity.level, score, entity._type);
+
+  return abl;
+}
+
+export var getInitialHitPoints = function(entity, classIndex=false){
+  let stats = _Class[classIndex];
+  let hitPoints = (classIndex) ? stats.hitPoints : 0;
+  let hitPointsFromLevels = 0;
+  
+  if(classIndex){
+    hitPoints += parseInt(entity.abilities[ stats.ability ].score, 10)
+    if(entity.level > 1) {
+      hitPointsFromLevels = stats.hitPointsLvl * (entity.level - 1);
+    }
+  } 
+  return hitPoints + hitPointsFromLevels; 
+}
+
+
+/// Left to migrate
+
+
+
 export var findEntitySize = function(label){
-  for(var x = 0; x<EntitySize.length;x++){
+  for(var x = 0; x<Entity._size.length;x++){
     if(EntitySize[x].label === label){
       return x;
     }
@@ -343,12 +361,7 @@ export var findEntitySize = function(label){
   return false;
 };
 
-export var getInitialHitPoints = function(state, classIndex){
-  let stats = _Class[classIndex];
-  let hitPoints = (classIndex) ? stats.hitPoints : 0;
-  let hitPointsPerLevel = (state.entity.level === 1) ? 0 : (((classIndex) ? stats.hitPointsLvl : 0) * state.entity.level);
-  return hitPoints + hitPointsPerLevel + parseInt(state.entity.abilities[ stats.ability ].score, 10); 
-}
+
 
 export var saveEntity = function(_this){
   let state = _this.state;

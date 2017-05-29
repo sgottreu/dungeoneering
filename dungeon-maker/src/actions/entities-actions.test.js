@@ -3,7 +3,7 @@ var assert = require('chai').assert;
 import * as types from './action-types';
 import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updateMouseover, 
           updatePointsKey, updateEntityWeapon, updateEntityArmor, updateEntityShield,
-          updateEntityDefense
+          updateEntityDefense, updateEntityAbility, updateEntityRace
         } from './entities-actions';
 
 var availableCharacters = [ {_id: 123, name: 'Steelhorn'}, {_id: 456, name: 'Jarim'} ];
@@ -245,4 +245,44 @@ describe('updateEntityDefense', function() {
       assert.equal(state.value, 12); // with optional message
     });
   });
+});
+
+describe('updateEntityAbility', function() {
+  var state = updateEntityAbility({ name: 'strength', value: 12});
+  describe('type', function() {
+    it('entitiesActions:updateEntityAbility.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityAbility.type |-| should equal = UPDATE_ENTITY_ABILITY', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_ABILITY'); // with optional message
+    });
+  });
+  describe('ability', function() {
+    it('entitiesActions:updateEntityAbility.defense |-| ability should equal strength', function() {
+      assert.equal(state.ability, 'strength'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('entitiesActions:updateEntityAbility.value |-| score should equal 12', function() {
+      assert.equal(state.score, 12); // with optional message
+    });
+  });
+});
+
+describe('updateEntityRace', function() {
+  var state = updateEntityRace(2);
+  describe('type', function() {
+    it('entitiesActions:updateEntityRace.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityRace.type |-| should equal = UPDATE_ENTITY_DEFENSE', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_RACE'); // with optional message
+    });
+  });
+  describe('index', function() {
+    it('entitiesActions:updateEntityRace.index |-| state.index should equal 2', function() {
+      assert.equal(state.index, 2); // with optional message
+    });
+  });
+
 });
