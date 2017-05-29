@@ -75,3 +75,18 @@ export function updateEntityDefense(defense, value=false) {
     value: value
   };
 }
+
+export function updateEntityAbility(event) {
+  return {
+    type: types.UPDATE_ENTITY_ABILITY,
+    ability: event.name,
+    score: event.value
+  };
+}
+
+export function updateEntityRace(index) {
+  return {
+    type: types.UPDATE_ENTITY_RACE,
+    index: index
+  };
+}

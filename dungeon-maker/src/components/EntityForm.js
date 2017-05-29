@@ -171,41 +171,7 @@ class EntityForm extends Component {
   }
 
   handleRaceChange = (event, index) => {
-    let state = this.state;
-    state.entity.race = index;
-    state.entity.size = EntityRace[index].size;
-    state.entity.speed = EntityRace[index].speed;
-    state.totalRacePoints = 0;
-
-    if(index !== state.entity.race){
-      state.remainingPoints = 4 + ((state.entity.level-1)*2);
-      for(let a in state.entity.abilities){
-        if(state.entity.abilities.hasOwnProperty(a)){
-          state.entity.abilities[ a ].score = 12;
-        }
-      }
-    }
-
-    if(EntityRace[index].abilityMod.any === undefined){
-      for(let a in EntityRace[index].abilityMod){
-        if(EntityRace[index].abilityMod.hasOwnProperty(a)){
-          let score = state.entity.abilities[ a ].score + parseInt(EntityRace[index].abilityMod[ a ], 10);
-          state.totalRacePoints += parseInt(EntityRace[index].abilityMod[ a ], 10);
-          state = this.calculateAbility(state, a, state.entity.level, score);
-        }
-      }
-    } else {
-      state.totalRacePoints = EntityRace[index].abilityMod.any;
-    }
-
-    if(EntityRace[index].skillBonus.any === undefined){
-      for(let a in EntityRace[index].skillBonus){
-        if(EntityRace[index].skillBonus.hasOwnProperty(a)){
-          state.entity.skills[a].raceModifier = parseInt(EntityRace[index].skillBonus[ a ], 10);
-        }
-      }
-    } 
-    this.setState( state );   
+    this.boundEntityAC.updateEntityRace(index);
   }
 
   handleHPChange(event){
@@ -247,39 +213,14 @@ class EntityForm extends Component {
   handleEntitySave = () => saveEntity(this);
 
   changeAbility = (event) => {
-    let state = this.state;
-    state = this.calcRemainingPoints(state, event.target);
-    if(state.remainingPoints === 0 ){ 
-      if(event.target.value >= state.entity.abilities[ event.target.name ].score){
+    let {entity, points} = this.props;
+    entity = this.calcRemainingPoints(entity, event.target);
+    if(points.remainingPoints === 0 ){ 
+      if(event.target.value >= entity.abilities[ event.target.name ].score){
         return false;
       }
-      
     } 
-    
-    if( state.entity.abilities[ event.target.name ].score < event.target.value ){
-      state.remainingPoints--;
-    } else {
-      state.remainingPoints++;
-    }
-    state = this.calculateAbility(state, event.target.name, this.state.entity.level, event.target.value);
-    
-    if(state.entity.class){
-      state.entity.surgesPerDay = parseInt(Entity._Class[ state.entity.class ].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
-      state.entity.hp = getInitialHitPoints(state, state.entity.class);
-    }
-    state.entity.initiative = calculateInitiative(state);
-    state = calculateDefense(state);
-    state = calculateArmorClass(state);
-    this.setState( state );      
-    
-  }
-
-  calculateAbility(state, label, level, score){
-    state.entity.abilities[ label ].score = score;
-    state.entity.abilities[ label ].abilityMod = AbilityModifier(score);
-    state.entity.abilities[ label ].AttackModifier = AttackModifier(level, score, state.entity._type);
-
-    return state;
+    this.boundEntityAC.updateEntityAbility(event.target);       
   }
 
   loadRoleField(){
@@ -295,7 +236,7 @@ class EntityForm extends Component {
   loadRaceField(){
     return (
       <SelectField   floatingLabelText="Race" value={this.state.entity.race} onChange={this.handleRaceChange} >
-        {EntityRace.map( (race, index) => (
+        {Entity._Race.map( (race, index) => (
           <MenuItem key={index} value={index} primaryText={race.name} />
         ))}
       </SelectField>
@@ -513,7 +454,7 @@ class EntityForm extends Component {
           <div className="AbilityList">
             {[...AbilityMap.entries()].map(function(a, i) {
               let attackMod = AttackModifier(_this.state.entity.level, a[1].score);
-              let RaceBonus = (EntityRace[_this.state.entity.race] === undefined || EntityRace[_this.state.entity.race].abilityMod[ a[0] ] === undefined) ? 0 : EntityRace[_this.state.entity.race].abilityMod[ a[0] ];
+              let RaceBonus = (Entity._Race[_this.state.entity.race] === undefined || Entity._Race[_this.state.entity.race].abilityMod[ a[0] ] === undefined) ? 0 : Entity._Race[_this.state.entity.race].abilityMod[ a[0] ];
               let styleRaceBonus = (RaceBonus===0) ? {display:'none'} : {};
 
               return (

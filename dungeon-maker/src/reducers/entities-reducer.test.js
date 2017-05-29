@@ -6,7 +6,8 @@ import Slots from '../lib/Slots.js';
 import TileOptions from '../lib/TileOptions';
 import entitiesReducer from './entities-reducer';
 import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey, updateMouseover, 
-          updateEntityWeapon, updateEntityArmor, updateEntityShield, updateEntityDefense
+          updateEntityWeapon, updateEntityArmor, updateEntityShield, updateEntityDefense, updateEntityAbility,
+          updateEntityRace
         
       } from '../actions/entities-actions';
 import * as Entity from '../lib/Entity';
@@ -584,4 +585,122 @@ describe('UPDATE_ENTITY_DEFENSE', function() {
   });
 
 });
+
+describe('UPDATE_ENTITY_ABILITY', function() {
+  let action, _state;
+  
+  describe('setting strength to 13 of lvl 1 Ranger', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 1;
+      _state.entity.class = 3;
+      _state.points.remainingPoints = 4;
+      _state.entity.defense.fortitude.classBonus = 1;
+      _state.entity.defense.reflex.classBonus = 1;
+
+      action = updateEntityAbility({ name: 'strength', value: 13});
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| points.remainingPoints = 3', function() {
+      assert.equal(_state.points.remainingPoints, 3); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| ability.strength.score = 13', function() {
+      assert.equal(_state.entity.abilities.strength.score, 13); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| surgesPerDay = 7', function() {
+      assert.equal(_state.entity.surgesPerDay, 7); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| hp = 24', function() {
+      assert.equal(_state.entity.hp, 24); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| bloodied = 12', function() {
+      assert.equal(_state.entity.bloodied, 12); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| healingSurge = 6', function() {
+      assert.equal(_state.entity.healingSurge, 6); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| initiative.base = 1', function() {
+      assert.equal(_state.entity.initiative.base, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| initiative.base = 1', function() {
+      assert.equal(_state.entity.initiative.total, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| defense.fortitude = 12', function() {
+      assert.equal(_state.entity.defense.fortitude.total, 12); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| defense.willpower = 11', function() {
+      assert.equal(_state.entity.defense.willpower.total, 11); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_ABILITY |-| defense.armorClass = 12', function() {
+      assert.equal(_state.entity.defense.armorClass.total, 12); // with optional message
+    });
+  });
+
+});
+
+
+describe('UPDATE_ENTITY_RACE', function() {
+  let action, _state;
+  
+  describe('level 1 Dwarf', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 1;
+
+      action = updateEntityRace(1);
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_RACE |-| points.remainingPoints = 4', function() {
+      assert.equal(_state.points.remainingPoints, 4); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_RACE |-| race = 1', function() {
+      assert.equal(_state.entity.race, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_RACE |-| size = 2', function() {
+      assert.equal(_state.entity.size, 'Medium'); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_RACE |-| speed = 5', function() {
+      assert.equal(_state.entity.speed, 5); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_RACE |-| ability.wisdom.total = 14', function() {
+      assert.equal(_state.entity.abilities.wisdom.score, 14); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_RACE |-| points.totalRacePoints = 4', function() {
+      assert.equal(_state.points.totalRacePoints, 4); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_RACE |-| skills.dungeoneering.raceModifier = 2', function() {
+      assert.equal(_state.entity.skills.dungeoneering.raceModifier, 2); // with optional message
+    });
+    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| bloodied = 12', function() {
+    //   assert.equal(_state.entity.bloodied, 12); // with optional message
+    // });
+    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| healingSurge = 6', function() {
+    //   assert.equal(_state.entity.healingSurge, 6); // with optional message
+    // });
+    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| initiative.base = 1', function() {
+    //   assert.equal(_state.entity.initiative.base, 1); // with optional message
+    // });
+    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| initiative.base = 1', function() {
+    //   assert.equal(_state.entity.initiative.total, 1); // with optional message
+    // });
+    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| defense.fortitude = 12', function() {
+    //   assert.equal(_state.entity.defense.fortitude.total, 12); // with optional message
+    // });
+    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| defense.willpower = 11', function() {
+    //   assert.equal(_state.entity.defense.willpower.total, 11); // with optional message
+    // });
+    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| defense.armorClass = 12', function() {
+    //   assert.equal(_state.entity.defense.armorClass.total, 12); // with optional message
+    // });
+  });
+
+});
+
+
 
