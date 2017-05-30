@@ -677,27 +677,6 @@ describe('UPDATE_ENTITY_RACE', function() {
     it('entitiesReducer:UPDATE_ENTITY_RACE |-| skills.dungeoneering.raceModifier = 2', function() {
       assert.equal(_state.entity.skills.dungeoneering.raceModifier, 2); // with optional message
     });
-    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| bloodied = 12', function() {
-    //   assert.equal(_state.entity.bloodied, 12); // with optional message
-    // });
-    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| healingSurge = 6', function() {
-    //   assert.equal(_state.entity.healingSurge, 6); // with optional message
-    // });
-    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| initiative.base = 1', function() {
-    //   assert.equal(_state.entity.initiative.base, 1); // with optional message
-    // });
-    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| initiative.base = 1', function() {
-    //   assert.equal(_state.entity.initiative.total, 1); // with optional message
-    // });
-    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| defense.fortitude = 12', function() {
-    //   assert.equal(_state.entity.defense.fortitude.total, 12); // with optional message
-    // });
-    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| defense.willpower = 11', function() {
-    //   assert.equal(_state.entity.defense.willpower.total, 11); // with optional message
-    // });
-    // it('entitiesReducer:UPDATE_ENTITY_RACE |-| defense.armorClass = 12', function() {
-    //   assert.equal(_state.entity.defense.armorClass.total, 12); // with optional message
-    // });
   });
 
 });

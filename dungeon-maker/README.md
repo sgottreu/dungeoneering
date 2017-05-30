@@ -11,6 +11,5 @@
 
 ## Tests to generate
 
-* calcWeaponDamage
+
 * EntityReducer.updateEntityClass
-* EntityReducter.updateEntityRace

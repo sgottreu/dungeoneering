@@ -850,7 +850,32 @@ describe('Entity', function() {
       });
     }); 
 
-  }); // getInitialHitPoints
+  }); // calcWeaponDamage
+
+  describe('calcWeaponDamage ', function() {
+    let entity = {
+      level: 8,
+      _type: 'character'
+    };  
+    it('Entity:calcWeaponDamage  |-| dmgMod = 7', function() {
+      let damageMod = Entity.calcWeaponDamage(entity, 3);
+      assert.equal(damageMod, 7); 
+    });
+  }); // calcWeaponDamage
+
+
+  describe('findEntitySize ', function() {
+    it('Entity:findEntitySize  |-| Huge = 4', function() {
+      let size = Entity.findEntitySize('Huge');
+      assert.equal(size, 4); 
+    });
+
+    it('Entity:findEntitySize  |-| HalfSize = false', function() {
+      let size = Entity.findEntitySize('HalfSize');
+      assert.equal(size, false); 
+    });
+
+  }); // findEntitySize
 
 });
 

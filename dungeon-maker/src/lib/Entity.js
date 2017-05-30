@@ -347,19 +347,28 @@ export var getInitialHitPoints = function(entity, classIndex=false){
   return hitPoints + hitPointsFromLevels; 
 }
 
+export var calcWeaponDamage = (player, AttackModifier) => {
+  let half = HalfLevelModifier(player.level, player._type);
+  let damageMod = half + AttackModifier;
 
-/// Left to migrate
+  return damageMod;
+}
 
 
-
-export var findEntitySize = function(label){
-  for(var x = 0; x<Entity._size.length;x++){
-    if(EntitySize[x].label === label){
+export var findEntitySize = (label) => {
+  for(var x = 0, len=_Size.length; x<len;x++){
+    if(_Size[x].label === label){
       return x;
     }
   }
   return false;
 };
+
+
+
+/// Left to migrate
+
+
 
 
 
@@ -387,12 +396,5 @@ export var saveEntity = function(_this){
   });
 }
 
-
-export var calcWeaponDamage = (player, AttackModifier) => {
-	let half = HalfLevelModifier(player.level, player._type);
-	let damageMod = half + AttackModifier;
-
-	return damageMod;
-}
 
 
