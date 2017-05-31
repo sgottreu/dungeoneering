@@ -23,13 +23,18 @@ class AddMonstersContainer extends Component {
 }
 
 const mapStateToProps = function(store) {
-  return store.weaponsState;
+  return {
+    availableMonsters: store.entitiesState.availableMonsters,
+    availableWeapons: store.weaponsState.availableWeapons,
+    entitiesState: store.entitiesState,
+    EntityType: 'monster'
+  };
 };
 
 function mapDispatchToProps(dispatch) {
   return({
-    boundWeaponAC: bindActionCreators(WeaponActionCreators, dispatch)
+    boundEntityAC: bindActionCreators(EntityActionCreators, dispatch)
   })
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddWeaponsContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AddMonstersContainer);
