@@ -20,8 +20,8 @@ const WeaponTooltip = ({ hoverObj, mouse }) => {
   let damage = (weapon.damage.die === undefined) ? weapon.damage : `${weapon.damage.num}${weapon.damage.die}`
 
   let className = 'WeaponTooltip'+(weapon === false ? ' hide' : '');
-
-  let style = (mouse) ? {left: `${mouse.clientX+40}px`, top: `${mouse.clientY-80}px` } : {};
+console.log(mouse);
+  let style = (mouse) ? {left: `${mouse.clientX+40}px`, top: `${mouse.clientY}px` } : {};
 
 	return (
 		<div className={className} style={style}>

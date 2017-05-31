@@ -8,6 +8,7 @@ import * as entitiesApi from '../api/entities-api';
 import * as Entity from '../lib/Entity';
 
 import * as EntityActionCreators from '../actions/entities-actions';
+import * as DungeonActionCreators from '../actions/dungeons-actions';
 
 class AddCharactersContainer extends Component {
 
@@ -18,7 +19,7 @@ class AddCharactersContainer extends Component {
 
     let _state = this.props.entitiesState;
     let _points = Entity.calcRemainingPoints(_state.points, _state.entity);
-    this.props.boundEntityAC.updatePointKeys( 'remainingPoints', _points.remainingPoints );
+    this.props.boundEntityAC.updatePointsKey( 'remainingPoints', _points.remainingPoints );
   }
 
   render() {
@@ -34,13 +35,15 @@ const mapStateToProps = function(store) {
     availableCharacters: store.entitiesState.availableCharacters,
     availableWeapons: store.weaponsState.availableWeapons,
     existingPowers: store.powersState.existingPowers,
-    entitiesState: store.entitiesState
+    entitiesState: store.entitiesState,
+    EntityType: 'character'
   };
 };
 
 function mapDispatchToProps(dispatch) {
   return({
-    boundEntityAC: bindActionCreators(EntityActionCreators, dispatch)
+    boundEntityAC: bindActionCreators(EntityActionCreators, dispatch),
+    boundDungeonAC: bindActionCreators(DungeonActionCreators, dispatch)
   })
 }
 

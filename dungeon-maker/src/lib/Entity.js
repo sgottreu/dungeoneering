@@ -63,7 +63,7 @@ export var Template = {
     weapons: []  
 };
 
-export var EntityIcons = [
+export var _Icons = [
   { label: 'Kobold', class: 'kobold', type: 'monster' },
   { label: 'Goblin', class: 'goblin', type: 'monster' },
   { label: 'Skeleton', class: 'skeleton', type: 'monster' },
@@ -82,7 +82,7 @@ export var EntityIcons = [
 
 export var AbilityScorePoints = 76;
 
-export var EntityRole = [
+export var _Role = [
   'Artillery',
   'Brute',
   'Controller',
@@ -113,15 +113,15 @@ export var _Class = [
 ]; 
 
 export var _Race = [
-  { name: 'Dragonborn' },
+  { name: 'Dragonborn', abilityMod: {}, size: 'Medium', speed: 5, skillBonus: {} },
   { name: 'Dwarf', abilityMod: { constitution: 2, wisdom: 2}, size: 'Medium', speed: 5, skillBonus: {dungeoneering: 2, endurance:2} },
-  { name: 'Eladrin' },
-  { name: 'Dragonborn' },
+  { name: 'Eladrin', abilityMod: {}, size: 'Medium', speed: 5, skillBonus: {} },
+  { name: 'Dragonborn', abilityMod: {}, size: 'Medium', speed: 5, skillBonus: {} },
   { name: 'Elf', abilityMod: { dexterity: 2, wisdom: 2}, size: 'Medium', speed: 7, skillBonus: {nature: 2, perception:2}, defenseMod: {willpower: 1} },
-  { name: 'Half-Elf' },
+  { name: 'Half-Elf', abilityMod: {}, size: 'Medium', speed: 5, skillBonus: {} },
   { name: 'Halfling', abilityMod: { dexterity: 2, charisma: 2}, size: 'Small', speed: 6, skillBonus: {acrobatics: 2, thievery:2} },
   { name: 'Human', abilityMod: { any: 2 }, size: 'Medium', speed: 6, skillBonus: 'any', defenseMod: {fortitude: 1, reflex: 1, willpower: 1} },
-  { name: 'Tiefling' }
+  { name: 'Tiefling', abilityMod: {}, size: 'Medium', speed: 5, skillBonus: {} }
 ];
 
 export var _Armor = [
@@ -218,9 +218,6 @@ export var addInventory = (purchasedItem, category, inventory) => {
   if(_i === -1){
     inventory.push( { category: category, item: tmpItem } );
   } else {
-    if(inventory[_i].item.quantity === undefined){
-      inventory[_i].item.quantity = 0;
-    }
     inventory[_i].item.quantity += tmpItem.quantity;
   }
   return inventory;

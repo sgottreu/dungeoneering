@@ -1,9 +1,10 @@
 var assert = require('chai').assert;
 
 import * as types from './action-types';
-import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updateMouseover, 
-          updatePointsKey, updateEntityWeapon, updateEntityArmor, updateEntityShield,
-          updateEntityDefense, updateEntityAbility, updateEntityRace, updateEntityClass
+import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updateMouseover, updateEntityLevel,
+          updatePointsKey, updateEntityWeapon, updateEntityArmor, updateEntityShield, updateEntityHp,
+          updateEntityDefense, updateEntityAbility, updateEntityRace, updateEntityClass,
+          updateEntityCharacterPower, updateEntityMonsterPower, updateEntityArmorclass, updateEntityInitiative
         } from './entities-actions';
 
 var availableCharacters = [ {_id: 123, name: 'Steelhorn'}, {_id: 456, name: 'Jarim'} ];
@@ -185,9 +186,7 @@ describe('updateEntityWeapon', function() {
       assert.equal(state.id, 12); // with optional message
     });
   });
-  
 });
-
 
 describe('updateEntityArmor', function() {
   var state = updateEntityArmor(3);
@@ -222,7 +221,24 @@ describe('updateEntityShield', function() {
       assert.equal(state.score, 2); // with optional message
     });
   });
+});
+
+describe('updateEntityArmorclass', function() {
+  var state = updateEntityArmorclass(15);
   
+  describe('type', function() {
+    it('entitiesActions:updateEntityArmorclass.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityArmorclass.type |-| should equal = UPDATE_ENTITY_ARMOR', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_ARMORCLASS'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('entitiesActions:updateEntityArmorclass.value |-| state.value should equal 15', function() {
+      assert.equal(state.value, 15); // with optional message
+    });
+  });
 });
 
 describe('updateEntityDefense', function() {
@@ -269,22 +285,21 @@ describe('updateEntityAbility', function() {
   });
 });
 
-describe('updateEntityRace', function() {
-  var state = updateEntityRace(2);
+describe('updateEntityLevel', function() {
+  var state = updateEntityLevel(12);
   describe('type', function() {
-    it('entitiesActions:updateEntityRace.type |-| should exist', function() {
+    it('entitiesActions:updateEntityLevel.type |-| should exist', function() {
       assert.isString(state.type, 'Is a string'); // with optional message
     });
-    it('entitiesActions:updateEntityRace.type |-| should equal = UPDATE_ENTITY_DEFENSE', function() {
-      assert.equal(state.type, 'UPDATE_ENTITY_RACE'); // with optional message
+    it('entitiesActions:updateEntityLevel.type |-| should equal = UPDATE_ENTITY_LEVEL', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_LEVEL'); // with optional message
     });
   });
-  describe('index', function() {
-    it('entitiesActions:updateEntityRace.index |-| state.index should equal 2', function() {
-      assert.equal(state.index, 2); // with optional message
+  describe('level', function() {
+    it('entitiesActions:updateEntityLevel.level |-| state.level should equal 12', function() {
+      assert.equal(state.level, 12); // with optional message
     });
   });
-
 });
 
 describe('updateEntityRace', function() {
@@ -302,7 +317,40 @@ describe('updateEntityRace', function() {
       assert.equal(state.index, 2); // with optional message
     });
   });
+});
 
+describe('updateEntityInitiative', function() {
+  var state = updateEntityInitiative(4);
+  describe('type', function() {
+    it('entitiesActions:updateEntityInitiative.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityInitiative.type |-| should equal = UPDATE_ENTITY_DEFENSE', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_INITIATIVE'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('entitiesActions:updateEntityInitiative.value |-| state.value should equal 4', function() {
+      assert.equal(state.value, 4); // with optional message
+    });
+  });
+});
+
+describe('updateEntityHp', function() {
+  var state = updateEntityHp(25);
+  describe('type', function() {
+    it('entitiesActions:updateEntityInitiative.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityInitiative.type |-| should equal = UPDATE_ENTITY_HP', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_HP'); // with optional message
+    });
+  });
+  describe('value', function() {
+    it('entitiesActions:updateEntityInitiative.value |-| state.value should equal 25', function() {
+      assert.equal(state.value, 25); // with optional message
+    });
+  });
 });
 
 describe('updateEntityClass', function() {
@@ -320,5 +368,49 @@ describe('updateEntityClass', function() {
       assert.equal(state.index, 2); // with optional message
     });
   });
-
 });
+
+
+describe('updateEntityCharacterPower', function() {
+  var state = updateEntityCharacterPower(2);
+  describe('type', function() {
+    it('entitiesActions:updateEntityCharacterPower.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityCharacterPower.type |-| should equal = UPDATE_ENTITY_CHARACTER_POWER', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_CHARACTER_POWER'); // with optional message
+    });
+  });
+  describe('id', function() {
+    it('entitiesActions:updateEntityCharacterPower.id |-| state.id should equal 2', function() {
+      assert.equal(state.id, 2); // with optional message
+    });
+  });
+});
+
+describe('updateEntityMonsterPower', function() {
+  var state = updateEntityMonsterPower({_id: 123}, true);
+  describe('type', function() {
+    it('entitiesActions:updateEntityMonsterPower.type |-| should exist', function() {
+      assert.isString(state.type, 'Is a string'); // with optional message
+    });
+    it('entitiesActions:updateEntityMonsterPower.type |-| should equal = UPDATE_ENTITY_MONSTER_POWER', function() {
+      assert.equal(state.type, 'UPDATE_ENTITY_MONSTER_POWER'); // with optional message
+    });
+  });
+  describe('power', function() {
+    it('entitiesActions:updateEntityMonsterPower.power |-| power is object', function() {
+      assert.isObject(state.power); // with optional message
+    });
+    it('entitiesActions:updateEntityMonsterPower.power._id |-| power._id should equal 123', function() {
+      assert.equal(state.power._id, 123); // with optional message
+    });
+  });
+  describe('power', function() {
+    it('entitiesActions:updateEntityMonsterPower.remove |-| remove should equal true', function() {
+      assert.equal(state.remove, true); // with optional message
+    });
+  });
+});
+
+

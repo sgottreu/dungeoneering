@@ -39,12 +39,14 @@ const entitiesReducer = function(state = initialState, action) {
       return Object.assign({}, state, {
         availableCharacters: action.entities
       });
+    //LOAD_CHARACTERS
 
     case types.LOAD_MONSTERS:
       action.entities.sort(SortByKey('name'));
       return Object.assign({}, state, {
         availableMonsters: action.entities
       });
+    //LOAD_MONSTERS
 
     case types.UPDATE_KEY:
       _state[ action.key ] = action.value;
@@ -54,7 +56,8 @@ const entitiesReducer = function(state = initialState, action) {
       }
 
       return Object.assign({}, state, _state);
-    
+    //UPDATE_KEY
+
     case types.UPDATE_ENTITY_KEY:
        _state.entity = Variables.addField( _state.entity, action.key, action.value );
 
@@ -63,6 +66,7 @@ const entitiesReducer = function(state = initialState, action) {
       }
 
       return Object.assign({}, state, _state);
+    //UPDATE_ENTITY_KEY
 
     case types.UPDATE_POINTS_KEY:
        _state.points = Variables.addField( _state.points, action.key, action.value );
@@ -72,6 +76,7 @@ const entitiesReducer = function(state = initialState, action) {
       }
 
       return Object.assign({}, state, _state);
+    //UPDATE_POINTS_KEY
 
     case types.UPDATE_MOUSEOVER:
       return Object.assign({}, state, {
@@ -84,6 +89,7 @@ const entitiesReducer = function(state = initialState, action) {
           clientY: action.mouse.clientY
         }
       });
+    //UPDATE_MOUSEOVER
 
     case types.UPDATE_ENTITY_WEAPON:
       _entity = _state.entity;
@@ -115,6 +121,8 @@ const entitiesReducer = function(state = initialState, action) {
         _entity.weapons.push(action.id);  
       }
       return Object.assign({}, state, { entity: _entity } );
+    //UPDATE_ENTITY_WEAPON
+
 
     case types.UPDATE_ENTITY_ARMOR:
       _entity = _state.entity;
@@ -148,6 +156,7 @@ const entitiesReducer = function(state = initialState, action) {
       _state.entity = _entity;
 
       return Object.assign( {}, state, _state );
+    //UPDATE_ENTITY_ARMOR
 
     case types.UPDATE_ENTITY_SHIELD:
       _entity = _state.entity;
@@ -185,6 +194,13 @@ const entitiesReducer = function(state = initialState, action) {
       _state.entity = _entity;
 
       return Object.assign( {}, state, _state );
+    //UPDATE_ENTITY_SHIELD
+
+    case types.UPDATE_ENTITY_ARMORCLASS:
+      _entity = _state.entity;
+      _entity.defense.armorClass = Entity.calculateArmorClass(_entity, action.value);
+      return Object.assign( {}, state, { entity: _entity} );
+    // UPDATE_ENTITY_ARMORCLASS
 
     case types.UPDATE_ENTITY_DEFENSE:
       _entity = _state.entity;
@@ -194,6 +210,25 @@ const entitiesReducer = function(state = initialState, action) {
       _state.entity = _entity;
 
       return Object.assign( {}, state, _state );
+    //UPDATE_ENTITY_DEFENSE
+
+    case types.UPDATE_ENTITY_HP:
+      _entity = _state.entity;
+
+      _entity.hp = action.value;
+      _entity.bloodied = Math.floor( _entity.hp / 2 );
+      _entity.healingSurge = Math.floor( _entity.hp / 4 );
+
+      return Object.assign( {}, state, { entity: _entity } );
+    //UPDATE_ENTITY_HP
+
+    case types.UPDATE_ENTITY_INITIATIVE:
+      _entity = _state.entity;
+
+      _entity.initiative = Entity.calculateInitiative(_entity, action.value);
+
+      return Object.assign( {}, state, { entity: _entity } );
+    //UPDATE_ENTITY_INITIATIVE
 
     case types.UPDATE_ENTITY_ABILITY:
       _entity = _state.entity;
@@ -228,6 +263,21 @@ const entitiesReducer = function(state = initialState, action) {
           entity: _entity
         } 
       );
+    //UPDATE_ENTITY_ABILITY
+
+    case types.UPDATE_ENTITY_LEVEL:
+      _entity = _state.entity;
+      _points = _state.points;
+      
+      _entity.level = action.level;
+      _points = Entity.calcRemainingPoints(_points, _entity);
+
+       return Object.assign( {}, state, {
+          points: _points,
+          entity: _entity
+        } 
+      );
+    //UPDATE_ENTITY_LEVEL
 
     case types.UPDATE_ENTITY_RACE:
       _entity = _state.entity;
@@ -273,6 +323,7 @@ const entitiesReducer = function(state = initialState, action) {
           entity: _entity
         } 
       );   
+    //UPDATE_ENTITY_RACE
 
     case types.UPDATE_ENTITY_CLASS:
       _entity = Variables.clone( _state.entity );
@@ -281,17 +332,50 @@ const entitiesReducer = function(state = initialState, action) {
       _entity.bloodied = Math.floor( _entity.hp / 2 );
       _entity.healingSurge = Math.floor( _entity.hp / 4 );
 
-      _entity.surgesPerDay = parseInt(Entity._Class[index].surges, 10) + parseInt(_entity.abilities.constitution.abilityMod, 10);
+      _entity.surgesPerDay = parseInt(Entity._Class[action.index].surges, 10) + parseInt(_entity.abilities.constitution.abilityMod, 10);
 
-      _entity.iconClass = Entity._Class[ index ].name.toLowerCase();
+      _entity.iconClass = Entity._Class[ action.index ].name.toLowerCase();
 
-      for(let c in Entity._Class[index].defenseMod){
-        if(Entity._Class[index].defenseMod.hasOwnProperty(c)){
-          _entity.defense[ c ].classBonus = parseInt(Entity._Class[index].defenseMod[c], 10);
+      for(let c in Entity._Class[ action.index ].defenseMod){
+        if(Entity._Class[ action.index ].defenseMod.hasOwnProperty(c)){
+          _entity.defense[ c ].classBonus = parseInt(Entity._Class[ action.index ].defenseMod[c], 10);
         }
       }
 
       return Object.assign( {}, state, { entity: _entity } ); 
+    //UPDATE_ENTITY_CLASS
+
+    case types.UPDATE_ENTITY_CHARACTER_POWER:
+      _entity = Variables.clone( _state.entity );
+
+      if( _entity.powers.includes( action.id) ){
+        _i = _entity.powers.findIndex(function(p) { return p === action.id})
+        _entity.powers.splice(_i, 1);
+      } else {
+        _entity.powers.push( action.id );  
+      }
+
+      return Object.assign( {}, state, { entity: _entity } ); 
+    //UPDATE_ENTITY_CHARACTER_POWER
+
+    case types.UPDATE_ENTITY_MONSTER_POWER:
+      _entity = Variables.clone( _state.entity );
+      _i = _entity.powers.findIndex( _power => { return _power._id === action.power._id });
+
+      if(_i > -1){   
+        if(action.remove) {
+
+          _entity.powers.splice(_i, 1);
+        } else {
+          _entity.powers[_i] = action.power;
+        }
+      } else {
+        _entity.powers.push(action.power);
+      }
+
+      return Object.assign( {}, state, { entity: _entity } ); 
+    //UPDATE_ENTITY_MONSTER_POWER
+
 
     default:
       return state;

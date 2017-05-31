@@ -1,8 +1,9 @@
 ## TODO
 
-
+* Fix EntityChooser tooltip
+* Fix snackbars with APIs
 * Create randomizer for chests
-
+* Fix AddMonster page.
 
 ## FAQ
 
@@ -12,4 +13,4 @@
 ## Tests to generate
 
 
-* EntityReducer.updateEntityClass
+

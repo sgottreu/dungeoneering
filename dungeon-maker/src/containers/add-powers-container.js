@@ -5,6 +5,7 @@ import AddPowers from '../components/AddPowers';
 import * as powersApi from '../api/powers-api';
 
 import * as PowerActionCreators from '../actions/powers-actions';
+import * as EntityActionCreators from '../actions/entities-actions';
 
 class AddPowersContainer extends Component {
 
@@ -25,7 +26,8 @@ var mapStateToProps = function(store) {
 
 function mapDispatchToProps(dispatch) {
   return({
-    boundPowerAC: bindActionCreators(PowerActionCreators, dispatch)
+    boundPowerAC: bindActionCreators(PowerActionCreators, dispatch),
+    boundEntityAC: bindActionCreators(EntityActionCreators, dispatch)
   })
 }
 

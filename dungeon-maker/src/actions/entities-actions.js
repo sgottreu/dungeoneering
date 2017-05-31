@@ -47,6 +47,13 @@ export function updateMouseover(entity, entityType, event) {
   };
 }
 
+export function updateEntityLevel(level) {
+  return {
+    type: types.UPDATE_ENTITY_LEVEL,
+    level: level
+  };
+}
+
 export function updateEntityWeapon(id) {
   return {
     type: types.UPDATE_ENTITY_WEAPON,
@@ -58,6 +65,13 @@ export function updateEntityArmor(index) {
   return {
     type: types.UPDATE_ENTITY_ARMOR,
     index: index
+  };
+}
+
+export function updateEntityArmorclass(value) {
+  return {
+    type: types.UPDATE_ENTITY_ARMORCLASS,
+    value: value
   };
 }
 
@@ -95,5 +109,32 @@ export function updateEntityClass(index) {
   return {
     type: types.UPDATE_ENTITY_CLASS,
     index: index
+  };
+}
+export function updateEntityInitiative(value) {
+  return {
+    type: types.UPDATE_ENTITY_INITIATIVE,
+    value: value
+  };
+}
+export function updateEntityHp(value) {
+  return {
+    type: types.UPDATE_ENTITY_HP,
+    value: value
+  };
+}
+
+export function updateEntityCharacterPower(id) {
+  return {
+    type: types.UPDATE_ENTITY_CHARACTER_POWER,
+    id: id
+  };
+}
+
+export function updateEntityMonsterPower(power, remove=false) {
+  return {
+    type: types.UPDATE_ENTITY_MONSTER_POWER,
+    power: power,
+    remove: remove
   };
 }

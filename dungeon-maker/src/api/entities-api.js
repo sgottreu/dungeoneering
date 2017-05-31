@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import store from '../store';
-import { loadCharacters, loadMonsters } from '../actions/entities-actions';
+import { loadCharacters, loadMonsters, updateEntityKey } from '../actions/entities-actions';
 
 export var findCharacters = () => {
   axios.get(`${Variables.host}/findCharacters`)
@@ -20,15 +20,17 @@ export var findMonsters = () => {
 //   if(!selectedEntity){
 //     return false;
 //   }
-//   axios.get(`${Variables.host}/findEntityGrid?_id=${selectedEntity}`)
+//   axios.get(`${Variables.host}/findEntity?_id=${selectedEntity}`)
 //   .then(res => {
 //     store.dispatch(setEntity(res.data));
 //     store.dispatch(updateKey('selectedEntity', res.data._id));
 //   }); 
 // };
-// export var saveEntity = (entity) => {
-//   axios.post(`${Variables.host}/saveEntityGrids`, entity)
-//   .then(res => {
-//     store.dispatch(updateExistingEntity(res.data._id, res.data.title));
-//   }); 
-// };
+
+export var saveEntity = (entity) => {
+  axios.post(`${Variables.host}/saveEntity`, entity)
+  .then(res => {
+    store.dispatch(updateEntityKey("_id", res.data._id));
+    store.dispatch(updateEntityKey("name", res.data.title));
+  }); 
+};
