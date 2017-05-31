@@ -22,6 +22,7 @@ class PowersForm extends Component {
 		this.defense = Variables.mapObj(EntityTemplate.defense);
 
     this.boundPowerAC = this.props.boundPowerAC;
+    this.boundEntityAC = this.props.boundEntityAC;
 
 		this.handleChoosePower = this.handleChoosePower.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -53,12 +54,13 @@ class PowersForm extends Component {
   }
 
   addPower(){
-    if(this.props.onIncludePower === undefined){
-      powersApi.savePower(this.props.power);
+    if(this.props.entityType === undefined){
+      powersApi.savePower( this.props.power );
     } else {
-      
-    }
-    
+      if(this.props.entityType === 'monster'){
+        this.boundEntityAC.updateEntityMonsterPower( this.props.power );
+      }
+    }    
   }
 
   handleChange = (event) => {
@@ -212,7 +214,7 @@ class PowersForm extends Component {
 
 	render(){
 		let { entityType, weapons, power } = this.props;
-console.log(this.props.power);
+
 		return (
 			<div className={'PowersForm inset'}>
 				

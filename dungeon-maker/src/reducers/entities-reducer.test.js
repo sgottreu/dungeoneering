@@ -5,9 +5,9 @@ import {Variables} from '../lib/Variables';
 import Slots from '../lib/Slots.js';
 import TileOptions from '../lib/TileOptions';
 import entitiesReducer from './entities-reducer';
-import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey, updateMouseover, 
-          updateEntityWeapon, updateEntityArmor, updateEntityShield, updateEntityDefense, updateEntityAbility,
-          updateEntityRace
+import { loadCharacters, loadMonsters, updateKey, updateEntityKey, updatePointsKey, updateMouseover, updateEntityLevel, updateEntityHp,
+          updateEntityWeapon, updateEntityArmor, updateEntityShield, updateEntityArmorclass, updateEntityDefense, updateEntityAbility,
+          updateEntityRace, updateEntityClass, updateEntityCharacterPower, updateEntityMonsterPower, updateEntityInitiative
         
       } from '../actions/entities-actions';
 import * as Entity from '../lib/Entity';
@@ -175,6 +175,9 @@ describe('UPDATE_POINTS_KEY', function() {
     assert.equal(_state.points.usedPoints, 16); // with optional message
   });
 });
+
+
+
 
 describe('UPDATE_ENTITY_WEAPON', function() {
   let action, _state;
@@ -481,6 +484,29 @@ describe('UPDATE_ENTITY_SHIELD', function() {
 
 });
 
+describe('UPDATE_ENTITY_ARMORCLASS', function() {
+  let action, _state;
+  
+  describe('Adding ArmorClass to lvl 1 character', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 1;
+
+      action = updateEntityArmorclass( 16 );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.fortitude.total = 16', function() {
+      assert.equal(_state.entity.defense.armorClass.total, 16); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_DEFENSE |-| defense.fortitude.abilityMod = 4', function() {
+      assert.equal(_state.entity.defense.armorClass.misc, 4); // with optional message
+    });
+  });
+});
+
 describe('UPDATE_ENTITY_DEFENSE', function() {
   let action, _state;
   
@@ -586,6 +612,55 @@ describe('UPDATE_ENTITY_DEFENSE', function() {
 
 });
 
+describe('UPDATE_ENTITY_INITIATIVE', function() {
+  let action, _state;
+  
+  describe('Adding Initiative to lvl 1 character', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'character';
+      _state.entity.level = 1;
+
+      action = updateEntityInitiative( 4 );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_INITIATIVE |-| initiative.total = 4', function() {
+      assert.equal(_state.entity.initiative.total, 4); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_INITIATIVE |-| initiative.modifier = 3', function() {
+      assert.equal(_state.entity.initiative.modifier, 3); // with optional message
+    });
+  });
+});
+
+describe('UPDATE_ENTITY_HP', function() {
+  let action, _state;
+  
+  describe('Adding Health points', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+
+      _state.entity._type = 'monster';
+      _state.entity.level = 1;
+
+      action = updateEntityHp( 25 );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_HP |-| hp = 25', function() {
+      assert.equal(_state.entity.hp, 25); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_HP |-| bloodied = 12', function() {
+      assert.equal(_state.entity.bloodied, 12); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_HP |-| healingSurge = 6', function() {
+      assert.equal(_state.entity.healingSurge, 6); // with optional message
+    });
+  });
+});
+
 describe('UPDATE_ENTITY_ABILITY', function() {
   let action, _state;
   
@@ -641,6 +716,25 @@ describe('UPDATE_ENTITY_ABILITY', function() {
 
 });
 
+describe('UPDATE_ENTITY_LEVEL', function() {
+  let action, _state;
+  beforeEach(function() {
+    _state = Variables.clone( state );
+
+    _state.entity._type = 'character';
+    _state.entity.level = 1;
+
+    action = updateEntityLevel( 11 );
+    _state = entitiesReducer(_state, action);
+  });
+
+  it('entitiesReducer:UPDATE_ENTITY_LEVEL |-| entity.level should equal 11', function() {
+    assert.equal(_state.entity.level, 11); // with optional message
+  });
+  it('entitiesReducer:UPDATE_ENTITY_LEVEL |-| points.remainingPoints should equal 24', function() {
+    assert.equal(_state.points.remainingPoints, 24); // with optional message
+  });
+});
 
 describe('UPDATE_ENTITY_RACE', function() {
   let action, _state;
@@ -681,5 +775,141 @@ describe('UPDATE_ENTITY_RACE', function() {
 
 });
 
+describe('UPDATE_ENTITY_CLASS', function() {
+  let action, _state;
+  
+  describe('lvl 1 Elf Rogue', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
 
+      _state.entity._type = 'character';
+      _state.entity.level = 1;
+      _state.entity.race = 4;
 
+      action = updateEntityClass( 4 );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_CLASS |-| class = 4', function() {
+      assert.equal(_state.entity.class, 4); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_CLASS |-| surgesPerDay = 7', function() {
+      assert.equal(_state.entity.surgesPerDay, 7); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_CLASS |-| hp = 24', function() {
+      assert.equal(_state.entity.hp, 24); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_CLASS |-| bloodied = 12', function() {
+      assert.equal(_state.entity.bloodied, 12); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_CLASS |-| healingSurge = 6', function() {
+      assert.equal(_state.entity.healingSurge, 6); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_CLASS |-| defense.reflex.classBonus = 2', function() {
+      assert.equal(_state.entity.defense.reflex.classBonus, 2); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_CLASS |-| iconClass', function() {
+      assert.equal(_state.entity.iconClass, 'rogue'); // with optional message
+    });
+  });
+
+});
+
+describe('UPDATE_ENTITY_CHARACTER_POWER', function() {
+  let action, _state;
+  
+  describe('add new power', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+      _state.existingPowers = ['67890', '37465', '12345'];
+      _state.entity.powers.push('12345');
+
+      action = updateEntityCharacterPower( '67890' );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_CHARACTER_POWER |-| powers length is 2', function() {
+      assert.lengthOf(_state.entity.powers, 2); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_CHARACTER_POWER |-| powers[1] = 67890', function() {
+      assert.equal(_state.entity.powers[1], '67890'); // with optional message
+    });
+
+  });
+
+  describe('remove power', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+      _state.existingPowers = ['67890', '37465', '12345'];
+      _state.entity.powers.push('12345', '67890');
+
+      action = updateEntityCharacterPower( '12345' );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_CHARACTER_POWER |-| powers length is 1', function() {
+      assert.lengthOf(_state.entity.powers, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_CHARACTER_POWER |-| powers[0] = 67890', function() {
+      assert.equal(_state.entity.powers[0], '67890'); // with optional message
+    });
+  });
+});
+
+describe('UPDATE_ENTITY_MONSTER_POWER', function() {
+  let action, _state;
+  
+  describe('add new power', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+      _state.entity.powers = [{_id: '12345', name:'Bite'}, {_id:456, name: 'Claw'}];
+
+      action = updateEntityMonsterPower( {_id: '789', name:'Howl'} );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_MONSTER_POWER |-| powers length is 3', function() {
+      assert.lengthOf(_state.entity.powers, 3); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_MONSTER_POWER |-| powers[2].name = Howl', function() {
+      assert.equal(_state.entity.powers[2].name, 'Howl'); // with optional message
+    });
+  });
+
+  describe('update existing power', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+      _state.entity.powers = [{_id: '12345', name:'Bite'}, {_id:456, name: 'Claw'}];
+
+      action = updateEntityMonsterPower( {_id:456, name: 'Maul'} );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_MONSTER_POWER |-| powers length is 2', function() {
+      assert.lengthOf(_state.entity.powers, 2); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_MONSTER_POWER |-| powers[1].name = Maul', function() {
+      assert.equal(_state.entity.powers[1].name, 'Maul'); // with optional message
+    });
+
+  });
+
+  describe('remove power', function() {
+    beforeEach(function() {
+      _state = Variables.clone( state );
+      _state.entity.powers =[{_id: 12345, name:'Bite'}, {_id:456, name: 'Claw'}];
+
+      action = updateEntityMonsterPower( {_id:12345, name: 'Bite'}, true );
+      _state = entitiesReducer(_state, action);
+    });
+
+    it('entitiesReducer:UPDATE_ENTITY_MONSTER_POWER |-| powers length is 1', function() {
+      assert.lengthOf(_state.entity.powers, 1); // with optional message
+    });
+    it('entitiesReducer:UPDATE_ENTITY_MONSTER_POWER |-| powers[0].name = Claw', function() {
+      assert.equal(_state.entity.powers[0].name, 'Claw'); // with optional message
+    });
+
+  });
+
+});
