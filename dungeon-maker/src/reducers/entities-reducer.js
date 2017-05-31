@@ -274,6 +274,24 @@ const entitiesReducer = function(state = initialState, action) {
         } 
       );   
 
+    case types.UPDATE_ENTITY_CLASS:
+      _entity = Variables.clone( _state.entity );
+      _entity.class = action.index;
+      _entity.hp = Entity.getInitialHitPoints(_entity, action.index);
+      _entity.bloodied = Math.floor( _entity.hp / 2 );
+      _entity.healingSurge = Math.floor( _entity.hp / 4 );
+
+      _entity.surgesPerDay = parseInt(Entity._Class[index].surges, 10) + parseInt(_entity.abilities.constitution.abilityMod, 10);
+
+      _entity.iconClass = Entity._Class[ index ].name.toLowerCase();
+
+      for(let c in Entity._Class[index].defenseMod){
+        if(Entity._Class[index].defenseMod.hasOwnProperty(c)){
+          _entity.defense[ c ].classBonus = parseInt(Entity._Class[index].defenseMod[c], 10);
+        }
+      }
+
+      return Object.assign( {}, state, { entity: _entity } ); 
 
     default:
       return state;

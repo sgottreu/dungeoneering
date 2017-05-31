@@ -90,3 +90,10 @@ export function updateEntityRace(index) {
     index: index
   };
 }
+
+export function updateEntityClass(index) {
+  return {
+    type: types.UPDATE_ENTITY_CLASS,
+    index: index
+  };
+}
