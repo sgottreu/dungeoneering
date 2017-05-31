@@ -42,8 +42,7 @@ const mapStateToProps = function(store) {
 
 function mapDispatchToProps(dispatch) {
   return({
-    boundEntityAC: bindActionCreators(EntityActionCreators, dispatch),
-    boundDungeonAC: bindActionCreators(DungeonActionCreators, dispatch)
+    boundEntityAC: bindActionCreators(EntityActionCreators, dispatch)
   })
 }
 
