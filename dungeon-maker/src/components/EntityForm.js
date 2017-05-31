@@ -31,7 +31,7 @@ class EntityForm extends Component {
     this.boundEntityAC = this.props.boundEntityAC;
     this.rState = this.props.entitiesState;
 
-    this.EntityType = this.props.type;
+    this.EntityType = this.props.entity._type;
     this.input = [];
 
     this.handleChange = this.handleChange.bind(this);
@@ -71,17 +71,6 @@ class EntityForm extends Component {
     this.selectWeapon = this.selectWeapon.bind(this);
     this.selectPower = this.selectPower.bind(this);
     this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
-    
-    let state = {
-      hoverObj: {
-        obj: false,
-        type: false
-      },
-      mouse: {
-        clientX: false,
-        clientY: false
-      }
-    };
 
     this.state = {
       snackbarOpen: false,
@@ -134,23 +123,7 @@ class EntityForm extends Component {
 	}
 
   handleClassChange = (event, index) => {    
-    let state = this.state;
-    state.entity.class = index;
-    state.entity.hp = getInitialHitPoints(state, state.entity.class);
-    state.entity.bloodied = Math.floor( state.entity.hp / 2 );
-    state.entity.healingSurge = Math.floor( state.entity.hp / 4 );
-
-    state.entity.surgesPerDay = parseInt(Entity._Class[index].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
-
-    state.entity.iconClass = Entity._Class[ index ].name.toLowerCase();
-
-    for(let c in Entity._Class[index].defenseMod){
-      if(Entity._Class[index].defenseMod.hasOwnProperty(c)){
-        state.entity.defense[ c ].classBonus = parseInt(Entity._Class[index].defenseMod[c], 10);
-      }
-    }
-
-    this.setState(state);
+    this.boundEntityAC.updateEntityClass( index );
   }
 
   changeIcon = (event) => {
