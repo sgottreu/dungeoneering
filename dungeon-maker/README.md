@@ -1,6 +1,5 @@
 ## TODO
 
-* Fix EntityChooser tooltip
 * Fix snackbars with APIs
 * Create randomizer for chests
 

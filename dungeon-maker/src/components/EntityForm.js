@@ -61,7 +61,6 @@ class EntityForm extends Component {
     this.loadRaceField = this.loadRaceField.bind(this);
     this.loadEntityIconField = this.loadEntityIconField.bind(this);
     this.loadPowersForm = this.loadPowersForm.bind(this);
-    this.loadWeaponTooltip = this.loadWeaponTooltip.bind(this);
 
     this.loadPowersField = this.loadPowersField.bind(this);
     this.loadWeaponsField = this.loadWeaponsField.bind(this);
@@ -74,6 +73,7 @@ class EntityForm extends Component {
       snackbarMsg: ''
     };
   }
+
 
   resetForm(){
     this.boundEntityAC.updateKey('selectedEntity', false);
@@ -327,6 +327,7 @@ class EntityForm extends Component {
     });
     let remWeapons = this.props.availableWeapons.filter(function(val){ return !entity.weapons.includes(val._id) });
     let {boundEntityAC} = this.props;
+    let _this = this;
     return(
       <div className="container">
         <Subheader>Weapons</Subheader>
@@ -340,22 +341,20 @@ class EntityForm extends Component {
             //
             return (
               <ListItem className={className} key={index}  
-                onTouchTap={this.selectWeapon.bind(this, weapon._id)}
+                onTouchTap={_this.selectWeapon.bind(_this, weapon._id)}
                 primaryText={<div >{weapon.name}</div>}  
                 leftAvatar={<Avatar className={'icon '+weapon_icon} />}
-                onMouseEnter={(e,i,v) => { this.props.boundEntityAC.updateMouseover(weapon, 'weapon', e) } } 
-                onMouseLeave={(e,i,v) => { this.props.boundEntityAC.updateMouseover(false, false, e) } }
+                onMouseEnter={(e,i,v) => { 
+                  boundEntityAC.updateMouseover(weapon, 'weapon', e) 
+                } } 
+                onMouseLeave={(e,i,v) => { 
+                  boundEntityAC.updateMouseover(false, false, e) 
+                } }
               />
             );
           })}
         </List>
       </div>
-    );
-  }
-
-  loadWeaponTooltip = () => {
-    return (
-      <WeaponTooltip hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
     );
   }
 
@@ -371,8 +370,17 @@ class EntityForm extends Component {
 
 		return (
 			<div className={`EntityForm inset ${formClassName}`}>
-        {(this.props.entitiesState.hoverObj.type === 'weapon') ? this.loadWeaponTooltip() : ''}
-        <EntityChooser onHandleSelectedEntity={this.handleSelectedEntity.bind(this)} saveEntities={saveEntities} EntityType={this.EntityType} selectedStyle={selectedStyle} selectedEntity={this.props.entitiesState.selectedEntity} />
+        <WeaponTooltip hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
+        <EntityChooser 
+          onHandleSelectedEntity={this.handleSelectedEntity.bind(this)} 
+          saveEntities={saveEntities} 
+          EntityType={this.EntityType} 
+          selectedStyle={selectedStyle} 
+          selectedEntity={this.props.entitiesState.selectedEntity}
+          boundEntityAC={this.props.boundEntityAC}
+          hoverObj={this.props.entitiesState.hoverObj} 
+          mouse={this.props.entitiesState.mouse}
+           />
         
 				<TextField  floatingLabelText="Name" value={entity.name} name="name" onChange={this.handleChange} />
         <RaisedButton primary={true}

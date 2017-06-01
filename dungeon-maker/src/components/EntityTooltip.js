@@ -9,11 +9,13 @@ const EntityTooltip = ( { hoverObj, mouse } ) => {
   if(hoverObj === undefined){
     return false;
   }
-  let entity = hoverObj.obj;
-
-  if(entity === undefined || !entity){
+  if(!hoverObj.obj){
     return false;
   }
+  if(hoverObj.type !== 'entity'){
+    return false;
+  }
+  let entity = hoverObj.obj;
 
   let AbilityMap = new Map(Object.entries(entity.abilities));
   let initiative = (entity.initiative.current === undefined) ? 0 : entity.initiative.current;
