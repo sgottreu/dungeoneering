@@ -364,7 +364,6 @@ const entitiesReducer = function(state = initialState, action) {
 
       if(_i > -1){   
         if(action.remove) {
-
           _entity.powers.splice(_i, 1);
         } else {
           _entity.powers[_i] = action.power;

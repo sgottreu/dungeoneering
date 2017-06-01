@@ -84,36 +84,39 @@ describe('powersReducer', function() {
 
 
   describe('CHANGE_CURRENT_POWER', function() {
-    var _state = Object.assign({}, state);
-    _state.existingPowers = powers;
+    var _state, action;
 
-    it('powersReducer:CHANGE_CURRENT_POWER |-| change from current_power: false to 1', function() {
-      var action = changeCurrentPower( 1 );
-      _state = powersReducer(_state, action);      
-      assert.equal(_state.current_power, 1); // with optional message
-    });
-    it('powersReducer:CHANGE_CURRENT_POWER |-| change power._id: false to 123', function() {
-      var action = changeCurrentPower( 1 );
-      _state = powersReducer(_state, action);      
-      assert.equal(_state.power._id, 123); // with optional message
+    describe('Change from false to 456', function() {
+      beforeEach(function() {
+        _state = Object.assign({}, state);
+        _state.existingPowers = powers;
+        action = changeCurrentPower( 456 );
+        _state = powersReducer(_state, action); 
+      });
+      it('powersReducer:CHANGE_CURRENT_POWER |-| change from current_power: false to 1', function() {
+        assert.equal(_state.current_power, 456); // with optional message
+      });
+      it('powersReducer:CHANGE_CURRENT_POWER |-| change power._id: false to 456', function() {   
+        assert.equal(_state.power._id, 456); // with optional message
+      });
     });
   
-    it('powersReducer:CHANGE_CURRENT_POWER |-| change from current_power: 1 to false', function() {
-      var action = changeCurrentPower( 1 );
-      _state = powersReducer(_state, action);
+    describe('Change from 456 to false', function() {
+      beforeEach(function() {
+        _state = Object.assign({}, state);
+        _state.existingPowers = powers;
+        action = changeCurrentPower( 456 );
+        _state = powersReducer(_state, action);
 
-      action = changeCurrentPower( 0 );
-      _state = powersReducer(_state, action);
-
-      assert.equal(_state.current_power, false); // with optional message
-    });
-    it('powersReducer:CHANGE_CURRENT_POWER |-| change power._id: 123 to false', function() {
-      var action = changeCurrentPower( 1 );
-      _state = powersReducer(_state, action);
-
-      action = changeCurrentPower( 0 );
-      _state = powersReducer(_state, action);      
-      assert.equal(_state.power._id, undefined); // with optional message
+        action = changeCurrentPower( 0 );
+        _state = powersReducer(_state, action);
+      });
+      it('powersReducer:CHANGE_CURRENT_POWER |-| change from current_power: 1 to false', function() {
+        assert.equal(_state.current_power, false); // with optional message
+      });
+      it('powersReducer:CHANGE_CURRENT_POWER |-| change power._id: 456 to false', function() {   
+        assert.equal(_state.power._id, undefined); // with optional message
+      });
     });
 
   });

@@ -13,6 +13,7 @@ const powersReducer = function(state = initialState, action) {
   let power = false;
   let powers = false;
   let current_power = false;
+  let _i;
 
   if(action === undefined){
     return state;
@@ -26,12 +27,13 @@ const powersReducer = function(state = initialState, action) {
 
     case types.CHANGE_CURRENT_POWER:
       power = Variables.clone(Powers.powerTemplate);
-      if(action.index === 0){
+      if(action.id === 0){
         power = Variables.clone(Powers.powerTemplate);
         current_power = false;
       } else {
-        power = Variables.clone(state.existingPowers[action.index-1]);
-        current_power = action.index;
+        _i = state.existingPowers.findIndex( _power => { return _power._id === action.id });
+        power = Variables.clone(state.existingPowers[_i]);
+        current_power = action.id;
       }
 
       return Object.assign({}, state, {

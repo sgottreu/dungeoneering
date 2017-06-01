@@ -305,13 +305,25 @@ app.post('/saveGear', function (req, res) {
 
 // ************* Admin ******************//
 app.get('/admin', function (req, res) {
-  // console.log('admin');
-   
-  // EntityArmor.map(armor => {
-  //   armor._id = monk.id();
-  //   console.log(JSON.stringify(armor));
+  // let query = { _type: {"$in": ["monster"] }};
+	// dungeon_grid.find(query).then(function(docs) {
+  //   let entities = [];
+
+  //   for(var x=0,len = docs.length;x<len;x++){
+  //   	for(var y=0,len2 = docs[x].powers.length;y<len2;y++){
+  //       if( docs[x].powers[y]._id === undefined){
+  //         docs[x].powers[y]._id = uuidV4();
+  //       }
+  //     }
+  //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, docs[x] ).then(function (data) {
+  //       console.log(`${docs[x].name} updated!`);
+  //     }).catch(function(err){ 
+  //       console.log(err);
+  //     });
+  //   }
+
+  //   sendJSON(res, docs);
   // });
-  // res.sendStatus(200);
 });
 
 /*********** Global  *************/
