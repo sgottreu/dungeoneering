@@ -12,6 +12,9 @@ const WeaponTooltip = ({ hoverObj, mouse }) => {
   if(!hoverObj.obj){
     return false;
   }
+  if(hoverObj.obj._type !== 'weapon'){
+    return false;
+  }
   let weapon = hoverObj.obj;
 
   let showRange = (weapon.range !== false && weapon.range !== '');
