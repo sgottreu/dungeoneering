@@ -21,10 +21,10 @@ export function resetCurrentPower(power) {
   };
 }
 
-export function changeCurrentPower(index) {
+export function changeCurrentPower(id) {
   return {
     type: types.CHANGE_CURRENT_POWER,
-    index: index
+    id: id
   };
 }
 

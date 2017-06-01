@@ -5,6 +5,7 @@ import {EntityTemplate, EntityClass} from './EntityTemplate';
 import {Variables} from '../lib/Variables';
 import {Die} from '../lib/Die';
 import * as powersApi from '../api/powers-api';
+import uuidV4  from 'uuid/v4';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
@@ -48,17 +49,27 @@ class PowersForm extends Component {
 
 	}
 
+  componentDidMount() {
+    // if(this.props.existingPowers !== undefined){
+    //   this.boundPowerAC.loadExistingPowers(this.props.existingPowers);
+    // }
+  }
 
   handleChoosePower(event, index) {
-   this.boundPowerAC.changeCurrentPower(index);
+    let id = (index === 0) ? 0 : this.props.existingPowers[index-1]._id;
+    this.boundPowerAC.changeCurrentPower(id);
   }
 
   addPower(){
-    if(this.props.entityType === undefined){
+    if(this.props.entityType === 'character'){
       powersApi.savePower( this.props.power );
     } else {
       if(this.props.entityType === 'monster'){
-        this.boundEntityAC.updateEntityMonsterPower( this.props.power );
+        let power = this.props.power;
+        if(power._id === undefined){
+          power._id = uuidV4();
+        }
+        this.boundEntityAC.updateEntityMonsterPower( power );
       }
     }    
   }
@@ -144,7 +155,7 @@ class PowersForm extends Component {
 
   loadClassField(_power){
    return (
-      <SelectField className="bottomAlign" maxHeight={200} style={Variables.getSelectListStyle(_power.class)} floatingLabelText="Power Class" value={EntityClass.findIndex((_class, index)=> { return _class.name === _power.class.name})} name="type" onChange={this.handleClassChange} >
+      <SelectField className="bottomAlign" maxHeight={200} floatingLabelText="Power Class" value={EntityClass.findIndex((_class, index)=> { return _class.name === _power.class.name})} name="type" onChange={this.handleClassChange} >
         {EntityClass.map( (_class, index) => (
           <MenuItem key={index} value={index} primaryText={_class.name} />
         ))}
@@ -156,7 +167,7 @@ class PowersForm extends Component {
   loadWeaponsField(weapons){
     let availableWeapons = this.props.availableWeapons;
     return (
-      <SelectField className="bottomAlign"   floatingLabelText="Weapon" value={this.state.power.weapon} onChange={this.handleWeaponChange} >
+      <SelectField className="bottomAlign"   floatingLabelText="Weapon" value={this.props.power.weapon} onChange={this.handleWeaponChange} >
         {weapons.map( (weapon, index) => {
           let _weapon = availableWeapons.find(function(w, i){ return w._id === weapon});
           return (
@@ -169,13 +180,12 @@ class PowersForm extends Component {
 
   loadPowerChooser(){
     let { existingPowers, current_power } = this.props;
-
       return (
         <SelectField className="bottomAlign" floatingLabelText="Choose Power" value={current_power} onChange={this.handleChoosePower} >
           <MenuItem key={0} value={0} primaryText="Add New Power" />
           {existingPowers.map( (p, index) => (
             <MenuItem leftIcon={<div className={'icon icon_power_class '+(p.class.name === undefined? p.class : p.class.name.toLowerCase())} />} 
-              key={index+1} value={index+1} primaryText={p.name} />
+              key={p._id} value={p._id} primaryText={p.name} />
           ))}
         </SelectField>
       );
@@ -186,8 +196,8 @@ class PowersForm extends Component {
     return (
       <div className="damage">
         <TextField className="mediumField" floatingLabelText="Num of Damage Die"      type="number" value={_power.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
-        <SelectField className="bottomAlign" style={ { position: 'relative', top: 15 } } floatingLabelText="Damage" name="damage_die" value={_power.damage.die}  onChange={this.handleDieChange} >
-          {Die.map( (die, index) => (
+        <SelectField className="bottomAlign" floatingLabelText="Damage" name="damage_die" value={_power.damage.die}  onChange={this.handleDieChange} >
+          {Die.types.map( (die, index) => (
             <MenuItem key={index} value={`${die.label}`} primaryText={`${die.label}`} />
           ))}
         </SelectField>
@@ -224,19 +234,19 @@ class PowersForm extends Component {
         { (entityType === 'character') ? this.loadPowerLevel(power) : ''}
 				<br/>
         <div className="selectRow">
-  				<SelectField className="bottomAlign" maxHeight={200} style={Variables.getSelectListStyle(power.type)} floatingLabelText="Power Type" value={power.type} name="type" onChange={this.handleTypeChange} >
+  				<SelectField className="bottomAlign" maxHeight={200}  floatingLabelText="Power Type" value={power.type} name="type" onChange={this.handleTypeChange} >
             {Powers.powerType.map( (type, index) => (
             	<MenuItem key={index} value={index} primaryText={type.name} />
             ))}
           </SelectField>
           
-  				<SelectField className="bottomAlign" maxHeight={200} style={Variables.getSelectListStyle(power.action)} floatingLabelText="Power Action" value={power.action} name="action" onChange={this.handleActionChange} >
+  				<SelectField className="bottomAlign" maxHeight={200}  floatingLabelText="Power Action" value={power.action} name="action" onChange={this.handleActionChange} >
             {Powers.powerAction.map( (action, index) => (
             	<MenuItem key={index} value={index} primaryText={action} />
             ))}
           </SelectField>
           
-  				<SelectField className="bottomAlign" maxHeight={200} style={Variables.getSelectListStyle(power.recharge)} floatingLabelText="Power Recharge" value={power.recharge} name="recharge" onChange={this.handleRechargeChange} >
+  				<SelectField className="bottomAlign" maxHeight={200}  floatingLabelText="Power Recharge" value={power.recharge} name="recharge" onChange={this.handleRechargeChange} >
             {Powers.powerRecharge.map( (recharge, index) => (
             	<MenuItem key={index} value={index} primaryText={recharge} />
             ))}

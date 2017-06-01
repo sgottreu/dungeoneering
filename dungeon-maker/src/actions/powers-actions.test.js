@@ -87,7 +87,7 @@ describe('resetCurrentPower', function() {
 });
 
 describe('changeCurrentPower', function() {
-  var state = changeCurrentPower(1);
+  var state = changeCurrentPower(123);
 
   it('powersActions:changeCurrentPower |-| should be an object', function() {
     assert.isObject(state); // with optional message
@@ -101,9 +101,9 @@ describe('changeCurrentPower', function() {
       assert.equal(state.type, 'CHANGE_CURRENT_POWER'); // with optional message
     });
   });
-  describe('index', function() {
-    it('powersActions:changeCurrentPower.power |-| _id should equal 123', function() {
-      assert.isNumber(state.index); // with optional message
+  describe('id', function() {
+    it('powersActions:changeCurrentPower.power |-| id should equal 123', function() {
+      assert.equal(state.id, 123); // with optional message
     });
   });
 
