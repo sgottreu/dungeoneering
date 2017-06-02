@@ -50,7 +50,8 @@ const mapStateToProps = function(store) {
   return {
     availableMonsters: store.entitiesState.availableMonsters,
     availableCharacters: store.entitiesState.availableCharacters,
-    dungeonsState: store.dungeonsState
+    dungeonsState: store.dungeonsState,
+    entitiesState: store.entitiesState
   };
 };
 

@@ -61,8 +61,12 @@ const EntityTile = ( { slot, entity, combatList, currentActor, onHandleObjMouseO
     return (
         <div className={'EntityHolder '+((ActorSlot === parseInt(slot.id, 10)) ? 'currentActor' : '')}>
             <div 
-                onMouseEnter={ (e,i,v) => { onHandleObjMouseOver(entity, 'entity', e) } } 
-                onMouseLeave={ (e,i,v) => { onHandleObjMouseOver(false, false, e) } } 
+                onMouseEnter={ (e,i,v) => { 
+                    onHandleObjMouseOver(entity, 'entity', e) 
+                } } 
+                onMouseLeave={ (e,i,v) => { 
+                    onHandleObjMouseOver(false, false, e) 
+                } } 
                 style={style} 
                 data-slot={slot.id} 
                 key={uuid} 
