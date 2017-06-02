@@ -261,7 +261,7 @@ class PowersForm extends Component {
 	          	<MenuItem key={index} value={index} primaryText={abl} />
 	          ))}
 	        </SelectField>
-	         vs. 
+	          vs.  
 	        <SelectField className="bottomAlign" floatingLabelText="Defense" value={this.defense.findIndex( (val) => { return val === power.attack.against })} onChange={this.handleDefenseChange} >
 	          {this.defense.map( (def, index) => (
 	          	<MenuItem key={index} value={index} primaryText={def} />

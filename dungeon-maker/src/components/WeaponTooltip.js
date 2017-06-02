@@ -4,8 +4,7 @@ import TooltipChip from './TooltipChip';
 import uuidV4  from 'uuid/v4';
 import '../css/WeaponTooltip.css';
 
-const WeaponTooltip = ({ hoverObj, mouse }) => {
-
+const WeaponTooltip = ({ hoverObj, mouse, weaponField }) => {
   if(hoverObj === undefined){
     return false;
   }
@@ -23,8 +22,11 @@ const WeaponTooltip = ({ hoverObj, mouse }) => {
   let damage = (weapon.damage.die === undefined) ? weapon.damage : `${weapon.damage.num}${weapon.damage.die}`
 
   let className = 'WeaponTooltip'+(weapon === false ? ' hide' : '');
-console.log(mouse);
-  let style = (mouse) ? {left: `${mouse.clientX+40}px`, top: `${mouse.clientY}px` } : {};
+
+  let top = (weaponField !== null) ? weaponField.offsetTop : 0;
+  let left = (weaponField !== null) ? weaponField.offsetLeft+250 : 0;
+
+  let style = (mouse) ? {left: `${left}px`, top: `${top}px` } : {};
 
 	return (
 		<div className={className} style={style}>
