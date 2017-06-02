@@ -33,6 +33,7 @@ class EntityForm extends Component {
     this.rState = this.props.entitiesState;
 
     this.EntityType = this.props.EntityType;
+    this.weaponField = null;
 
     this.handleChange = this.handleChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
@@ -329,9 +330,9 @@ class EntityForm extends Component {
     let {boundEntityAC} = this.props;
     let _this = this;
     return(
-      <div className="container">
+      <div className="container" ref={(list) => { this.weaponField = list; }}>
         <Subheader>Weapons</Subheader>
-        <List className="EntityWeapons" style={listStyle}>
+        <List className="EntityWeapons" style={listStyle} >
           {selWeapons.concat(remWeapons).map( (weapon, index) => {
             let _found = entity.weapons.findIndex(function(w) { 
               return weapon._id === w
@@ -370,7 +371,7 @@ class EntityForm extends Component {
 
 		return (
 			<div className={`EntityForm inset ${formClassName}`}>
-        <WeaponTooltip hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
+        <WeaponTooltip weaponField={this.weaponField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
         <EntityChooser 
           onHandleSelectedEntity={this.handleSelectedEntity.bind(this)} 
           saveEntities={saveEntities} 
@@ -380,8 +381,8 @@ class EntityForm extends Component {
           boundEntityAC={this.props.boundEntityAC}
           hoverObj={this.props.entitiesState.hoverObj} 
           mouse={this.props.entitiesState.mouse}
-           />
-        
+          boundEntityAC={this.props.boundEntityAC}
+        />        
 				<TextField  floatingLabelText="Name" value={entity.name} name="name" onChange={this.handleChange} />
         <RaisedButton primary={true}
           label="Reset"
