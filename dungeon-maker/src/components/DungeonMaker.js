@@ -20,6 +20,7 @@ class DungeonMaker extends Component {
     super(props);
 
     this.boundDungeonAC = this.props.boundDungeonAC;
+    this.boundEntityAC = this.props.boundEntityAC;
     this.openDrawer = this.openDrawer.bind(this);
 
     this.state = { 
@@ -39,10 +40,8 @@ class DungeonMaker extends Component {
     this.setState( state );
   }
 
-
-
   render() {
-    let { selectedTile, availableDungeons, selectedDungeon, selectedEntity, hoverObj, mouse, tileType, dungeon} = this.props.dungeonsState;
+    let { selectedTile, availableDungeons, selectedDungeon, selectedEntity, tileType, dungeon} = this.props.dungeonsState;
     let availableMonsters = this.props.availableMonsters
     let hideDupeButton = (selectedDungeon) ? '': ' hide ';
     return (    	
@@ -71,7 +70,7 @@ class DungeonMaker extends Component {
             onOpenDrawer={this.openDrawer}
             open={this.state.drawers.entity} 
           />
-          <EntityTooltip hoverObj={hoverObj} mouse={mouse} />
+          <EntityTooltip hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
           <DungeonLoadDrawer 
             showSave={true} 
             onChooseDungeon={dungeonsApi.findDungeon} 
