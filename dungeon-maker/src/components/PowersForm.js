@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {Powers} from '../lib/Powers';
-import {EntityTemplate, EntityClass} from './EntityTemplate';
+import * as Entity from '../lib/Entity';
 import {Variables} from '../lib/Variables';
 import {Die} from '../lib/Die';
 import * as powersApi from '../api/powers-api';
@@ -11,6 +11,7 @@ import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import '../css/PowersForm.css';
 
@@ -19,8 +20,8 @@ class PowersForm extends Component {
 	constructor(props){
 		super(props);
 
-		this.abilities = Variables.mapObj(EntityTemplate.abilities);
-		this.defense = Variables.mapObj(EntityTemplate.defense);
+		this.abilities = Variables.mapObj(Entity.Template.abilities);
+		this.defense = Variables.mapObj(Entity.Template.defense);
 
     this.boundPowerAC = this.props.boundPowerAC;
     this.boundEntityAC = this.props.boundEntityAC;
@@ -47,12 +48,24 @@ class PowersForm extends Component {
     this.loadMonsterDamageField = this.loadMonsterDamageField.bind(this);
     this.loadCharacterDamageField = this.loadCharacterDamageField.bind(this);
 
+    this.updateSnackBar = this.updateSnackBar.bind(this);
+
+    this.state = { 
+      snackbarOpen: false,
+      snackbarMsg: ''
+    };
+
 	}
 
   componentDidMount() {
     // if(this.props.existingPowers !== undefined){
     //   this.boundPowerAC.loadExistingPowers(this.props.existingPowers);
     // }
+  }
+
+  updateSnackBar = (msg, open=false) => {
+    let state = this.state;
+    this.setState( { snackbarMsg: msg, snackbarOpen: open } );
   }
 
   handleChoosePower(event, index) {
@@ -62,7 +75,10 @@ class PowersForm extends Component {
 
   addPower(){
     if(this.props.entityType === 'character'){
-      powersApi.savePower( this.props.power );
+      let updateSnackBar = this.updateSnackBar;
+      powersApi.savePower( this.props.power ).then( function(response){
+        updateSnackBar('Power saved.', true);
+      });
     } else {
       if(this.props.entityType === 'monster'){
         let power = this.props.power;
@@ -126,7 +142,7 @@ class PowersForm extends Component {
   }
 
   handleClassChange = (event, index) => {
-    this.boundPowerAC.updateKey( 'class', EntityClass[index]);
+    this.boundPowerAC.updateKey( 'class', Entity._Class[index]);
   }
 
   handleDieNumChange = (event) => {
@@ -155,8 +171,8 @@ class PowersForm extends Component {
 
   loadClassField(_power){
    return (
-      <SelectField className="bottomAlign" maxHeight={200} floatingLabelText="Power Class" value={EntityClass.findIndex((_class, index)=> { return _class.name === _power.class.name})} name="type" onChange={this.handleClassChange} >
-        {EntityClass.map( (_class, index) => (
+      <SelectField className="bottomAlign" maxHeight={200} floatingLabelText="Power Class" value={Entity._Class.findIndex((_class, index)=> { return _class.name === _power.class.name})} name="type" onChange={this.handleClassChange} >
+        {Entity._Class.map( (_class, index) => (
           <MenuItem key={index} value={index} primaryText={_class.name} />
         ))}
       </SelectField>
@@ -276,6 +292,11 @@ class PowersForm extends Component {
         <RaisedButton primary={true}
           label={'Add Power'}
           onTouchTap={this.addPower}
+        />
+        <Snackbar
+          open={this.state.snackbarOpen}
+          message={this.state.snackbarMsg}
+          autoHideDuration={4000}            
         />
         <br/>
 			</div>

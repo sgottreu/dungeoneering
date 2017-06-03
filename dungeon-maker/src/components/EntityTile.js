@@ -1,5 +1,5 @@
 import React from 'react';
-import {EntitySize} from './EntityTemplate';
+import * as Entity from '../lib/Entity';
 import uuidV4  from 'uuid/v4';
 
 
@@ -38,7 +38,7 @@ const EntityTile = ( { slot, entity, combatList, currentActor, onHandleObjMouseO
     }    
     let style, size;
 
-    size = EntitySize.find(s => { return s.label === entity.size});
+    size = Entity._Size.find(s => { return s.label === entity.size});
 
     if(size !== undefined && size !== false){
         style = {
@@ -53,7 +53,7 @@ const EntityTile = ( { slot, entity, combatList, currentActor, onHandleObjMouseO
         bkGdDiv = function() { return ( <div className='Entity character bkgd' />) };
     }
 
-    let entitySize = (isNaN(entity.size)) ? entity.size : EntitySize[ entity.size ].label;
+    let entitySize = (isNaN(entity.size)) ? entity.size : Entity._Size[ entity.size ].label;
 
     let uuid = (entity.uuid === undefined) ? uuidV4() : entity.uuid
     let ActorSlot = (currentActor === undefined) ? -1 : parseInt(currentActor.slot, 10);

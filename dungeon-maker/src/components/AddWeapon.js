@@ -26,6 +26,8 @@ class AddWeapon extends Component {
     this.handleHandsChange = this.handleHandsChange.bind(this);
     this.loadRangeField = this.loadRangeField.bind(this);
 
+    this.updateSnackBar = this.updateSnackBar.bind(this);
+
     this.weaponType = ['Melee', 'Ranged', 'Both'];
     this.category = ['Simple', 'Military', 'Superior'];
     this.hands = ['One-Handed', 'Two-Handed'];
@@ -36,13 +38,16 @@ class AddWeapon extends Component {
     }
   }
 
+  updateSnackBar = (msg, open=false) => {
+    let state = this.state;
+    this.setState( { snackbarMsg: msg, snackbarOpen: open } );
+  }
 
   handleWeaponSave = () => {
     let weapon = this.props.weapon;
-    weaponsApi.saveWeapon(weapon);
-    this.setState( {
-      snackbarOpen: true,
-      snackbarMsg: (weapon._id) ? 'Weapon Updated' : 'Weapon Added'
+    let updateSnackBar = this.updateSnackBar;
+    weaponsApi.saveWeapon(weapon).then( function(response){
+      updateSnackBar('Weapon saved.', true);
     });
   }
 
@@ -98,6 +103,7 @@ class AddWeapon extends Component {
     let _weapon = this.props.weapon;
     let availableWeapons = this.props.availableWeapons;
     let _i = availableWeapons.findIndex( (w, index) => { return w._id === _weapon._id });
+
 		return (
 			<div className="AddWeapon">
         <SelectField  floatingLabelText="Choose Weapon" value={_i+1} onChange={this.handleChooseWeapon} >

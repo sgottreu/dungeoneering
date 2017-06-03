@@ -6,7 +6,7 @@ import {Die} from '../lib/Die';
 const initialState = {
   existingPowers: [],
   current_power: false,
-  power: Variables.clone(Powers.powerTemplate)
+  power: Variables.clone(Powers.Template)
 };
 
 const powersReducer = function(state = initialState, action) {
@@ -26,9 +26,8 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.CHANGE_CURRENT_POWER:
-      power = Variables.clone(Powers.powerTemplate);
       if(action.id === 0){
-        power = Variables.clone(Powers.powerTemplate);
+        power = Variables.clone(Powers.Template);
         current_power = false;
       } else {
         _i = state.existingPowers.findIndex( _power => { return _power._id === action.id });
@@ -55,7 +54,7 @@ const powersReducer = function(state = initialState, action) {
       });
 
     case types.RESET_CURRENT_POWER:
-      power = Variables.clone(state.power);
+      power = Variables.clone(action.power);
       power._id = false;
 
       return Object.assign({}, state, {

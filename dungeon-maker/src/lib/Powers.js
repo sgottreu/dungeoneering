@@ -1,6 +1,6 @@
 class Powers {};
 
-Powers.powerTemplate = {
+Powers.Template = {
   name: '',
   type: false,
   _type: "power",
