@@ -22,6 +22,7 @@ class DungeonMaker extends Component {
     this.boundDungeonAC = this.props.boundDungeonAC;
     this.boundEntityAC = this.props.boundEntityAC;
     this.openDrawer = this.openDrawer.bind(this);
+    this.updateSnackBar = this.updateSnackBar.bind(this);
 
     this.state = { 
       drawers: {
@@ -40,10 +41,16 @@ class DungeonMaker extends Component {
     this.setState( state );
   }
 
+  updateSnackBar = (msg, open=false) => {
+    let state = this.state;
+    this.setState( { snackbarMsg: msg, snackbarOpen: open } );
+  }
+
   render() {
     let { selectedTile, availableDungeons, selectedDungeon, selectedEntity, tileType, dungeon} = this.props.dungeonsState;
     let availableMonsters = this.props.availableMonsters
     let hideDupeButton = (selectedDungeon) ? '': ' hide ';
+    let updateSnackBar = this.updateSnackBar;
     return (    	
 	      <div className="DungeonMaker">
           <DungeonGrid 
@@ -92,9 +99,14 @@ class DungeonMaker extends Component {
             <br/>
             <TextField 
               hintText="Dungeon Name" 
-              value={this.state.title} 
-              onChange={(e) => { this.boundDungeonAC.updateDungeonKey('title', e.target.value) } } />
-            <RaisedButton label="Save Dungeon" primary={true}  onClick={(e,i,v) => { dungeonsApi.saveDungeon(dungeon)}} />
+              floatingLabelText="Dungeon Name"
+              value={dungeon.title} 
+              onChange={(e) => { this.boundDungeonAC.updateDungeonKey('title', e.target.value); } } />
+            <RaisedButton label="Save Dungeon" primary={true}  onClick={(e,i,v) => { 
+                dungeonsApi.saveDungeon(dungeon).then( function(response){
+                  updateSnackBar('Dungeon saved.', true)
+                });
+              }} />
           </div>
           <Snackbar
             open={this.state.snackbarOpen}

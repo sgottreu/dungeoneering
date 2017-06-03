@@ -13,7 +13,7 @@ import Subheader from 'material-ui/Subheader';
 import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
 
-import { EntityClass, calcWeightPrice } from './EntityTemplate';
+import * as Entity from '../lib/Entity';
 
 import axios from 'axios';
 import {Variables} from '../lib/Variables';
@@ -133,7 +133,7 @@ class CreateParty extends Component{
   _updateInventory = (item, category, bolRemove, bolAddItem) => {
     let state = this.state;
     let _i = state.party.members.findIndex(member => { return member._id === this.state.selectedMember});
-    state.party.members[_i] = calcWeightPrice(state.party.members[_i], item, category, bolRemove, bolAddItem);
+    state.party.members[_i] = Entity.calcWeightPrice(state.party.members[_i], item, category, bolRemove, bolAddItem);
 
     this.setState(state);
   }
@@ -219,7 +219,7 @@ class CreateParty extends Component{
             <Subheader>Party Members</Subheader>
             <RadioButtonGroup name="selectedMembers" className="SelectedPartyMembers list" onChange={this.handleMemberBuyer} >
               {this.state.party.members.map( (member, index) => {
-                let icon_class = EntityClass[ member.class ].name;
+                let icon_class = Entity._Class[ member.class ].name;
                 return (
                     <RadioButton key={index} value={member._id} 
                       label={
@@ -236,7 +236,7 @@ class CreateParty extends Component{
             <Subheader>Available Characters</Subheader>
             <List className="AvailableMembers list">
               {this.state.availableCharacters.map( (character, index) => {
-                let icon_class = EntityClass[ character.class ].name;
+                let icon_class = Entity._Class[ character.class ].name;
                 return (
                   <ListItem key={index}
                     onTouchTap={this.selectMember.bind(this, character)}

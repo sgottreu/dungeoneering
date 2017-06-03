@@ -16,7 +16,7 @@ describe('powersReducer', function() {
   const state = {
     existingPowers: [],
     current_power: false,
-    power: Variables.clone(Powers.powerTemplate)
+    power: Variables.clone(Powers.Template)
   };
 
   const powers = [ {_id: 123, name: 'Melee'}, {_id: 456} ];

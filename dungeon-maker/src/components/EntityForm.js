@@ -48,7 +48,6 @@ class EntityForm extends Component {
     this.changeIcon = this.changeIcon.bind(this);
 
     this.handleEntitySave = this.handleEntitySave.bind(this);
-    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
     this.handleInitiativeChange = this.handleInitiativeChange.bind(this);
     this.handleArmorClassChange = this.handleArmorClassChange.bind(this);
     this.handleFortitudeChange = this.handleFortitudeChange.bind(this);
@@ -69,12 +68,18 @@ class EntityForm extends Component {
     this.selectWeapon = this.selectWeapon.bind(this);
     this.selectCharacterPower = this.selectCharacterPower.bind(this);
 
+    this.updateSnackBar = this.updateSnackBar.bind(this);
+
     this.state = {
       snackbarOpen: false,
       snackbarMsg: ''
     };
   }
 
+  updateSnackBar = (msg, open=false) => {
+    let state = this.state;
+    this.setState( { snackbarMsg: msg, snackbarOpen: open } );
+  }
 
   resetForm(){
     this.boundEntityAC.updateKey('selectedEntity', false);
@@ -89,12 +94,6 @@ class EntityForm extends Component {
       this.boundPowerAC.loadExistingPowers(this.props[key][index].powers);
     }
   }
-
-  handleSnackBarClose = () => {
-    this.setState({
-      snackbarOpen: false,
-    });
-  };
 
   selectWeapon = (id) => {
     this.boundEntityAC.updateEntityWeapon(id);
@@ -163,7 +162,11 @@ class EntityForm extends Component {
   }
 
   handleEntitySave = () => {
-    entitiesApi.saveEntity(this.props.entitiesState.entity);
+    let updateSnackBar = this.updateSnackBar;
+    let key = (this.EntityType === 'monster') ? 'Monster' : 'Character';
+    entitiesApi.saveEntity(this.props.entitiesState.entity).then( function(response){
+      updateSnackBar(key+' saved.', true);
+    });
   };
 
   changeAbility = (event) => {
@@ -465,8 +468,7 @@ class EntityForm extends Component {
         <Snackbar
           open={this.state.snackbarOpen}
           message={this.state.snackbarMsg}
-          autoHideDuration={4000}
-          onRequestClose={this.handleSnackBarClose}          
+          autoHideDuration={4000}         
         />
 			</div>
 		);

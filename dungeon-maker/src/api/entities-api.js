@@ -1,16 +1,16 @@
 import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import store from '../store';
-import { loadCharacters, loadMonsters, updateEntityKey } from '../actions/entities-actions';
+import { loadCharacters, loadMonsters, updateEntityKey, updateKey } from '../actions/entities-actions';
 
 export var findCharacters = () => {
-  axios.get(`${Variables.host}/findCharacters`)
+  return axios.get(`${Variables.host}/findCharacters`)
   .then(res => {
     store.dispatch(loadCharacters(res.data));
   }); 
 };
 export var findMonsters = () => {
-  axios.get(`${Variables.host}/findMonsters`)
+  return axios.get(`${Variables.host}/findMonsters`)
   .then(res => {
     store.dispatch(loadMonsters(res.data));
   }); 
@@ -28,9 +28,23 @@ export var findMonsters = () => {
 // };
 
 export var saveEntity = (entity) => {
-  axios.post(`${Variables.host}/saveEntity`, entity)
+  return axios.post(`${Variables.host}/saveEntity`, entity)
   .then(res => {
+    let key = (entity._type === 'monster') ? 'availableMonsters' : 'availableCharacters';
     store.dispatch(updateEntityKey("_id", res.data._id));
     store.dispatch(updateEntityKey("name", res.data.title));
+
+    let state = store.getState();
+    let entitiesState = state.entitiesState;
+    let key2 = Variables.clone(entitiesState.selectedEntity);
+
+    if(entitiesState[key][key2] === undefined){
+      entitiesState[key].push(res.data);
+    } else {
+      entitiesState[key][key2] = res.data;
+    }
+
+    store.dispatch(updateKey(key, entitiesState[ key ] ));
+
   }); 
 };
