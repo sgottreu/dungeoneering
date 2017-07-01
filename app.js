@@ -359,7 +359,7 @@ app.get('/reports/src/*', (req, res) => {
   fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
     if (err) {
       var newPath = req.originalUrl.replace('/reports/', '');
-      newPath = newPath.replace('/', '\\');
+      // newPath = newPath.replace('/', '\\');
       newPath = (newPath.indexOf('.html') > -1) ? newPath : newPath+'.html';
       res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+newPath);
 

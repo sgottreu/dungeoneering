@@ -12,4 +12,9 @@
 * Create Party
 
 
+## Use Axios Mock Adapter
+
+https://www.npmjs.com/package/axios-mock-adapter
+
+
 
