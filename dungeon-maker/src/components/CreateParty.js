@@ -12,11 +12,15 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Subheader from 'material-ui/Subheader';
 import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
+import SortByKey from '../lib/SortByKey';
 
 import * as Entity from '../lib/Entity';
 
 import axios from 'axios';
 import {Variables} from '../lib/Variables';
+import * as entitiesApi from '../api/entities-api';
+import * as partiesApi from '../api/parties-api';
+import * as gearApi from '../api/gear-api';
 
 import '../css/CreateParty.css';
 
@@ -29,9 +33,10 @@ class CreateParty extends Component{
       _id: false,
       name: '',
       _type: 'party',
-      members: []
-      
+      members: []      
     };
+
+    this.boundPartyAC = this.props.boundPartyAC;
 
     this.handlePartyChange  = this.handlePartyChange.bind(this);
     this.handleMemberBuyer  = this.handleMemberBuyer.bind(this);
@@ -40,7 +45,6 @@ class CreateParty extends Component{
     this._updateInventory   = this._updateInventory.bind(this);
     this.handlePartySave    = this.handlePartySave.bind(this);
     this.handleNameChange   = this.handleNameChange.bind(this);
-    this.sortGear           = this.sortGear.bind(this);
 
     this.state = { 
       selectedParty: false,
@@ -62,49 +66,30 @@ class CreateParty extends Component{
   componentDidMount() {
     window.addEventListener("click", this.handleMyEvent);
 
-    let _this = this;
-
-    axios.get(`${Variables.host}/findEntities?type=character`)
-    .then(res => {
-      let state = _this.state;
-      state.availableCharacters = res.data.character;
-      _this.setState( state );
-    }); 
-
-    axios.get(`${Variables.host}/findParties`)
-    .then(res => {
-      let state = _this.state;
-      state.availableParties = res.data;
-      _this.setState( state );
-    }); 
-
-    axios.get(`${Variables.host}/findGear`)
-    .then(res => {
-      let state = _this.state;
-      state.availableGear = res.data;
-      _this.setState( state );
-    });
+    entitiesApi.findCharacters();
+    partiesApi.findParties();
+    gearApi.findGear();
   }
 
   handlePartySave = () => {
     let state = this.state;
     let _this = this;
 
-    axios.post(`${Variables.host}/saveParty`, state.party)
-    .then(res => {
+    let party = partiesApi.saveParty(this.props.partiesState.party);
+    
+    party.then(res => {
       let _id = res.data._id;
       state.snackbarOpen = true;
       state.snackbarMsg = 'Party successfully saved';
-      state.party = Variables.clone(_this.initialPartyState);
       state.selectedParty = false;
       state.selectedMember = false;
 
-      let _i = state.availableParties.find(p => { return p._id === res.data._id});
-      if(_i !== -1){
-         state.availableParties[_i] = res.data;
-      } else {
-        state.availableParties.push(res.data);
-      }
+      // let _i = state.availableParties.find(p => { return p._id === res.data._id});
+      // if(_i !== -1){
+      //    state.availableParties[_i] = res.data;
+      // } else {
+      //   state.availableParties.push(res.data);
+      // }
      
       _this.setState( state );
     });
@@ -181,27 +166,12 @@ class CreateParty extends Component{
     );
   }
 
-  sortGear = (gear, inventory) => {
-    gear.sort(function(a, b) {
-      var nameA = a.name.toUpperCase(), nameB = b.name.toUpperCase(); // ignore upper and lowercase
-      if (nameA < nameB) {
-        return -1;
-      } else {
-        if (nameA > nameB) {
-          return 1;
-        }
-      }
-      return 0;
-    });
-    return gear;
-  }
-
   render() {
     let { party, selectedMember, availableGear } = this.state;
     let spm = party.members.find(member => { return member._id === selectedMember});
     spm = (spm === undefined) ? { inventory: [], coin_purse: 0, encumbered: 0 } : spm;
     spm.inventory.sort( (a, b) => { return a.item.name.toUpperCase() + b.item.name.toUpperCase() } );
-    availableGear = this.sortGear(availableGear, spm.inventory);
+    availableGear.sort(SortByKey('name'));
     return (
       <div className="CreateParty inset">
         <SelectField  floatingLabelText={`Choose Party`} value={this.state.selectedParty} onChange={this.handlePartyChange} >

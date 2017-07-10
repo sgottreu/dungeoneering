@@ -369,29 +369,29 @@ export var findEntitySize = (label) => {
 
 
 
-export var saveEntity = function(_this){
-  let state = _this.state;
-  state._type = _this.EntityType;
+// export var saveEntity = function(_this){
+//   let state = _this.state;
+//   state._type = _this.EntityType;
 
-  let key = (_this.EntityType === 'monster') ? 'availableMonsters' : 'availableCharacters';
+//   let key = (_this.EntityType === 'monster') ? 'availableMonsters' : 'availableCharacters';
 
-  axios.post(`${Variables.host}/saveEntity`, state.entity)
-  .then(res => {
-    let key2 = Variables.clone(_this.state.selectedEntity);
-    state.snackbarOpen = true;
-    state.snackbarMsg = state._type+' successfully saved';
-    state.entity = Variables.clone(Template);
+//   axios.post(`${Variables.host}/saveEntity`, state.entity)
+//   .then(res => {
+//     let key2 = Variables.clone(_this.state.selectedEntity);
+//     state.snackbarOpen = true;
+//     state.snackbarMsg = state._type+' successfully saved';
+//     state.entity = Variables.clone(Template);
     
-    if(state[key][key2] === undefined){
-      state[key].push(res.data);
-    } else {
-      state[key][key2] = res.data;
-    }
+//     if(state[key][key2] === undefined){
+//       state[key].push(res.data);
+//     } else {
+//       state[key][key2] = res.data;
+//     }
     
-    state.selectedEntity = false;
-    _this.setState( state );
-  });
-}
+//     state.selectedEntity = false;
+//     _this.setState( state );
+//   });
+// }
 
 
 
