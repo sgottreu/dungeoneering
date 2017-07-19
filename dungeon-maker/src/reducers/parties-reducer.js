@@ -15,6 +15,7 @@ const initialState = {
 const partiesReducer = function(state = initialState, action) {
   let party = false;
   let availableParties = false;
+  let _state = false;
 
   if(action === undefined){
     return state;
@@ -28,63 +29,27 @@ const partiesReducer = function(state = initialState, action) {
         availableParties: action.parties
       });
 
-// export const UPDATE_PARTY = 'UPDATE_PARTY';
-// export const UPDATE_PARTY_MEMBER = 'UPDATE_PARTY_MEMBER';
-
     case types.UPDATE_PARTY:
       return Object.assign({}, state, {
         party: action.party
       });
 
-    // case types.CHANGE_WEAPON:
-    //   party = Variables.clone(WeaponTemplate);
-    //   if(action.index === 0){
-    //     party = Variables.clone(WeaponTemplate);
-    //   } else {
-    //     party = Variables.clone(state.availableParties[action.index-1]);
-    //   }
+    case types.UPDATE_PARTY_MEMBER:
+      _state = Variables.clone(state);
 
-    //   if(party.damage.die === undefined) {
-    //     let damage = party.damage.split('d');
-    //     party.damage = { die: `d${damage[1]}`, num: damage[0] };
-    //   }
+      if(action.member !== undefined){
+        let _i = _state.party.members.findIndex(function(m) { return m === action.member});
 
-    //   return Object.assign({}, state, {
-    //     party: party
-    //   });
-    
-    // case types.CHANGE_DIE_TYPE:
-    //   party = Variables.clone(state.party);
-    //   party.damage.die = Die.types[action.index].label;
+        if(_i === -1) {
+          _state.party.members.push( action.member );
+        } else {
+          _state.party.members.splice(_i, 1);
+        }
+      } 
 
-    //   return Object.assign({}, state, {
-    //     party: party
-    //   });
-
-    // case types.CHANGE_DIE_NUMBER:
-    //   party = Variables.clone(state.party);
-    //   party.damage.num = action.quantity;
-
-    //   return Object.assign({}, state, {
-    //     party: party
-    //   });
-
-
-    // case types.UPDATE_KEY:
-    //   party = Variables.clone(state.party);
-    //   party[ action.key ] = action.value;
-      
-    //   return Object.assign({}, state, {
-    //     party: party
-    //   });
-
-    // case types.UPDATE_RANGE:
-    //   party = Variables.clone(state.party);
-    //   party.range[ action.key ] = action.value;
-      
-    //   return Object.assign({}, state, {
-    //     party: party
-    //   });
+      return Object.assign({}, state, {
+        party: _state.party
+      });
 
     default:
       return state;    
