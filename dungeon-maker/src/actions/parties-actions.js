@@ -14,17 +14,9 @@ export function updateParty(party) {
   };
 }
 
-export function updatePartyName(name) {
-  return {
-    type: types.UPDATE_PARTY_NAME,
-    name: name
-  };
-}
-
-export function updatePartyMember(member, index) {
+export function updatePartyMember(member) {
   return {
     type: types.UPDATE_PARTY_MEMBER,
-    member: member,
-    index: index
+    member: member
   };
 }
