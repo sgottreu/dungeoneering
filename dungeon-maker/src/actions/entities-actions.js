@@ -54,6 +54,15 @@ export function updateEntityLevel(level) {
   };
 }
 
+export function updateEntityInventory(entity, item, step='add') {
+  return {
+    type: types.UPDATE_ENTITY_INVENTORY,
+    item: item,
+    entity: entity,
+    step: step,
+  };
+}
+
 export function updateEntityWeapon(id) {
   return {
     type: types.UPDATE_ENTITY_WEAPON,
