@@ -91,6 +91,25 @@ const entitiesReducer = function(state = initialState, action) {
       });
     //UPDATE_MOUSEOVER
 
+    case types.UPDATE_ENTITY_INVENTORY:
+      _entity = action.entity;
+      item = action.item;
+
+      if( action.step === 'remove' ){        
+        _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'remove');
+        _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'remove');
+        _entity.inventory = Entity.removeInventoryItem(item, item.category, _entity.inventory)     
+      } else {
+        _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'add');
+        _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'add');
+         _entity.inventory = Entity.addInventory(item, item.category, _entity.inventory)
+        _entity.inventory_log = Entity.addInventoryLog(item, item.category, _entity.inventory_log)
+      }
+      return Object.assign({}, state, { entity: _entity } );
+    //UPDATE_ENTITY_INVENTORY
+
+
+
     case types.UPDATE_ENTITY_WEAPON:
       _entity = _state.entity;
       item = state.availableWeapons.find(function(val){ return action.id === val._id});
