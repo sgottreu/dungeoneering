@@ -14,7 +14,8 @@ export var Die =
         let len = (rnd.length === 0) ? 5 : rnd.length;
         for( var x=0;x<len;x++){
             let random = (rnd[x] !== undefined) ? rnd[x] : Die.getRandomRoll();
-            rolls.push( ( Math.floor( random * uBound ) ) );
+            let roll = Math.floor( random * uBound) + 1;
+            rolls.push( roll );
         }
         let median = Math.floor(Die.findMedian(rolls));
 
