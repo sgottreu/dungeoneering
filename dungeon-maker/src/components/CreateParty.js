@@ -24,7 +24,7 @@ import * as gearApi from '../api/gear-api';
 
 import '../css/CreateParty.css';
 
-class CreateParty extends Component{
+class CreateParty extends Component {
 
   constructor(props){
     super(props);
