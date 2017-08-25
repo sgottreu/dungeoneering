@@ -36,8 +36,8 @@ const partiesReducer = function(state = initialState, action) {
 
     case types.UPDATE_PARTY_MEMBER:
       _state = Variables.clone(state);
-
       if(action.member !== undefined){
+
         let _i = _state.party.members.findIndex(function(m) { return m === action.member});
 
         if(_i === -1) {
