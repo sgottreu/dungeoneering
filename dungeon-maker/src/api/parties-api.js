@@ -12,7 +12,18 @@ export var findParties = () => {
 export var saveParty = (party) => {
   return axios.post(`${Variables.host}/saveParty`, party)
 	  .then(res => {
-	    store.dispatch(updateParty(party));
+			store.dispatch(updateParty(res.data));
+			
+			let _state = store.getState();
+			let availableParties = _state.partiesState.availableParties;
+			let _i = availableParties.findIndex(function(m) { return m._id === res.data._id});
+			
+			if(_i === -1) {
+				availableParties.push( res.data );
+			} else {
+				availableParties[ _i ] = res.data;
+			}
+			store.dispatch(loadAvailableParties(availableParties));
 	  }); 
 };
 

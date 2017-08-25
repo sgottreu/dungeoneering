@@ -63,7 +63,7 @@ class CreateParty extends Component {
     let party = partiesApi.saveParty(this.props.partiesState.party);
     
     party.then(res => {
-      let _id = res.data._id;
+
       state.snackbarOpen = true;
       state.snackbarMsg = 'Party successfully saved';
       state.selectedParty = false;
@@ -120,6 +120,7 @@ class CreateParty extends Component {
   }
 
   addMember = (character, e) => {
+console.log(character);
     this.boundPartyAC.updatePartyMember(character._id);
   }
 
@@ -183,13 +184,15 @@ class CreateParty extends Component {
             <Subheader>Party Members</Subheader>
             <RadioButtonGroup name="selectedMembers" className="SelectedPartyMembers list" onChange={this.handleMemberBuyer} >
               {party.members.map( (member, index) => {
+                console.log(availableCharacters);
                 let _i = availableCharacters.findIndex(function(c) { return c._id === member});    
-                let icon_class = Entity._Class[ availableCharacters[_i].class ].name;
+                let icon_class = (_i == -1) ? '' : Entity._Class[ availableCharacters[_i].class ].name;
+                let charName = (_i == -1) ? '' : availableCharacters[_i].name;
                 return (
                     <RadioButton key={index} value={member} 
                       label={
                         <div style={ {marginLeft: '40px'} } key={index} >
-                          <Avatar className={`icon ${icon_class.toLowerCase()}`} /> {availableCharacters[_i].name}
+                          <Avatar className={`icon ${icon_class.toLowerCase()}`} /> {charName}
                         </div> 
                       }
                     />                    

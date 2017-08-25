@@ -28,7 +28,7 @@
     "uuid": "^3.0.1"
   },
   "scripts": {
-    "start": "set NODE_ENV=development && set PORT=3000 && react-scripts start",
+    "start": "set DEBUG= && set NODE_ENV=development && set PORT=3000 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom \"--colors\" \"--coverage\" \"--verbose\" \"--json\" \"--outputFile=coverage.json\" \"--updateSnapshot\"",
     "full_test": "npm test -- --colors --coverage --verbose --json --outputFile=coverage.json --updateSnapshot",
