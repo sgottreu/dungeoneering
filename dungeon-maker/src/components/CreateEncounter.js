@@ -20,6 +20,10 @@ class CreateEncounter extends Component {
   constructor(props){
     super(props);
 
+    this.boundEncounterAC      = this.props.boundEncounterAC;
+    this.boundEntityAC      = this.props.boundEntityAC;
+    this.boundDungeonAC       = this.props.boundDungeonAC;
+
     this.selectTile = this.selectTile.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.addTile = this.addTile.bind(this);
@@ -39,8 +43,8 @@ class CreateEncounter extends Component {
     	connectedDoor: true,
     	choosingEntrance: false,
     	choosingExit: false,
-      availableEncounters: [],
-      availableDungeons: [],
+      // availableEncounters: [],
+      // availableDungeons: [],
       selectedDungeon: false,
       snackbarOpen: false,
       snackbarMsg: '',
@@ -66,21 +70,21 @@ class CreateEncounter extends Component {
 
     let _this = this;
     
-    _Dungeon.findDungeonGrids(_this); 
+    // _Dungeon.findDungeonGrids(_this); 
 
-    axios.get(`${Variables.host}/findEncounters`)
-    .then(res => {
-      let state = _this.state;
-      state.availableEncounters = res.data;
-      _this.setState(state);
-    });
+    // axios.get(`${Variables.host}/findEncounters`)
+    // .then(res => {
+    //   let state = _this.state;
+    //   state.availableEncounters = res.data;
+    //   _this.setState(state);
+    // });
 
-    axios.get(`${Variables.host}/findEntities`)
-    .then(res => {
-      let state = _this.state;
-      state.availableMonsters = res.data.monster;
-      _this.setState( state );
-    });  
+    // axios.get(`${Variables.host}/findEntities`)
+    // .then(res => {
+    //   let state = _this.state;
+    //   state.availableMonsters = res.data.monster;
+    //   _this.setState( state );
+    // });  
 
 
   }
@@ -186,7 +190,8 @@ class CreateEncounter extends Component {
   }
 
   render() {
-    let {slots, selectedDungeon, availableMonsters} = this.state;
+    let {slots, selectedDungeon} = this.state;
+    let { availableMonsters, availableDungeons} = this.props;
 
     return (    	
       <div className="CreateEncounter">
@@ -199,7 +204,7 @@ class CreateEncounter extends Component {
           onHandleObjMouseOver={this.handleObjMouseOver}
         />
         <List className="AvailableDungeons">
-          {this.state.availableDungeons.map( (grid, index) => {
+          {availableDungeons.map( (grid, index) => {
             return (
               <DraggableListItem key={index} onGetDroppedItem={this.getDroppedItem} onHandleDungeonChoice={this.handleDungeonChoice} name={grid.title} _id={grid._id}/>
             );

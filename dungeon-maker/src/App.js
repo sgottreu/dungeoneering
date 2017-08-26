@@ -18,7 +18,7 @@ import AddPowersContainer from './containers/add-powers-container';
 import AddCharactersContainer from './containers/add-characters-container';
 import AddDungeonsContainer from './containers/add-dungeons-container';
 import CreatePartyContainer from './containers/create-party-container';
-
+import CreateEncounterContainer from './containers/create-encounter-container';
 
 
 import './css/App.css';
@@ -74,7 +74,7 @@ class App extends Component {
       	
         <Route exact path="/" component={Home} />
         <Route path="/runEncounter" component={RunEncounter}/>
-        <Route path="/createEncounter" component={CreateEncounter}/>
+        <Route path="/createEncounter" component={() => (<CreateEncounterContainer />)}/>
         <Route path="/dungeonMaker" component={() => (<AddDungeonsContainer />)} />
         <Route path="/createParty" component={() => (<CreatePartyContainer />)}/>
         <Route path="/createCharacter" component={ () => (<AddCharactersContainer />) } />
