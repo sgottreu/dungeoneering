@@ -36,6 +36,26 @@ describe('loadAvailableEncounters', function() {
   });
 });
 
+describe('updateEncounter', function() {
+  var state = _actions.updateEncounter(encounter[0]);
+
+  describe('type', function() {
+    it('encountersActions:updateEncounter.type |-| should exist', function() {
+      assert.isString(state.type); // with optional message
+    });
+    it('encountersActions:updateEncounter.type |-| should equal UPDATE_ENCOUNTER', function() {
+      assert.equal('UPDATE_ENCOUNTER', state.type); // with optional message
+    });
+  });
+  describe('encounter', function() {
+    it('encountersActions:updateEncounter.encounter |-| should be an Object', function() {
+      assert.isObject(state.encounter); // with optional message
+    });
+    it('encountersActions:updateEncounter.encounter |-| Element.name should equal "Mordor"', function() {
+      assert.equal('Corridors', state.encounter.name); // with optional message
+    });
+  });
+});
 
 describe('updateEncounterName', function() {
   var state = _actions.updateEncounterName('Mordor');

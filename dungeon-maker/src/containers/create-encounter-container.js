@@ -9,18 +9,14 @@ import * as entitiesApi from '../api/entities-api';
 import * as dungeonsApi from '../api/dungeons-api';
 import * as encountersApi from '../api/encounters-api';
 
-// import * as Entity from '../lib/Entity';
-
 import * as DungeonActionCreators from '../actions/dungeons-actions';
-import * as EncounterActionCreators from '../actions/dungeons-actions';
+import * as EncounterActionCreators from '../actions/encounters-actions';
 import * as EntityActionCreators from '../actions/entities-actions';
 
 
 class CreateEncounterContainer extends Component {
 
   componentDidMount() {
-    // entitiesApi.findCharacters();
-    // partiesApi.findParties();
     gearApi.findGear();
     weaponsApi.findWeapons();
     dungeonsApi.findDungeons();
@@ -38,7 +34,6 @@ class CreateEncounterContainer extends Component {
 const mapStateToProps = function(store) {
   return {
     availableMonsters: store.entitiesState.availableMonsters,
-    // availableCharacters: store.entitiesState.availableCharacters,
     availableWeapons: store.weaponsState.availableWeapons,
     availableParties: store.partiesState.availableParties,
     availableGear: store.gearState.availableGear,

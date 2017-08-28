@@ -10,7 +10,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import EntityDrawer from './EntityDrawer';
 
-
 import * as dungeonsApi from '../api/dungeons-api';
 
 import '../css/DungeonMaker.css';
