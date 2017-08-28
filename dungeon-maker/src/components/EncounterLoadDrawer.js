@@ -29,7 +29,7 @@ const EncounterLoadDrawer = (
 	
   
 	let _encounter = availableEncounters.find(enc => { return enc._id === selectedEncounter});
-	let encounterDungeons = (!selectedEncounter) ? [] : _encounter.encounterDungeons; 
+	let encounterDungeons = (!selectedEncounter) ? [] : _encounter.dungeons; 
 
 	return (
 		<div className="EncounterLoadDrawer">
@@ -56,7 +56,7 @@ const EncounterLoadDrawer = (
 				<br/>
 				<SelectField onChange={(e, i, v) => { onSetEncounter(v); }} value={selectedEncounter} floatingLabelText="Saved Encounters" >
 					{availableEncounters.map( (enc, x) => {
-						let label = (enc.title) ? enc.title : enc._id;
+						let label = (enc.name) ? enc.name : enc._id;
 						return (
 							<MenuItem key={enc._id} value={enc._id} primaryText={label} />
 						)
