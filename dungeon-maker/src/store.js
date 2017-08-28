@@ -5,6 +5,7 @@ import weaponsReducer from './reducers/weapons-reducer';
 import dungeonsReducer from './reducers/dungeons-reducer';
 import entitiesReducer from './reducers/entities-reducer';
 import partiesReducer from './reducers/parties-reducer';
+import encountersReducer from './reducers/encounters-reducer';
 import gearReducer from './reducers/gear-reducer';
 import { logger } from 'redux-logger';
 
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   dungeonsState: dungeonsReducer,
   entitiesState: entitiesReducer,
   partiesState: partiesReducer,
+  encountersState: encountersReducer,
   gearState: gearReducer
 });
 

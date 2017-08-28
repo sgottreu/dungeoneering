@@ -49,7 +49,7 @@ class DroppableList extends Component {
   }
 
   render() {
-    const { canDrop, isOver, connectDropTarget, encounterDungeons } = this.props;
+    const { canDrop, isOver, connectDropTarget, encounterDungeons, availableDungeons } = this.props;
     const isActive = canDrop && isOver;
 
     let backgroundColor = '#fff';
@@ -61,11 +61,12 @@ class DroppableList extends Component {
       <div className="encounterDungeons" style={{ ...style, backgroundColor }}>
         <List style={{width: '100%', height: '100%'}}>
           {encounterDungeons.map( (grid, index) => {
+            let dungeon = availableDungeons.find(function(m) { return m._id === grid});
             return (
               <div key={index} className="selectedDungeons">
                 <ListItem className="listItem"
-                  primaryText={grid.title}
-                  onTouchTap={this.selectDungeon.bind(this, grid._id)}
+                  primaryText={dungeon.title}
+                  onTouchTap={this.selectDungeon.bind(this, grid)}
                 />
                 <div className="moveItem">
                   {(index > 0) ? this.makeItemMover(index, 'up') : ''}

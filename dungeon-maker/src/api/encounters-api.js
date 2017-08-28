@@ -9,19 +9,19 @@ export var findEncounters = () => {
 	    store.dispatch(loadAvailableEncounters(res.data));
 	  }); 
 };
-export var saveParty = (party) => {
-  return axios.post(`${Variables.host}/saveParty`, party)
+export var saveEncounter = (party) => {
+  return axios.post(`${Variables.host}/saveEncounter`, party)
 	  .then(res => {
-			// let _state = store.getState();
-			// let availableEncounters = _state.encountersState.availableEncounters;
-			// let _i = availableEncounters.findIndex(function(m) { return m._id === res.data._id});
+			let _state = store.getState();
+			let availableEncounters = _state.encountersState.availableEncounters;
+			let _i = availableEncounters.findIndex(function(m) { return m._id === res.data._id});
 			
-			// if(_i === -1) {
-			// 	availableEncounters.push( res.data );
-			// } else {
-			// 	availableEncounters[ _i ] = res.data;
-			// }
-			// store.dispatch(loadAvailableEncounters(availableEncounters));
+			if(_i === -1) {
+				availableEncounters.push( res.data );
+			} else {
+				availableEncounters[ _i ] = res.data;
+			}
+			store.dispatch(loadAvailableEncounters(availableEncounters));
 	  }); 
 };
 

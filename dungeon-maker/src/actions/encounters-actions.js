@@ -7,6 +7,13 @@ export function loadAvailableEncounters(encounters) {
   };
 }
 
+export function updateEncounter(encounter) {
+  return {
+    type: types.UPDATE_ENCOUNTER,
+    encounter: encounter
+  };
+}
+
 export function updateEncounterDungeons(dungeon) {
   return {
     type: types.UPDATE_ENCOUNTER_DUNGEONS,
