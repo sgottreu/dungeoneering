@@ -63,10 +63,6 @@ class RunEncounter extends Component {
     	choosingEntrance: false,
     	choosingExit: false,
       showAttackDialog: false,
-      availableDungeons: [],
-      availableEncounters: [],
-      availableMonsters: [],
-      availableCharacters: [],
       attacking: false,
       selectedDungeon: false,
       selectedEncounter: false,
@@ -91,36 +87,6 @@ class RunEncounter extends Component {
 
   componentDidMount() {
     window.addEventListener("click", this.handleMyEvent);
-
-    let _this = this;
-    
-    axios.get(`${Variables.host}/findEncounters`)
-    .then(res => {
-        let state = _this.state;
-        state.availableEncounters = res.data;
-        _this.setState(state);
-    });
-    axios.get(`${Variables.host}/findParties`)
-    .then(res => {
-      let state = _this.state;
-      state.availableParties = res.data;
-      _this.setState( state );
-    }); 
-    axios.get(`${Variables.host}/findEntities`)
-    .then(res => {
-      let state = _this.state;
-      state.availableMonsters = res.data.monster;
-      state.availableCharacters = res.data.character;
-      _this.setState( state );
-    });  
-
-    powersApi.findPowers();
-
-    setTimeout( function() {
-        let _state = store.getState();
-        _this.setState( {existingPowers: _state.powersState.existingPowers});
-    }, 2000);
-
   }
   componentWillUnmount() {
     window.removeEventListener("click", this.handleMyEvent);
@@ -269,10 +235,10 @@ class RunEncounter extends Component {
     state.selectedParty = state.availableParties[ index ]._id;
     state.party = state.availableParties[ index ];
 
-    state.party.members.map((p, x) => {
-      p.uuid = uuidV4();
-      return p;
-    });
+    // state.party.members.map((p, x) => {
+    //   p.uuid = uuidV4();
+    //   return p;
+    // });
 
     this.setState(state);
   }
@@ -538,7 +504,8 @@ class RunEncounter extends Component {
   }
 
   render() {
-    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters, availableMonsters, combatList, currentActor, selectedAttackers} = this.state;
+    let {slots, selectedDungeon, selectedEncounter, selectedParty, combatList, currentActor, selectedAttackers} = this.state;
+    let {availableParties, availableEncounters, availableMonsters, availableCharacters, availableDungeons} = this.props;
     let party = availableParties.find(p => { return p._id === selectedParty} );
     if(party === undefined) {
       party = { members: [] };

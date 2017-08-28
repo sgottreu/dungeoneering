@@ -9,10 +9,8 @@ import { Route } from 'react-router-dom';
 
 import Home from './components/Home';
 
-import RunEncounter from './components/RunEncounter';
-import CreateEncounter from './components/CreateEncounter';
+import RunEncounterContainer from './containers/run-encounter-container';
 import AddMonstersContainer from './containers/add-monsters-container';
-
 import AddWeaponsContainer from './containers/add-weapons-container';
 import AddPowersContainer from './containers/add-powers-container';
 import AddCharactersContainer from './containers/add-characters-container';
@@ -73,7 +71,7 @@ class App extends Component {
         {this.props.children}
       	
         <Route exact path="/" component={Home} />
-        <Route path="/runEncounter" component={RunEncounter}/>
+        <Route path="/runEncounter" component={() => (<RunEncounterContainer />)}/>
         <Route path="/createEncounter" component={() => (<CreateEncounterContainer />)}/>
         <Route path="/dungeonMaker" component={() => (<AddDungeonsContainer />)} />
         <Route path="/createParty" component={() => (<CreatePartyContainer />)}/>
