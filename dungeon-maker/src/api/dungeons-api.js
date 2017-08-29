@@ -13,7 +13,7 @@ export var findDungeon = (selectedDungeon) => {
   if(!selectedDungeon){
     return false;
   }
-  return axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
+  return axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}&`+Math.random())
   .then(res => {
     store.dispatch(setDungeon(res.data));
     store.dispatch(updateKey('selectedDungeon', res.data._id));

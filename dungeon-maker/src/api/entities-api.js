@@ -28,7 +28,7 @@ export var findMonsters = () => {
 // };
 
 export var saveEntity = (entity) => {
-  return axios.post(`${Variables.host}/saveEntity`, entity)
+  return axios.post(`${Variables.host}/saveEntity?`+Math.random(), entity)
   .then(res => {
     let key = (entity._type === 'monster') ? 'availableMonsters' : 'availableCharacters';
     store.dispatch(updateEntityKey("_id", res.data._id));

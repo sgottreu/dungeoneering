@@ -10,7 +10,7 @@ export var findParties = () => {
 	  }); 
 };
 export var saveParty = (party) => {
-  return axios.post(`${Variables.host}/saveParty`, party)
+  return axios.post(`${Variables.host}/saveParty?`+Math.random(), party)
 	  .then(res => {
 			store.dispatch(updateParty(res.data));
 			

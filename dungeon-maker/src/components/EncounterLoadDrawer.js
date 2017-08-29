@@ -14,6 +14,7 @@ const EncounterLoadDrawer = (
     selectedDungeon, 
     selectedParty, 
     availableParties,
+    availableDungeons,
     onHandlePartyChange,
     onSetEncounter,
     onSetDungeon,
@@ -45,7 +46,8 @@ const EncounterLoadDrawer = (
         open={open}
         onRequestChange={ () => {onOpenDrawer('encounter', false)} }
       >
-				<SelectField  floatingLabelText={`Choose Party`} value={selectedParty} onChange={(e,i,v) => { onHandlePartyChange(e,i,v) } } >
+				<SelectField  floatingLabelText={`Choose Party`} 
+					value={ selectedParty._id } onChange={(e,i,v) => { onHandlePartyChange(e,i,v) } } >
 						{availableParties.map( (party, index) => {
 							return (
 								<MenuItem 
@@ -64,10 +66,11 @@ const EncounterLoadDrawer = (
 				</SelectField>
 				<br/>
 				<SelectField onChange={(e,i,v) => {handleDungeonChange(e,i,v) }} value={selectedDungeon} floatingLabelText="Saved Dungeon Grids" >
-					{encounterDungeons.map( (grid, x) => {
-						let label = (grid.title) ? grid.title : grid._id;
+					{encounterDungeons.map( (_dungeon, x) => {
+						let dungeon = availableDungeons.find(d => { return d._id === _dungeon});
+						let label = (dungeon.name) ? dungeon.name : dungeon._id;
 						return (
-							<MenuItem key={grid._id} value={grid._id} primaryText={label} />
+							<MenuItem key={x} value={dungeon._id} primaryText={label} />
 						)
 					})}
 				</SelectField>
