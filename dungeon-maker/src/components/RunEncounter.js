@@ -143,10 +143,12 @@ class RunEncounter extends Component {
 
     let _power = attacker.powers.find(function(p, i){ return p.uuid === attacker.currentPower });
 
-    let _weapon = attacker.inventory.find(function(w, i){ return w.item._id === attacker.currentWeapon });
+    let _weapon = false;
+    if(attacker.inventory !== undefined){
+      _weapon = attacker.inventory.find(function(w, i){ return w.item._id === attacker.currentWeapon });
+    }    
     _weapon = (_weapon === false) ? false : _weapon.item;
 
-    //attack  { against, for, modifier}
     let natAttackRoll = Die.dieRoll(20);
     let AttackMod = attacker.abilities[ _power.attack.for ].AttackModifier;
     let PowerMod = parseInt(_power.attack.modifier, 10);
@@ -274,7 +276,7 @@ class RunEncounter extends Component {
   }
 
   rollInitiative(){
-    _Dungeon.rollInitiative(this);
+    _Dungeon.rollInitiative(this, this.props.existingPowers);
   }
 
   pickCombatList = () => {

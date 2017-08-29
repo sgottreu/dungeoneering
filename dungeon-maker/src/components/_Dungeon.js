@@ -69,10 +69,10 @@ _Dungeon.setUuidMonsters = (state) => {
   return state;
 }
 
-_Dungeon.rollInitiative = (_this) => {
+_Dungeon.rollInitiative = (_this, existingPowers) => {
   let state = _this.state;
 
-  state = _Dungeon.setAttackAttributes(state);
+  state = _Dungeon.setAttackAttributes(state, existingPowers);
 
   state.currentActor = {slot: false, roll: false, uuid: false};
 
@@ -89,13 +89,13 @@ _Dungeon.rollInitiative = (_this) => {
   _this.setState( state );
 }
 
-_Dungeon.setAttackAttributes = (state) => {
+_Dungeon.setAttackAttributes = (state, existingPowers) => {
   state.combatList.forEach( (cb, i) => {
     state.combatList[i].currentPower = false;
     state.combatList[i].currentWeapon = false;
     cb.powers.forEach( (pp, j) => {
       if(cb._type === 'character'){
-        let _power = state.existingPowers.find( p => { return p._id === pp});
+        let _power = existingPowers.find( p => { return p._id === pp});
         state.combatList[i].powers[j] = Variables.clone( _power );
       }
       state.combatList[i].powers[j].uuid = uuidV4();
