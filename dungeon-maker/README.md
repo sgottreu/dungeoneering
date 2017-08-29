@@ -2,6 +2,8 @@
 
 * Create randomizer for chests
 * Duplicate dungeons does not work. Id not being reset.
+* When power is selected, filter out weapons.
+* Hovering over power select field, have pop-up with power stats.
 
 ## FAQ
 

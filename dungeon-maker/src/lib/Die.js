@@ -13,7 +13,7 @@ export var Die =
         let random = (rnd !== undefined) ? rnd : Die.getRandomRoll();
         let roll = Math.floor( random * uBound) + 1;
 
-        return roll;
+        return parseInt(roll, 10);
     },
 
     getRandomRoll: () => {
