@@ -17,6 +17,7 @@ export var findDungeon = (selectedDungeon) => {
   .then(res => {
     store.dispatch(setDungeon(res.data));
     store.dispatch(updateKey('selectedDungeon', res.data._id));
+    return res.data;
   }); 
 };
 export var saveDungeon = (dungeon) => {

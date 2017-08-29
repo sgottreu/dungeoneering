@@ -1,6 +1,5 @@
 import * as types from '../actions/action-types';
 import SortByKey from '../lib/SortByKey';
-import {Variables} from '../lib/Variables';
 
 const initialState = {
   availableGear: [],

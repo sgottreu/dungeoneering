@@ -8,7 +8,6 @@ import * as entitiesApi from '../api/entities-api';
 import * as Entity from '../lib/Entity';
 
 import * as EntityActionCreators from '../actions/entities-actions';
-import * as DungeonActionCreators from '../actions/dungeons-actions';
 
 class AddCharactersContainer extends Component {
 

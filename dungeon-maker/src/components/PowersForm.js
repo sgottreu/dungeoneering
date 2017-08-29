@@ -58,13 +58,10 @@ class PowersForm extends Component {
 	}
 
   componentDidMount() {
-    // if(this.props.existingPowers !== undefined){
-    //   this.boundPowerAC.loadExistingPowers(this.props.existingPowers);
-    // }
+
   }
 
   updateSnackBar = (msg, open=false) => {
-    let state = this.state;
     this.setState( { snackbarMsg: msg, snackbarOpen: open } );
   }
 

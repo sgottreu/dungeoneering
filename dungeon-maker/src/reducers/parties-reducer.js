@@ -13,8 +13,6 @@ const initialState = {
 };
 
 const partiesReducer = function(state = initialState, action) {
-  let party = false;
-  let availableParties = false;
   let _state = false;
 
   if(action === undefined){

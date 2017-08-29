@@ -5,7 +5,6 @@ import DungeonGrid from './DungeonGrid';
 import EntityTooltip from './EntityTooltip';
 import DroppableList from './DroppableList';
 import DraggableListItem from './DraggableListItem';
-import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -137,7 +136,6 @@ class CreateEncounter extends Component {
   }
 
   updateSnackBar = (msg, open=false) => {
-    let state = this.state;
     this.setState( { snackbarMsg: msg, snackbarOpen: open } );
   }
 

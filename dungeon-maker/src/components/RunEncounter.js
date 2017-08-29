@@ -5,22 +5,15 @@ import AttackDialog from './AttackDialog';
 import EncounterLoadDrawer from './EncounterLoadDrawer';
 import EntityTooltip from './EntityTooltip';
 import RaisedButton from 'material-ui/RaisedButton';
-import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import {Die} from '../lib/Die';
 import * as Entity from '../lib/Entity';
-import uuidV4  from 'uuid/v4';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import '../css/RunEncounter.css';
 
-// import * as weaponsApi from '../api/weapons-api';
-import * as powersApi from '../api/powers-api';
-
-import store from '../store';
-
-
+import * as dungeonsApi from '../api/dungeons-api';
 
 class RunEncounter extends Component {
   constructor(props){
@@ -303,18 +296,22 @@ class RunEncounter extends Component {
     if(selectedDungeon === false){
       return false;
     }
-
+    let { availableCharacters } = this.props;
     let _this = this;
-    axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
-    .then(res => {
-      let state = _this.state;
-      state.slots = res.data.slots;
+    let _dungeon = dungeonsApi.findDungeon(selectedDungeon);
 
-      state.slots = _Dungeon.addCharToMap(state.selectedParty, state.slots, this.props.availableCharacters);
+    _dungeon.then(function (res) {
+      let state = _this.state;
+      state.slots = res.slots;
+
+      state.slots = _Dungeon.addCharToMap(state.selectedParty, state.slots, availableCharacters);
       state = _Dungeon.setUuidMonsters(state);
       state.selectedDungeon = selectedDungeon;
 
       _this.setState(state);
+    })
+    .catch(function (error) {
+      console.log(error);
     });
   }
 
@@ -494,7 +491,7 @@ class RunEncounter extends Component {
 
   render() {
     let {slots, selectedDungeon, selectedEncounter, selectedParty, combatList, currentActor, selectedAttackers} = this.state;
-    let {availableParties, availableEncounters, availableMonsters, availableCharacters, availableDungeons} = this.props;
+    let {availableParties, availableEncounters, availableMonsters, availableDungeons} = this.props;
     let party = availableParties.find(p => { return p._id === selectedParty} );
     if(party === undefined) {
       party = { members: [] };

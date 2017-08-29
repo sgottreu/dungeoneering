@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import EntityForm from '../components/EntityForm';
 import * as weaponsApi from '../api/weapons-api';
 import * as entitiesApi from '../api/entities-api';
-import * as Entity from '../lib/Entity';
 
 import * as EntityActionCreators from '../actions/entities-actions';
 import * as PowerActionCreators from '../actions/powers-actions';
@@ -14,7 +13,6 @@ class AddMonstersContainer extends Component {
   componentDidMount() {
     weaponsApi.findWeapons();
     entitiesApi.findMonsters();
-    //let state = this.calcRemainingPoints(this.state);
   }
 
   render() {

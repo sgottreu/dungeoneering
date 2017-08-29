@@ -13,8 +13,6 @@ const initialState = {
 };
 
 const encountersReducer = function(state = initialState, action) {
-  let encounter = false;
-  let availableEncounters = false;
   let _state = false;
 
   if(action === undefined){
