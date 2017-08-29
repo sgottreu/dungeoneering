@@ -1,8 +1,6 @@
 import * as types from '../actions/action-types';
 import {Variables} from '../lib/Variables';
 import SortByKey from '../lib/SortByKey';
-import Slots from '../lib/Slots';
-import TileOptions from '../lib/TileOptions';
 import * as Entity from '../lib/Entity';
 
 const initialState = {

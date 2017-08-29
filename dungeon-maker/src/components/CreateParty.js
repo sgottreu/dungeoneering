@@ -12,15 +12,12 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Subheader from 'material-ui/Subheader';
 import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
-import SortByKey from '../lib/SortByKey';
 
 import * as Entity from '../lib/Entity';
 
-import axios from 'axios';
 import {Variables} from '../lib/Variables';
 import * as entitiesApi from '../api/entities-api';
 import * as partiesApi from '../api/parties-api';
-import * as gearApi from '../api/gear-api';
 
 import '../css/CreateParty.css';
 
@@ -159,7 +156,6 @@ console.log(character);
   }
 
   render() {
-    let { selectedMember } = this.state;
     let { party, availableParties } = this.props.partiesState;
     let availableCharacters = this.props.availableCharacters;
     let { entity } = this.props.entitiesState;
@@ -186,8 +182,8 @@ console.log(character);
               {party.members.map( (member, index) => {
                 console.log(availableCharacters);
                 let _i = availableCharacters.findIndex(function(c) { return c._id === member});    
-                let icon_class = (_i == -1) ? '' : Entity._Class[ availableCharacters[_i].class ].name;
-                let charName = (_i == -1) ? '' : availableCharacters[_i].name;
+                let icon_class = (_i === -1) ? '' : Entity._Class[ availableCharacters[_i].class ].name;
+                let charName = (_i === -1) ? '' : availableCharacters[_i].name;
                 return (
                     <RadioButton key={index} value={member} 
                       label={

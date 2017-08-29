@@ -45,6 +45,6 @@ export var saveEntity = (entity) => {
     }
 
     store.dispatch(updateKey(key, entitiesState[ key ] ));
-
+    return res.data;
   }); 
 };

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import EntityTooltip from './EntityTooltip';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';

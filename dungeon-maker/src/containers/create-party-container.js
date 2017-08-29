@@ -6,7 +6,6 @@ import * as weaponsApi from '../api/weapons-api';
 import * as gearApi from '../api/gear-api';
 import * as partiesApi from '../api/parties-api';
 import * as entitiesApi from '../api/entities-api';
-import * as Entity from '../lib/Entity';
 
 import * as EntityActionCreators from '../actions/entities-actions';
 import * as PartyActionCreators from '../actions/parties-actions';

@@ -9,17 +9,11 @@ export var Die =
     { label : 'd20', num: 20}
     ],
 
-    dieRoll: (uBound, rnd=[]) => {
-        let rolls = [];
-        let len = (rnd.length === 0) ? 5 : rnd.length;
-        for( var x=0;x<len;x++){
-            let random = (rnd[x] !== undefined) ? rnd[x] : Die.getRandomRoll();
-            let roll = Math.floor( random * uBound) + 1;
-            rolls.push( roll );
-        }
-        let median = Math.floor(Die.findMedian(rolls));
+    dieRoll: (uBound, rnd) => {
+        let random = (rnd !== undefined) ? rnd : Die.getRandomRoll();
+        let roll = Math.floor( random * uBound) + 1;
 
-        return median;
+        return roll;
     },
 
     getRandomRoll: () => {

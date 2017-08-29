@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import CreateEncounter from '../components/CreateEncounter';
 import * as weaponsApi from '../api/weapons-api';
 import * as gearApi from '../api/gear-api';
-import * as partiesApi from '../api/parties-api';
 import * as entitiesApi from '../api/entities-api';
 import * as dungeonsApi from '../api/dungeons-api';
 import * as encountersApi from '../api/encounters-api';

@@ -39,7 +39,6 @@ class AddWeapon extends Component {
   }
 
   updateSnackBar = (msg, open=false) => {
-    let state = this.state;
     this.setState( { snackbarMsg: msg, snackbarOpen: open } );
   }
 

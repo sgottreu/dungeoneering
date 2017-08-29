@@ -4,8 +4,6 @@ import {Variables} from '../lib/Variables';
 import {Powers} from '../lib/Powers';
 import * as Entity from '../lib/Entity';
 import * as entitiesApi from '../api/entities-api';
-import * as weaponsApi from '../api/weapons-api';
-import * as powersApi from '../api/powers-api';
 import PowersForm from './PowersForm';
 import SortByKey from '../lib/SortByKey';
 import EntityChooser from './EntityChooser';
@@ -77,7 +75,6 @@ class EntityForm extends Component {
   }
 
   updateSnackBar = (msg, open=false) => {
-    let state = this.state;
     this.setState( { snackbarMsg: msg, snackbarOpen: open } );
   }
 
@@ -164,7 +161,8 @@ class EntityForm extends Component {
   handleEntitySave = () => {
     let updateSnackBar = this.updateSnackBar;
     let key = (this.EntityType === 'monster') ? 'Monster' : 'Character';
-    entitiesApi.saveEntity(this.props.entitiesState.entity).then( function(response){
+    entitiesApi.saveEntity(this.props.entitiesState.entity)
+    .then( function(response){
       updateSnackBar(key+' saved.', true);
     });
   };
@@ -189,7 +187,7 @@ class EntityForm extends Component {
 
 
   loadRoleField(){
-    let {entity, points} = this.props.entitiesState;
+    let {entity} = this.props.entitiesState;
   	return (
     	<SelectField className="bottomAlign" floatingLabelText="Role" value={entity.role} onChange={this.handleRoleChange} >
         {Entity._Role.map( (role, index) => (
@@ -200,7 +198,7 @@ class EntityForm extends Component {
   }
 
   loadRaceField(){
-    let {entity, points} = this.props.entitiesState;
+    let {entity} = this.props.entitiesState;
     return (
       <SelectField  className="bottomAlign" floatingLabelText="Race" value={entity.race} onChange={this.handleRaceChange} >
         {Entity._Race.map( (race, index) => (
@@ -211,7 +209,7 @@ class EntityForm extends Component {
   }
 
   loadClassField(){
-    let {entity, points} = this.props.entitiesState;
+    let {entity} = this.props.entitiesState;
     return (
       <SelectField className="bottomAlign"  floatingLabelText="Class" value={entity.class} onChange={this.handleClassChange} >
         {Entity._Class.map( (_class, index) => (
@@ -222,14 +220,14 @@ class EntityForm extends Component {
   }
 
   loadXPField(){
-    let {entity, points} = this.props.entitiesState;
+    let {entity} = this.props.entitiesState;
     return (
       <TextField className="shortField" floatingLabelText="XP" type="number" value={entity.xp} name="xp" onChange={this.handleChange} />
     );
   }
 
   loadPowersForm() {
-    let {entity, points, selectedEntity} = this.props.entitiesState;
+    let {entity, selectedEntity} = this.props.entitiesState;
     return (
       <PowersForm 
         boundPowerAC={this.props.boundPowerAC}
@@ -384,7 +382,6 @@ class EntityForm extends Component {
           boundEntityAC={this.props.boundEntityAC}
           hoverObj={this.props.entitiesState.hoverObj} 
           mouse={this.props.entitiesState.mouse}
-          boundEntityAC={this.props.boundEntityAC}
         />        
 				<TextField  floatingLabelText="Name" value={entity.name} name="name" onChange={this.handleChange} />
         <RaisedButton primary={true}
