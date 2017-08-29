@@ -38,23 +38,24 @@ _Dungeon.setCurrentActor = (state, roll, slot, uuid, reset=false) => {
   return state;
 }
 
-_Dungeon.addCharToMap = (state) => {
-  let party = state.party.members;
+_Dungeon.addCharToMap = (party, slots, availableCharacters) => {
+  let members = party.members;
 
-  party.map( (character, x) => {
-    let _slot = state.slots.find( slot => {
+  members.map( (character, x) => {
+    let _slot = slots.find( slot => {
       return !slot.occupied && (slot.tileType === undefined || slot.tileType === '');
     });
 
     if(_slot){
-      state.slots[ _slot.id -1 ].overlays.entity = Variables.clone(character);//character.uuid;
-      state.slots[ _slot.id -1 ].occupied = true;
+      let _character = availableCharacters.find(c => { return c._id === character})
+      slots[ _slot.id -1 ].overlays.entity = Variables.clone( _character );//character.uuid;
+      slots[ _slot.id -1 ].occupied = true;
       return true;
     }
     return false;
   });
 
-  return state;
+  return slots;
 }
 
 _Dungeon.setUuidMonsters = (state) => {

@@ -26,11 +26,15 @@ class RunEncounter extends Component {
   constructor(props){
     super(props);
 
+    this.boundEncounterAC      = this.props.boundEncounterAC;
+    this.boundEntityAC      = this.props.boundEntityAC;
+    this.boundDungeonAC       = this.props.boundDungeonAC;
+
     this.selectTile = this.selectTile.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.addTile = this.addTile.bind(this);
     this.chooseDungeon = this.chooseDungeon.bind(this);
-    this.chooseEncounter = this.chooseEncounter.bind(this);
+    // this.chooseEncounter = this.chooseEncounter.bind(this);
     this.setEncounter = this.setEncounter.bind(this);
     this.setDungeon = this.setDungeon.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
@@ -232,13 +236,8 @@ class RunEncounter extends Component {
 
   handlePartyChange = (e, index) => {
     let state = this.state;
-    state.selectedParty = state.availableParties[ index ]._id;
-    state.party = state.availableParties[ index ];
-
-    // state.party.members.map((p, x) => {
-    //   p.uuid = uuidV4();
-    //   return p;
-    // });
+    state.selectedParty = this.props.availableParties[ index ];
+    state.party = this.props.availableParties[ index ];
 
     this.setState(state);
   }
@@ -289,44 +288,32 @@ class RunEncounter extends Component {
     if(selectedEncounter === false){
       return false;
     }
-    let _this = this;
-    axios.get(`${Variables.host}/findEncounter?_id=${selectedEncounter}`)
-      .then(res => {
-        let state = _this.state;
-        state.selectedEncounter = selectedEncounter;
-        state.encounter = res.data;
 
-        _this.setState(state);
-      });
+    let state = this.state;
+    state.selectedEncounter = selectedEncounter;
+    this.setState(state);
+
+    let _selected = this.props.availableEncounters.find(e => { return e._id === selectedEncounter } );
+    this.boundEncounterAC.updateEncounter( _selected );
   }
 
   setDungeon(selectedDungeon){
     if(selectedDungeon === false){
       return false;
     }
+
     let _this = this;
     axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
     .then(res => {
       let state = _this.state;
       state.slots = res.data.slots;
-      state._id = res.data._id;
-      state.title = res.data.title;
 
-      // state = _Dungeon.setCombatList(state);
-      // state = _Dungeon.setAttackAttributes(state);
-      state = _Dungeon.addCharToMap(state);
+      state.slots = _Dungeon.addCharToMap(state.selectedParty, state.slots, this.props.availableCharacters);
       state = _Dungeon.setUuidMonsters(state);
       state.selectedDungeon = selectedDungeon;
 
       _this.setState(state);
     });
-  }
-
-  chooseEncounter(id){
-    let state = this.state;
-    state.selectedEncounter = id;
-
-    this.setState( state );
   }
 
   chooseDungeon(id){
@@ -533,6 +520,7 @@ class RunEncounter extends Component {
               selectedDungeon={selectedDungeon}
               selectedParty={selectedParty}            
               availableParties={availableParties}
+              availableDungeons={availableDungeons}
               availableEncounters={availableEncounters}
               onOpenDrawer={this.openDrawer}
               open={this.state.drawers.encounter}

@@ -77,9 +77,9 @@ app.post('/saveEncounter', function (req, res) {
 
 	let payload = {
 		_type: 'encounter',
-		title: req.body.title,
-		encounterDungeons: req.body.encounterDungeons
-	};
+		name: req.body.name,
+		dungeons: req.body.dungeons
+	};console.log(payload);
 	 _Save(req, res, payload);		
 });
 

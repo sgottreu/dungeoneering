@@ -10,7 +10,7 @@ export var findWeapons = () => {
     }); 
 };
 export var saveWeapon = (weapon) => {
-  return axios.post(`${Variables.host}/saveWeapon`, weapon)
+  return axios.post(`${Variables.host}/saveWeapon?`+Math.random(), weapon)
     .then(res => {
       store.dispatch(editAvailableWeapons(res.data));
     }); 

@@ -11,7 +11,7 @@ export var findPowers = () => {
 	  }); 
 };
 export var savePower = (power) => {
-  return axios.post(`${Variables.host}/savePower`, power)
+  return axios.post(`${Variables.host}/savePower?`+Math.random(), power)
 	  .then(res => {
 	    store.dispatch(addToPowers(power));
 	    store.dispatch(resetCurrentPower( Variables.clone(Powers.Template) ));

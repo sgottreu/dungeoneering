@@ -10,7 +10,7 @@ export var findEncounters = () => {
 	  }); 
 };
 export var saveEncounter = (party) => {
-  return axios.post(`${Variables.host}/saveEncounter`, party)
+  return axios.post(`${Variables.host}/saveEncounter?`+Math.random(), party)
 	  .then(res => {
 			let _state = store.getState();
 			let availableEncounters = _state.encountersState.availableEncounters;
