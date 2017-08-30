@@ -3,7 +3,7 @@
 }
 
 .CreateParty.inset {
-  width: 55% !important;
+  width: 60% !important;
 }
 
 
@@ -21,7 +21,7 @@
 }
 
 .AvailableGear {
-  width: 1000px !important;
+  width: 1100px !important;
   float:none;
   background: #FCFCFC !important;
 }

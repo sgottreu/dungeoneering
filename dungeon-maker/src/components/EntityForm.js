@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
-import { EntityTemplate, AbilityModifier, AttackModifier, EntityRole, EntitySize, EntityRace, EntityClass, 
-  EntityShield, calcWeightPrice,
-  getInitialHitPoints, EntityArmor, calculateArmorClass, calculateDefense, saveEntity, EntityIcons, 
-  findEntity, calculateInitiative} from './EntityTemplate';
 
-import {Variables} from './Variables';
-import {_Powers} from './_Powers';
-import {findWeapons} from './Weapons';
+import {Variables} from '../lib/Variables';
+import {Powers} from '../lib/Powers';
+import * as Entity from '../lib/Entity';
+import * as entitiesApi from '../api/entities-api';
 import PowersForm from './PowersForm';
-
+import SortByKey from '../lib/SortByKey';
 import EntityChooser from './EntityChooser';
 import WeaponTooltip from './WeaponTooltip';
 import TextField from 'material-ui/TextField';
@@ -29,8 +26,12 @@ class EntityForm extends Component {
   constructor(props){
     super(props);
 
-    this.EntityType = this.props.type;
-    this.input = [];
+    this.boundEntityAC = this.props.boundEntityAC;
+    this.boundPowerAC = this.props.boundPowerAC;
+    this.rState = this.props.entitiesState;
+
+    this.EntityType = this.props.EntityType;
+    this.weaponField = null;
 
     this.handleChange = this.handleChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
@@ -43,11 +44,8 @@ class EntityForm extends Component {
     this.handleLevelChange = this.handleLevelChange.bind(this);
     this.changeAbility = this.changeAbility.bind(this);
     this.changeIcon = this.changeIcon.bind(this);
-    this.calcRemainingPoints = this.calcRemainingPoints.bind(this);
-    this.calculateAbility = this.calculateAbility.bind(this);
-    this._setEntityState = this._setEntityState.bind(this);
+
     this.handleEntitySave = this.handleEntitySave.bind(this);
-    this.handleSnackBarClose = this.handleSnackBarClose.bind(this);
     this.handleInitiativeChange = this.handleInitiativeChange.bind(this);
     this.handleArmorClassChange = this.handleArmorClassChange.bind(this);
     this.handleFortitudeChange = this.handleFortitudeChange.bind(this);
@@ -61,325 +59,138 @@ class EntityForm extends Component {
     this.loadRaceField = this.loadRaceField.bind(this);
     this.loadEntityIconField = this.loadEntityIconField.bind(this);
     this.loadPowersForm = this.loadPowersForm.bind(this);
-    this.loadWeaponTooltip = this.loadWeaponTooltip.bind(this);
 
-    this.findPowers = this.findPowers.bind(this);
-    this.includePower = this.includePower.bind(this);
     this.loadPowersField = this.loadPowersField.bind(this);
     this.loadWeaponsField = this.loadWeaponsField.bind(this);
     this.handleSelectedEntity = this.handleSelectedEntity.bind(this);
     this.selectWeapon = this.selectWeapon.bind(this);
-    this.selectPower = this.selectPower.bind(this);
-    this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
-    
-    let state = {
-      hoverObj: {
-        obj: false,
-        type: false
-      },
-      mouse: {
-        clientX: false,
-        clientY: false
-      }
+    this.selectCharacterPower = this.selectCharacterPower.bind(this);
+
+    this.updateSnackBar = this.updateSnackBar.bind(this);
+
+    this.state = {
+      snackbarOpen: false,
+      snackbarMsg: ''
     };
-
-    state.entity = Variables.clone(EntityTemplate);
-    state.entity._type = this.EntityType;
-    state.entity.coin_purse = (this.EntityType === 'character') ? 200 : 0;
-    
-    
-    state.totalRacePoints = 0;
-    state.usedPoints = 0;
-    state.snackbarOpen = false;
-    state.snackbarMsg = '';
-    state.existingPowers = [];
-    state.availableMonsters = [];
-    state.availableCharacters = [];
-    state.availableWeapons = [];
-    state.selectedEntity = false;
-    this.state = state;
   }
 
-  componentDidMount(){
-    let state = this.calcRemainingPoints(this.state);
-    this.setState( state );
-    if(this.EntityType === 'character'){
-      this.findPowers();
-    }
-    findEntity(this);
-    findWeapons(this);
+  updateSnackBar = (msg, open=false) => {
+    this.setState( { snackbarMsg: msg, snackbarOpen: open } );
   }
-
-  handleObjMouseOver = (obj, _type, eve) => {
-    let state = this.state;
-    state.hoverObj = {
-      obj: obj,
-      type: _type
-    };
-    state.mouse.clientX = eve.pageX;
-    state.mouse.clientY = eve.pageY;
-    this.setState(state);
-  }
-
 
   resetForm(){
-    let state = this.state;
-    state.selectedEntity = false;
-    state.entity = Variables.clone(EntityTemplate);
-    this.setState(state);
+    this.boundEntityAC.updateKey('selectedEntity', false);
+    this.boundEntityAC.updateKey('entity', Variables.clone(Entity.Template));
   }
 
   handleSelectedEntity = (event, index) => {
-    let state = this.state;
-    state.selectedEntity = index;
+    this.boundEntityAC.updateKey('selectedEntity', index);
     let key = (this.EntityType === 'monster') ? 'availableMonsters' : 'availableCharacters';
-    state.entity = state[key][index];
-
-    this.setState(state);
+    this.boundEntityAC.updateKey( 'entity', Variables.clone( this.props[key][index] ) );
+    if(this.EntityType === 'monster'){
+      this.boundPowerAC.loadExistingPowers(this.props[key][index].powers);
+    }
   }
-
-  findPowers(){
-    _Powers.findPowers(this);
-  }
-
-  handleSnackBarClose = () => {
-    this.setState({
-      snackbarOpen: false,
-    });
-  };
 
   selectWeapon = (id) => {
-    let state = this.state;
-    if( state.entity.weapons.includes(id) ){
-      let _i = state.entity.weapons.findIndex(function(w) { return w === id});
-      let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state.entity = calcWeightPrice(state.entity, weapon, 'weapons', 'item', false);
-      state.entity.weapons.splice(_i, 1);
-    } else {
-      let weapon = this.state.availableWeapons.find(function(val){ return id === val._id});
-      state.entity = calcWeightPrice(state.entity, weapon, 'weapons');
-      state.entity.weapons.push(id);  
-    }
-    this.setState( state ); 
-  }
-
-  _setEntityState(key, value){
-		let state = this.state;
-		state.entity[ key ] = value;
-		this.setState( state );
+    this.boundEntityAC.updateEntityWeapon(id);
   }
 
   handleChange = (event) => {
-    this._setEntityState( event.target.name, event.target.value);
+    this.boundEntityAC.updateEntityKey( event.target.name, event.target.value);
   }
 
 	handleRoleChange = (event, index) => {
-		this._setEntityState('role', index);
+		this.boundEntityAC.updateEntityKey('role', index);
 	}
 
   handleArmorChange = (event, index) => {
-    let state = this.state;
-
-    state.entity = calcWeightPrice(state.entity, EntityArmor[index], 'armor', 'category');
-
-    state.entity.armor = index;
-    state = calculateArmorClass(state);
-    this.setState( state );
+    this.boundEntityAC.updateEntityArmor( index );
   }
 
   handleShieldChoice = (event, isInputChecked) => {
-    let state = this.state;  
-    let shield = (isInputChecked === true && state.entity.shield !== event.target.dataset.shield) ? parseInt(event.target.dataset.shield, 10) : false;
+    let {entity} = this.props;  
+    let shield = (isInputChecked === true && entity.shield !== event.target.dataset.shield) ? parseInt(event.target.dataset.shield, 10) : false;
 
-    state.entity.shield = shield;
-    let _i = EntityShield.findIndex((shd, s) => { return shd.score === shield});
-    state.entity = calcWeightPrice(state.entity, EntityShield[_i], 'shield', 'category', (shield === false) ? false : true);
-
-    state.entity.defense.armorClass.shield = (!shield) ? 0 : shield;
-    state = calculateArmorClass(state);
-    this.setState( state );
+    this.boundEntityAC.updateEntityShield( shield );
   }
 
 	handleSizeChange = (event, index) => {
-		this._setEntityState('size', EntitySize[index].label);
+		this.boundEntityAC.updateEntityKey('size', Entity._Size[index].label);
 	}
 
   handleClassChange = (event, index) => {    
-    let state = this.state;
-    state.entity.class = index;
-    state.entity.hp = getInitialHitPoints(state, state.entity.class);
-    state.entity.bloodied = Math.floor( state.entity.hp / 2 );
-    state.entity.healingSurge = Math.floor( state.entity.hp / 4 );
-
-    state.entity.surgesPerDay = parseInt(EntityClass[index].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
-
-    state.entity.iconClass = EntityClass[ index ].name.toLowerCase();
-
-    for(let c in EntityClass[index].defenseMod){
-      if(EntityClass[index].defenseMod.hasOwnProperty(c)){
-        state.entity.defense[ c ].classBonus = parseInt(EntityClass[index].defenseMod[c], 10);
-      }
-    }
-
-    this.setState(state);
+    this.boundEntityAC.updateEntityClass( index );
   }
 
   changeIcon = (event) => {
-    let state = this.state;
-    state.entity.iconClass = event.target.dataset.icon;
-    this.setState(state);
-  }
-
-  includePower = (power, current_power=false) => {
-    let state = this.state;
-    if(current_power !== false){
-      state.entity.powers[current_power-1] = power;
-    } else {
-      state.entity.powers.push(power);
-      current_power = state.entity.powers.length;
-    }
-    this.setState(state);
-
-    return current_power;
+    this.boundEntityAC.updateEntityKey('iconClass', event.target.dataset.icon);
   }
 
   handleRaceChange = (event, index) => {
-    let state = this.state;
-    state.entity.race = index;
-    state.entity.size = EntityRace[index].size;
-    state.entity.speed = EntityRace[index].speed;
-    state.totalRacePoints = 0;
-
-    if(index !== state.entity.race){
-      state.remainingPoints = 4 + ((state.entity.level-1)*2);
-      for(let a in state.entity.abilities){
-        if(state.entity.abilities.hasOwnProperty(a)){
-          state.entity.abilities[ a ].score = 12;
-        }
-      }
-    }
-
-    if(EntityRace[index].abilityMod.any === undefined){
-      for(let a in EntityRace[index].abilityMod){
-        if(EntityRace[index].abilityMod.hasOwnProperty(a)){
-          let score = state.entity.abilities[ a ].score + parseInt(EntityRace[index].abilityMod[ a ], 10);
-          state.totalRacePoints += parseInt(EntityRace[index].abilityMod[ a ], 10);
-          state = this.calculateAbility(state, a, state.entity.level, score);
-        }
-      }
-    } else {
-      state.totalRacePoints = EntityRace[index].abilityMod.any;
-    }
-
-    if(EntityRace[index].skillBonus.any === undefined){
-      for(let a in EntityRace[index].skillBonus){
-        if(EntityRace[index].skillBonus.hasOwnProperty(a)){
-          state.entity.skills[a].raceModifier = parseInt(EntityRace[index].skillBonus[ a ], 10);
-        }
-      }
-    } 
-    this.setState( state );   
+    this.boundEntityAC.updateEntityRace(index);
   }
 
   handleHPChange(event){
-    let state = this.state;
-    state.entity.hp = event.target.value;
-    state.entity.bloodied = Math.floor( state.entity.hp / 2 );
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityHp( event.target.value );
   }
 
   handleInitiativeChange(event){
-    let state = this.state;
-    state.entity.initiative = calculateInitiative(state, event.target.value);
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityInitiative(event.target.value);
   }
 
   handleArmorClassChange(event){
-    let state = calculateArmorClass(this.state, event.target.value);
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityArmorclass('armorClass', event.target.value);
   }
 
   handleFortitudeChange(event){
-    let state = calculateDefense(this.state, 'fortitude', event.target.value);
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityDefense('fortitude', event.target.value);
   }
   handleReflexChange(event){
-    let state = calculateDefense(this.state, 'reflex', event.target.value);
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityDefense('reflex', event.target.value);
   }
   handleWillpowerChange(event){
-    let state = calculateDefense(this.state, 'willpower', event.target.value);
-    this.setState( state ); 
+    this.boundEntityAC.updateEntityDefense('willpower', event.target.value);
   }
 
 
   handleLevelChange = (event) => {
-    let state = this.state;
-    state.entity.level = event.target.value;
-    state = this.calcRemainingPoints(this.state);
-    this.setState(state);
+    this.boundEntityAC.updateEntityLevel(event.target.value);
   }
 
-  handleEntitySave = () => saveEntity(this);
+  handleEntitySave = () => {
+    let updateSnackBar = this.updateSnackBar;
+    let key = (this.EntityType === 'monster') ? 'Monster' : 'Character';
+    entitiesApi.saveEntity(this.props.entitiesState.entity)
+    .then( function(response){
+      updateSnackBar(key+' saved.', true);
+    });
+  };
 
   changeAbility = (event) => {
-    let state = this.state;
-    state = this.calcRemainingPoints(state, event.target);
-    if(state.remainingPoints === 0 ){ 
-      if(event.target.value >= state.entity.abilities[ event.target.name ].score){
+    let {entity, points} = this.props.entitiesState;
+    entity = Entity.calcRemainingPoints(entity, event.target);
+    if(points.remainingPoints === 0 ){ 
+      if(event.target.value >= entity.abilities[ event.target.name ].score){
         return false;
       }
-      
     } 
-    
-    if( state.entity.abilities[ event.target.name ].score < event.target.value ){
-      state.remainingPoints--;
-    } else {
-      state.remainingPoints++;
-    }
-    state = this.calculateAbility(state, event.target.name, this.state.entity.level, event.target.value);
-    
-    if(state.entity.class){
-      state.entity.surgesPerDay = parseInt(EntityClass[ state.entity.class ].surges, 10) + parseInt(state.entity.abilities.constitution.abilityMod, 10);
-      state.entity.hp = getInitialHitPoints(state, state.entity.class);
-    }
-    state.entity.initiative = calculateInitiative(state);
-    state = calculateDefense(state);
-    state = calculateArmorClass(state);
-    this.setState( state );      
-    
+    this.boundEntityAC.updateEntityAbility(event.target);       
   }
 
-  calculateAbility(state, label, level, score){
-    state.entity.abilities[ label ].score = score;
-    state.entity.abilities[ label ].abilityMod = AbilityModifier(score);
-    state.entity.abilities[ label ].AttackModifier = AttackModifier(level, score, state.entity._type);
-
-    return state;
-  }
-
-  calcRemainingPoints(state, target){
-    if(target === undefined){
-      state.remainingPoints = 4 + ((state.entity.level-1)*2);
-    } else {
-      state.usedPoints = 0;
-      for(let a in state.entity.abilities){
-        if(state.entity.abilities.hasOwnProperty(a)){
-          if(target.name === a){
-            state.usedPoints += parseInt( target.value, 10 );
-          } else {
-            state.usedPoints += parseInt( state.entity.abilities[ a ].score, 10 );
-          }          
-        }
-      }
+  selectCharacterPower = (power, event) => {
+    if(power._id === undefined){
+      return false;
     }
-    return state;
+    this.boundEntityAC.updateEntityCharacterPower(power._id);
   }
+
 
   loadRoleField(){
+    let {entity} = this.props.entitiesState;
   	return (
-    	<SelectField style={Variables.getSelectListStyle(this.state.entity.role, EntityRole.map( (role, index) => {return index}) )} floatingLabelText="Role" value={this.state.entity.role} onChange={this.handleRoleChange} >
-        {EntityRole.map( (role, index) => (
+    	<SelectField className="bottomAlign" floatingLabelText="Role" value={entity.role} onChange={this.handleRoleChange} >
+        {Entity._Role.map( (role, index) => (
         	<MenuItem key={index} value={index} primaryText={role} />
         ))}
       </SelectField>
@@ -387,9 +198,10 @@ class EntityForm extends Component {
   }
 
   loadRaceField(){
+    let {entity} = this.props.entitiesState;
     return (
-      <SelectField   floatingLabelText="Race" value={this.state.entity.race} onChange={this.handleRaceChange} >
-        {EntityRace.map( (race, index) => (
+      <SelectField  className="bottomAlign" floatingLabelText="Race" value={entity.race} onChange={this.handleRaceChange} >
+        {Entity._Race.map( (race, index) => (
           <MenuItem key={index} value={index} primaryText={race.name} />
         ))}
       </SelectField>
@@ -397,9 +209,10 @@ class EntityForm extends Component {
   }
 
   loadClassField(){
+    let {entity} = this.props.entitiesState;
     return (
-      <SelectField   floatingLabelText="Class" value={this.state.entity.class} onChange={this.handleClassChange} >
-        {EntityClass.map( (_class, index) => (
+      <SelectField className="bottomAlign"  floatingLabelText="Class" value={entity.class} onChange={this.handleClassChange} >
+        {Entity._Class.map( (_class, index) => (
           <MenuItem key={index} value={index} primaryText={_class.name} />
         ))}
       </SelectField>
@@ -407,14 +220,25 @@ class EntityForm extends Component {
   }
 
   loadXPField(){
+    let {entity} = this.props.entitiesState;
     return (
-      <TextField className="shortField" floatingLabelText="XP" type="number" value={this.state.entity.xp} name="xp" onChange={this.handleChange} />
+      <TextField className="shortField" floatingLabelText="XP" type="number" value={entity.xp} name="xp" onChange={this.handleChange} />
     );
   }
 
   loadPowersForm() {
+    let {entity, selectedEntity} = this.props.entitiesState;
     return (
-      <PowersForm selEntity={this.state.selectedEntity} existingPowers={this.state.entity.powers} entityType="monster" onIncludePower={this.includePower} availableWeapons={this.state.availableWeapons} weapons={this.state.entity.weapons} />
+      <PowersForm 
+        boundPowerAC={this.props.boundPowerAC}
+        selEntity={selectedEntity} 
+        existingPowers={entity.powers} 
+        entityType="monster" 
+        power={this.props.powersState.power}
+        current_power={this.props.powersState.current_power}
+        availableWeapons={this.props.availableWeapons} 
+        weapons={entity.weapons}
+      />
     );
   }
 
@@ -422,20 +246,10 @@ class EntityForm extends Component {
     let _this = this;
     let listStyle = { height: '150px', width: '250px', overflowY: 'scroll' };
 
-    EntityIcons.sort(function(a, b) {
-      var nameA = a.label.toUpperCase(), nameB = b.label.toUpperCase(); // ignore upper and lowercase
-      if (nameA < nameB) {
-        return -1;
-      } else {
-        if (nameA > nameB) {
-          return 1;
-        }
-      }
-      return 0;
-    });
+    Entity._Icons.sort(SortByKey('label'));
 
-    let selIcons = EntityIcons.filter(function(val){ return val.class === _this.state.entity.iconClass });
-    let remIcons = EntityIcons.filter(function(val){ return val.class !== _this.state.entity.iconClass });
+    let selIcons = Entity._Icons.filter(function(val){ return val.class === _this.props.entitiesState.entity.iconClass });
+    let remIcons = Entity._Icons.filter(function(val){ return val.class !== _this.props.entitiesState.entity.iconClass });
 
     return(
       <div className="container">
@@ -446,7 +260,7 @@ class EntityForm extends Component {
             if(icon.type !== this.EntityType){
               return false;
             }
-            let className = ((icon.class === _this.state.entity.iconClass) ? ' active' : '');
+            let className = ((icon.class === _this.props.entitiesState.entity.iconClass) ? ' active' : '');
             return (
               <ListItem className={className} key={index} data-icon={icon.class} 
                 onTouchTap={this.changeIcon}
@@ -461,26 +275,12 @@ class EntityForm extends Component {
     );
   }
 
-  selectPower = (power, event) => {
-    if(power._id === undefined){
-      return false;
-    }
-
-    let state = this.state;
-    if( state.entity.powers.includes(power._id) ){
-      let _i = state.entity.powers.findIndex(function(p) { return p === power._id})
-      state.entity.powers.splice(_i, 1);
-    } else {
-      state.entity.powers.push(power._id);  
-    }
-    this.setState( state ); 
-  }
-
   loadPowersField(){
     let _this = this;
+    let {entity} = this.props.entitiesState;
     let listStyle = { height: '150px', width: '250px', overflowY: 'scroll' };
 
-    let _powers = (this.EntityType === 'character') ? this.state.existingPowers : this.state.entity.powers;
+    let _powers = (this.EntityType === 'character') ? this.props.existingPowers : this.props.entitiesState.entity.powers;
 
     return(
       <div className="container">
@@ -488,7 +288,7 @@ class EntityForm extends Component {
         <List className="EntityPowers" style={listStyle}>
           
           {_powers.map( (power, index) => {
-            if(!this.state.entity.class){
+            if(!entity.class){
               return (
                 <ListItem  key={index} 
                   primaryText={<div >{power.name}</div>}  
@@ -496,19 +296,20 @@ class EntityForm extends Component {
                 />
               );
             } else {
-              if(EntityClass[this.state.entity.class].name !== power.class.name){
+              let _found = entity.powers.findIndex(function(p) { 
+                return power._id === p
+              });
+
+              if(Entity._Class[entity.class].name !== power.class.name){
                 return false;
               }
 
-              let _found = _this.state.entity.powers.findIndex(function(p) { 
-                return power._id === p
-              });
               let className = (_found > -1) ? ' active' : '';
 
               return (
                 <ListItem className={className} key={index} 
                   primaryText={<div >{power.name}</div>}  
-                  leftAvatar={<Avatar className={'icon weapon_'+_Powers.powerType[power.type].class} onTouchTap={this.selectPower.bind(this, power)}/>}
+                  leftAvatar={<Avatar className={'icon weapon_'+Powers.powerType[power.type].class} onTouchTap={_this.selectCharacterPower.bind(this, power)}/>}
                 />
               );
             }
@@ -520,33 +321,21 @@ class EntityForm extends Component {
   }
 
   loadWeaponsField(){
-    let _this = this;
+    let {entity} = this.props.entitiesState;
     let listStyle = { height: '150px', width: '250px', overflowY: 'scroll' };
 
-    this.state.availableWeapons.sort(function(a, b) {
-      var nameA = a.name.toUpperCase(), nameB = b.name.toUpperCase(); // ignore upper and lowercase
-      if (nameA < nameB) {
-        return -1;
-      } else {
-        if (nameA > nameB) {
-          return 1;
-        }
-      }
-      return 0;
+    let selWeapons = this.props.availableWeapons.filter(function(val){ 
+      return entity.weapons.includes(val._id);
     });
-
-    let selWeapons = this.state.availableWeapons.filter(function(val){ 
-      return _this.state.entity.weapons.includes(val._id);
-    });
-    let remWeapons = this.state.availableWeapons.filter(function(val){ return !_this.state.entity.weapons.includes(val._id) });
-
-
+    let remWeapons = this.props.availableWeapons.filter(function(val){ return !entity.weapons.includes(val._id) });
+    let {boundEntityAC} = this.props;
+    let _this = this;
     return(
-      <div className="container">
+      <div className="container" ref={(list) => { this.weaponField = list; }}>
         <Subheader>Weapons</Subheader>
-        <List className="EntityWeapons" style={listStyle}>
+        <List className="EntityWeapons" style={listStyle} >
           {selWeapons.concat(remWeapons).map( (weapon, index) => {
-            let _found = _this.state.entity.weapons.findIndex(function(w) { 
+            let _found = entity.weapons.findIndex(function(w) { 
               return weapon._id === w
             });
             let className = (_found > -1) ? ' active' : '';
@@ -554,11 +343,15 @@ class EntityForm extends Component {
             //
             return (
               <ListItem className={className} key={index}  
-                onTouchTap={this.selectWeapon.bind(this, weapon._id)}
+                onTouchTap={_this.selectWeapon.bind(_this, weapon._id)}
                 primaryText={<div >{weapon.name}</div>}  
                 leftAvatar={<Avatar className={'icon '+weapon_icon} />}
-                onMouseEnter={this.handleObjMouseOver.bind(this, weapon, 'weapon')} 
-                onMouseLeave={this.handleObjMouseOver.bind(this, false, false)}
+                onMouseEnter={(e,i,v) => { 
+                  boundEntityAC.updateMouseover(weapon, 'weapon', e) 
+                } } 
+                onMouseLeave={(e,i,v) => { 
+                  boundEntityAC.updateMouseover(false, false, e) 
+                } }
               />
             );
           })}
@@ -567,27 +360,30 @@ class EntityForm extends Component {
     );
   }
 
-  loadWeaponTooltip = () => {
-    return (
-      <WeaponTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
-    );
-  }
-
 	render() {
-    
-    let abilities = this.state.entity.abilities;
+    let {entity, points} = this.props.entitiesState;
+    let abilities = entity.abilities;
     let AbilityMap = new Map(Object.entries(abilities));
     let _this = this;
-    let saveEntities = (this.EntityType === 'monster') ? this.state.availableMonsters : this.state.availableCharacters;
+    let saveEntities = (this.EntityType === 'monster') ? this.props.availableMonsters : this.props.availableCharacters;
+    let formClassName = (this.EntityType === 'monster') ? 'AddMonster' : 'AddCharacter';
 
-    let selectedStyle = Variables.getSelectListStyle(this.state.selectedEntity, saveEntities, true);
-    // selectedStyle.top = selectedStyle.top+15;
+    let selectedStyle = Variables.getSelectListStyle(this.props.selectedEntity, saveEntities, true);
+
 		return (
-			<div className="EntityForm inset">
-        {(this.state.hoverObj.type === 'weapon') ? this.loadWeaponTooltip() : ''}
-        <EntityChooser onHandleSelectedEntity={this.handleSelectedEntity.bind(this)} saveEntities={saveEntities} EntityType={this.EntityType} selectedStyle={selectedStyle} selectedEntity={this.state.selectedEntity} />
-        
-				<TextField  floatingLabelText="Name" value={this.state.entity.name} name="name" onChange={this.handleChange} />
+			<div className={`EntityForm inset ${formClassName}`}>
+        <WeaponTooltip weaponField={this.weaponField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
+        <EntityChooser 
+          onHandleSelectedEntity={this.handleSelectedEntity.bind(this)} 
+          saveEntities={saveEntities} 
+          EntityType={this.EntityType} 
+          selectedStyle={selectedStyle} 
+          selectedEntity={this.props.entitiesState.selectedEntity}
+          boundEntityAC={this.props.boundEntityAC}
+          hoverObj={this.props.entitiesState.hoverObj} 
+          mouse={this.props.entitiesState.mouse}
+        />        
+				<TextField  floatingLabelText="Name" value={entity.name} name="name" onChange={this.handleChange} />
         <RaisedButton primary={true}
           label="Reset"
           onTouchTap={this.resetForm}
@@ -597,30 +393,30 @@ class EntityForm extends Component {
         {(this.EntityType === 'character') ? this.loadClassField() : ''}
         {(this.EntityType === 'monster') ? this.loadRoleField() : ''}
 
-        <SelectField style={Variables.getSelectListStyle(this.state.entity.size, EntitySize.map( (size, index) => {return index}) )} 
+        <SelectField className="bottomAlign"
           floatingLabelText="Size" 
-          value={ EntitySize.findIndex( (size, i) => {return this.state.entity.size === size.label } ) }  
+          value={ Entity._Size.findIndex( (size, i) => {return entity.size === size.label } ) }  
           onChange={this.handleSizeChange} >
-          {EntitySize.map( (size, index) => (
+          {Entity._Size.map( (size, index) => (
             <MenuItem key={index} value={index} primaryText={`${size.label}`} />
           ))}
         </SelectField>
-        <SelectField style={Variables.getSelectListStyle(this.state.entity.armor, EntityArmor.map( (armor, index) => {return index}) )} floatingLabelText="Armor" value={this.state.entity.armor} onChange={this.handleArmorChange} >
-          {EntityArmor.map( (armor, index) => (
+        <SelectField className="bottomAlign" floatingLabelText="Armor" value={entity.armor} onChange={this.handleArmorChange} >
+          {Entity._Armor.map( (armor, index) => (
             <MenuItem key={index} value={index} primaryText={`${armor.name}`} />
           ))}
         </SelectField>
         <br/>
-        <TextField className="shortField" floatingLabelText="Level" type="number" value={this.state.entity.level} name="level" onChange={this.handleLevelChange} />
+        <TextField className="shortField" floatingLabelText="Level" type="number" value={entity.level} name="level" onChange={this.handleLevelChange} />
         {(this.EntityType === 'monster') ? this.loadXPField() : ''}
-        <TextField className="shortField" floatingLabelText="HP"         type="number" value={this.state.entity.hp}         name="hp"         onChange={this.handleHPChange} />
-        <TextField className="shortField" floatingLabelText="Speed"      type="number" value={this.state.entity.speed}      name="speed"      onChange={this.handleChange} />
+        <TextField className="shortField" floatingLabelText="HP"         type="number" value={entity.hp}         name="hp"         onChange={this.handleHPChange} />
+        <TextField className="shortField" floatingLabelText="Speed"      type="number" value={entity.speed}      name="speed"      onChange={this.handleChange} />
         <div className="AbilityBox">
-          <Subheader>Remaining Ability Points: {this.state.remainingPoints}</Subheader>
+          <Subheader>Remaining Ability Points: {points.remainingPoints}</Subheader>
           <div className="AbilityList">
             {[...AbilityMap.entries()].map(function(a, i) {
-              let attackMod = AttackModifier(_this.state.entity.level, a[1].score);
-              let RaceBonus = (EntityRace[_this.state.entity.race] === undefined || EntityRace[_this.state.entity.race].abilityMod[ a[0] ] === undefined) ? 0 : EntityRace[_this.state.entity.race].abilityMod[ a[0] ];
+              let attackMod = Entity.AttackModifier(entity.level, a[1].score);
+              let RaceBonus = (Entity._Race[entity.race] === undefined || Entity._Race[entity.race].abilityMod[ a[0] ] === undefined) ? 0 : Entity._Race[entity.race].abilityMod[ a[0] ];
               let styleRaceBonus = (RaceBonus===0) ? {display:'none'} : {};
 
               return (
@@ -628,7 +424,7 @@ class EntityForm extends Component {
                   <TextField className="miniField" floatingLabelText={a[0]}  type="number" 
                       value={ abilities[ a[0] ].score } name={a[0]} onChange={_this.changeAbility} />
                   <Chip tabIndex={-1} className="abilityChip">Atk: {(attackMod > 0 ? '+' : '') + attackMod}</Chip>    
-                  <Chip tabIndex={-1} className="abilityChip">Abl: {(AbilityModifier(a[1].score) > 0 ? '+' : '') + AbilityModifier(a[1].score)}</Chip>
+                  <Chip tabIndex={-1} className="abilityChip">Abl: {(Entity.AbilityModifier(a[1].score) > 0 ? '+' : '') + Entity.AbilityModifier(a[1].score)}</Chip>
                   <Chip tabIndex={-1} className="abilityChip" style={styleRaceBonus }>Race: +{RaceBonus}</Chip>
                   
                 </div>
@@ -636,11 +432,11 @@ class EntityForm extends Component {
             })}
           </div>
         </div>
-        <TextField className="shortField" floatingLabelText="Armor Class" type="number" value={this.state.entity.defense.armorClass.total} name="armorClass" onChange={this.handleArmorClassChange} />
-        <TextField className="shortField" floatingLabelText="Fortitude" type="number" value={this.state.entity.defense.fortitude.total} name="fortitude" onChange={this.handleFortitudeChange} />
-        <TextField className="shortField" floatingLabelText="Reflex" type="number" value={this.state.entity.defense.reflex.total} name="reflex" onChange={this.handleReflexChange} />
-        <TextField className="shortField" floatingLabelText="Willpower" type="number" value={this.state.entity.defense.willpower.total} name="willpower" onChange={this.handleWillpowerChange} />
-        <TextField className="shortField" floatingLabelText="Initiative" type="number" value={this.state.entity.initiative.total} name="initiative" onChange={this.handleInitiativeChange} />
+        <TextField className="shortField" floatingLabelText="Armor Class" type="number" value={entity.defense.armorClass.total} name="armorClass" onChange={this.handleArmorClassChange} />
+        <TextField className="shortField" floatingLabelText="Fortitude" type="number" value={entity.defense.fortitude.total} name="fortitude" onChange={this.handleFortitudeChange} />
+        <TextField className="shortField" floatingLabelText="Reflex" type="number" value={entity.defense.reflex.total} name="reflex" onChange={this.handleReflexChange} />
+        <TextField className="shortField" floatingLabelText="Willpower" type="number" value={entity.defense.willpower.total} name="willpower" onChange={this.handleWillpowerChange} />
+        <TextField className="shortField" floatingLabelText="Initiative" type="number" value={entity.initiative.total} name="initiative" onChange={this.handleInitiativeChange} />
         <div className="Lists">
           {this.loadEntityIconField()}
           {this.loadPowersField()}
@@ -649,11 +445,11 @@ class EntityForm extends Component {
         <br/>
         <div className="shields">
           <Subheader>Shield</Subheader>
-          {EntityShield.map( (shield, index) => {
+          {Entity._Shield.map( (shield, index) => {
             return (
               <Toggle key={index}
                 label={shield.name}
-                toggled={ this.state.entity.shield === shield.score ? true : false }
+                toggled={ entity.shield === shield.score ? true : false }
                 data-shield={shield.score}
                 onToggle={this.handleShieldChoice}
               />
@@ -669,12 +465,10 @@ class EntityForm extends Component {
         <Snackbar
           open={this.state.snackbarOpen}
           message={this.state.snackbarMsg}
-          autoHideDuration={4000}
-          onRequestClose={this.handleSnackBarClose}          
+          autoHideDuration={4000}         
         />
 			</div>
 		);
-//<PowersForm entityType={this.EntityType} existingPowers={this.state.existingPowers} onFindPowers={this.findPowers} onIncludePower={this.includePower}/>   
 	}
 
 }
