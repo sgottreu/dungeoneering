@@ -8,6 +8,7 @@ import PowersForm from './PowersForm';
 import SortByKey from '../lib/SortByKey';
 import EntityChooser from './EntityChooser';
 import WeaponTooltip from './WeaponTooltip';
+import PowerTooltip from './PowerTooltip';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import {List, ListItem} from 'material-ui/List';
@@ -32,6 +33,7 @@ class EntityForm extends Component {
 
     this.EntityType = this.props.EntityType;
     this.weaponField = null;
+    this.powerField = null;
 
     this.handleChange = this.handleChange.bind(this);
     this.resetForm = this.resetForm.bind(this);
@@ -283,7 +285,11 @@ class EntityForm extends Component {
     let _powers = (this.EntityType === 'character') ? this.props.existingPowers : this.props.entitiesState.entity.powers;
 
     return(
-      <div className="container">
+      <div className="container"
+        ref={(list) => { 
+          this.powerField = list; 
+        }}
+      >
         <Subheader>Powers</Subheader>
         <List className="EntityPowers" style={listStyle}>
           
@@ -292,7 +298,14 @@ class EntityForm extends Component {
               return (
                 <ListItem  key={index} 
                   primaryText={<div >{power.name}</div>}  
-                  leftAvatar={<Avatar className={'icon weapon_'+power.class} />}
+                  leftAvatar={<Avatar 
+                  className={'icon weapon_'+power.class} />}
+                  onMouseEnter={(e,i,v) => { 
+                    _this.boundEntityAC.updateMouseover(power, 'power', e) 
+                  } } 
+                  onMouseLeave={(e,i,v) => { 
+                    _this.boundEntityAC.updateMouseover(false, false, e) 
+                  } }
                 />
               );
             } else {
@@ -309,7 +322,15 @@ class EntityForm extends Component {
               return (
                 <ListItem className={className} key={index} 
                   primaryText={<div >{power.name}</div>}  
-                  leftAvatar={<Avatar className={'icon weapon_'+Powers.powerType[power.type].class} onTouchTap={_this.selectCharacterPower.bind(this, power)}/>}
+                  leftAvatar={<Avatar 
+                  className={'icon weapon_'+Powers.powerType[power.type].class} 
+                  onTouchTap={_this.selectCharacterPower.bind(this, power)}/>}
+                  onMouseEnter={(e,i,v) => { 
+                    _this.boundEntityAC.updateMouseover(power, 'power', e) 
+                  } } 
+                  onMouseLeave={(e,i,v) => { 
+                    _this.boundEntityAC.updateMouseover(false, false, e) 
+                  } }
                 />
               );
             }
@@ -377,6 +398,7 @@ class EntityForm extends Component {
 		return (
 			<div className={`EntityForm inset ${formClassName}`}>
         <WeaponTooltip weaponField={this.weaponField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
+        <PowerTooltip powerField={this.powerField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
         <EntityChooser 
           onHandleSelectedEntity={this.handleSelectedEntity.bind(this)} 
           saveEntities={saveEntities} 
