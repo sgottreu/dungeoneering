@@ -331,7 +331,11 @@ class EntityForm extends Component {
     let {boundEntityAC} = this.props;
     let _this = this;
     return(
-      <div className="container" ref={(list) => { this.weaponField = list; }}>
+      <div className="container" 
+        ref={(list) => { 
+        this.weaponField = list; 
+        }}
+      >
         <Subheader>Weapons</Subheader>
         <List className="EntityWeapons" style={listStyle} >
           {selWeapons.concat(remWeapons).map( (weapon, index) => {
