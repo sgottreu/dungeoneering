@@ -8,14 +8,16 @@ import MenuItem from 'material-ui/MenuItem';
 import { Route } from 'react-router-dom';
 
 import Home from './components/Home';
-import DungeonMaker from './components/DungeonMaker';
-import RunEncounter from './components/RunEncounter';
-import CreateEncounter from './components/CreateEncounter';
-import AddMonster from './components/AddMonster';
-import CreateCharacter from './components/CreateCharacter';
-import AddWeapon from './components/AddWeapon';
-import AddPowers from './components/AddPowers';
-import CreateParty from './components/CreateParty';
+
+import RunEncounterContainer from './containers/run-encounter-container';
+import AddMonstersContainer from './containers/add-monsters-container';
+import AddWeaponsContainer from './containers/add-weapons-container';
+import AddPowersContainer from './containers/add-powers-container';
+import AddCharactersContainer from './containers/add-characters-container';
+import AddDungeonsContainer from './containers/add-dungeons-container';
+import CreatePartyContainer from './containers/create-party-container';
+import CreateEncounterContainer from './containers/create-encounter-container';
+
 
 import './css/App.css';
 
@@ -69,14 +71,14 @@ class App extends Component {
         {this.props.children}
       	
         <Route exact path="/" component={Home} />
-        <Route path="/runEncounter" component={RunEncounter}/>
-        <Route path="/createEncounter" component={CreateEncounter}/>
-        <Route path="/dungeonMaker" component={DungeonMaker} />
-        <Route path="/createParty" component={CreateParty}/>
-        <Route path="/createCharacter" component={CreateCharacter}/>
-        <Route path="/addMonster" component={AddMonster}/>
-        <Route path="/addWeapon" component={AddWeapon}/>
-        <Route path="/addPowers" component={AddPowers}/>
+        <Route path="/runEncounter" component={() => (<RunEncounterContainer />)}/>
+        <Route path="/createEncounter" component={() => (<CreateEncounterContainer />)}/>
+        <Route path="/dungeonMaker" component={() => (<AddDungeonsContainer />)} />
+        <Route path="/createParty" component={() => (<CreatePartyContainer />)}/>
+        <Route path="/createCharacter" component={ () => (<AddCharactersContainer />) } />
+        <Route path="/addMonster" component={ () => (<AddMonstersContainer />) } />
+        <Route path="/addWeapon" component={() => (<AddWeaponsContainer />)} />
+        <Route path="/addPowers" component={() => (<AddPowersContainer />)} />
       </div>
 
        

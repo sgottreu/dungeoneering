@@ -1,30 +1,33 @@
 import React, { Component } from 'react';
-import Slots from './Slots.js';
+import Slots from '../lib/Slots.js';
 import DungeonGrid from './DungeonGrid';
 import AttackDialog from './AttackDialog';
 import EncounterLoadDrawer from './EncounterLoadDrawer';
 import EntityTooltip from './EntityTooltip';
 import RaisedButton from 'material-ui/RaisedButton';
-import axios from 'axios';
-import {Variables} from './Variables';
+import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
-import {DieRoll} from './Die';
-import {calcWeaponDamage} from './Weapons';
-import {_Powers} from './_Powers';
-import uuidV4  from 'uuid/v4';
+import {Die} from '../lib/Die';
+import * as Entity from '../lib/Entity';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import '../css/RunEncounter.css';
+
+import * as dungeonsApi from '../api/dungeons-api';
 
 class RunEncounter extends Component {
   constructor(props){
     super(props);
 
+    this.boundEncounterAC      = this.props.boundEncounterAC;
+    this.boundEntityAC      = this.props.boundEntityAC;
+    this.boundDungeonAC       = this.props.boundDungeonAC;
+
     this.selectTile = this.selectTile.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.addTile = this.addTile.bind(this);
     this.chooseDungeon = this.chooseDungeon.bind(this);
-    this.chooseEncounter = this.chooseEncounter.bind(this);
+    // this.chooseEncounter = this.chooseEncounter.bind(this);
     this.setEncounter = this.setEncounter.bind(this);
     this.setDungeon = this.setDungeon.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
@@ -45,6 +48,7 @@ class RunEncounter extends Component {
     this.pickCombatList = this.pickCombatList.bind(this);
     this.resetAttack = this.resetAttack.bind(this);
     this.closeAttackDialog = this.closeAttackDialog.bind(this);
+    this.openDrawer = this.openDrawer.bind(this);
 
     this.state = { 
       slots: Slots,
@@ -56,10 +60,6 @@ class RunEncounter extends Component {
     	choosingEntrance: false,
     	choosingExit: false,
       showAttackDialog: false,
-      foundDungeonGrids: [],
-      availableEncounters: [],
-      availableMonsters: [],
-      availableCharacters: [],
       attacking: false,
       selectedDungeon: false,
       selectedEncounter: false,
@@ -71,6 +71,9 @@ class RunEncounter extends Component {
       partyXP: 0,
       party: false,      
       currentActor: {slot: false, roll: false},
+      drawers: {
+        encounter: false
+      },
       hoverObj: false,
       mouse: {
         clientX: false,
@@ -81,30 +84,6 @@ class RunEncounter extends Component {
 
   componentDidMount() {
     window.addEventListener("click", this.handleMyEvent);
-
-    let _this = this;
-    
-    axios.get(`${Variables.host}/findEncounters`)
-    .then(res => {
-        let state = _this.state;
-        state.availableEncounters = res.data;
-        _this.setState(state);
-    });
-    axios.get(`${Variables.host}/findParties`)
-    .then(res => {
-      let state = _this.state;
-      state.availableParties = res.data;
-      _this.setState( state );
-    }); 
-    axios.get(`${Variables.host}/findEntities`)
-    .then(res => {
-      let state = _this.state;
-      state.availableMonsters = res.data.monster;
-      state.availableCharacters = res.data.character;
-      _this.setState( state );
-    });  
-    _Powers.findPowers(_this);
-
   }
   componentWillUnmount() {
     window.removeEventListener("click", this.handleMyEvent);
@@ -129,6 +108,12 @@ class RunEncounter extends Component {
 
   addTile(slot) {}
 
+  openDrawer = (name, status) => {
+    let state = this.state;
+    state.drawers[ name ] = (status === undefined) ? !state.drawers[ name ] : status;
+    this.setState( state );
+  }
+
   setToMove = () => {
     let state = this.state;
     state.moving = true;
@@ -151,11 +136,13 @@ class RunEncounter extends Component {
 
     let _power = attacker.powers.find(function(p, i){ return p.uuid === attacker.currentPower });
 
-    let _weapon = attacker.inventory.find(function(w, i){ return w.item._id === attacker.currentWeapon });
+    let _weapon = false;
+    if(attacker.inventory !== undefined){
+      _weapon = attacker.inventory.find(function(w, i){ return w.item._id === attacker.currentWeapon });
+    }    
     _weapon = (_weapon === false) ? false : _weapon.item;
 
-    //attack  { against, for, modifier}
-    let natAttackRoll = DieRoll(20);
+    let natAttackRoll = Die.dieRoll(20);
     let AttackMod = attacker.abilities[ _power.attack.for ].AttackModifier;
     let PowerMod = parseInt(_power.attack.modifier, 10);
     let Profiency = (_weapon) ? _weapon.prof : 0;
@@ -178,7 +165,7 @@ class RunEncounter extends Component {
 
       if(_weapon){
         _damage = _weapon.damage;
-        totalDamage += calcWeaponDamage(attacker, AttackMod);
+        totalDamage += Entity.calcWeaponDamage(attacker, AttackMod);
       } else {
         _damage = _power.damage;
         totalDamage += _power.damage.modifier;
@@ -189,7 +176,7 @@ class RunEncounter extends Component {
       num = ( _damage.die === undefined) ? parseInt(die_damage[0], 10) : parseInt(_damage.num, 10);
 
       for(var i=1;i<=num;i++){
-        totalDamage += DieRoll(die);
+        totalDamage += Die.dieRoll(die);
       }
 
       state.selectedAttackers[1].damage = totalDamage;
@@ -244,13 +231,8 @@ class RunEncounter extends Component {
 
   handlePartyChange = (e, index) => {
     let state = this.state;
-    state.selectedParty = state.availableParties[ index ]._id;
-    state.party = state.availableParties[ index ];
-
-    state.party.members.map((p, x) => {
-      p.uuid = uuidV4();
-      return p;
-    });
+    state.selectedParty = this.props.availableParties[ index ];
+    state.party = this.props.availableParties[ index ];
 
     this.setState(state);
   }
@@ -287,7 +269,7 @@ class RunEncounter extends Component {
   }
 
   rollInitiative(){
-    _Dungeon.rollInitiative(this);
+    _Dungeon.rollInitiative(this, this.props.existingPowers);
   }
 
   pickCombatList = () => {
@@ -301,44 +283,36 @@ class RunEncounter extends Component {
     if(selectedEncounter === false){
       return false;
     }
-    let _this = this;
-    axios.get(`${Variables.host}/findEncounter?_id=${selectedEncounter}`)
-      .then(res => {
-        let state = _this.state;
-        state.selectedEncounter = selectedEncounter;
-        state.encounter = res.data;
 
-        _this.setState(state);
-      });
+    let state = this.state;
+    state.selectedEncounter = selectedEncounter;
+    this.setState(state);
+
+    let _selected = this.props.availableEncounters.find(e => { return e._id === selectedEncounter } );
+    this.boundEncounterAC.updateEncounter( _selected );
   }
 
   setDungeon(selectedDungeon){
     if(selectedDungeon === false){
       return false;
     }
+    let { availableCharacters } = this.props;
     let _this = this;
-    axios.get(`${Variables.host}/findDungeonGrid?_id=${selectedDungeon}`)
-    .then(res => {
-      let state = _this.state;
-      state.slots = res.data.slots;
-      state._id = res.data._id;
-      state.title = res.data.title;
+    let _dungeon = dungeonsApi.findDungeon(selectedDungeon);
 
-      // state = _Dungeon.setCombatList(state);
-      // state = _Dungeon.setAttackAttributes(state);
-      state = _Dungeon.addCharToMap(state);
+    _dungeon.then(function (res) {
+      let state = _this.state;
+      state.slots = res.slots;
+
+      state.slots = _Dungeon.addCharToMap(state.selectedParty, state.slots, availableCharacters);
       state = _Dungeon.setUuidMonsters(state);
       state.selectedDungeon = selectedDungeon;
 
       _this.setState(state);
+    })
+    .catch(function (error) {
+      console.log(error);
     });
-  }
-
-  chooseEncounter(id){
-    let state = this.state;
-    state.selectedEncounter = id;
-
-    this.setState( state );
   }
 
   chooseDungeon(id){
@@ -516,7 +490,8 @@ class RunEncounter extends Component {
   }
 
   render() {
-    let {slots, selectedDungeon, selectedEncounter, selectedParty, availableParties, availableEncounters, availableMonsters, combatList, currentActor, selectedAttackers} = this.state;
+    let {slots, selectedDungeon, selectedEncounter, selectedParty, combatList, currentActor, selectedAttackers} = this.state;
+    let {availableParties, availableEncounters, availableMonsters, availableDungeons} = this.props;
     let party = availableParties.find(p => { return p._id === selectedParty} );
     if(party === undefined) {
       party = { members: [] };
@@ -544,7 +519,10 @@ class RunEncounter extends Component {
               selectedDungeon={selectedDungeon}
               selectedParty={selectedParty}            
               availableParties={availableParties}
+              availableDungeons={availableDungeons}
               availableEncounters={availableEncounters}
+              onOpenDrawer={this.openDrawer}
+              open={this.state.drawers.encounter}
               />
             <br />
             <RaisedButton

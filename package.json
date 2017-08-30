@@ -7,9 +7,9 @@
     "node": "6.11.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "node app.js",
-    "dev": "nodemon app.js --ignore dungeon-maker/ --port 4000"
+    "dev": "set DEBUG= && nodemon app.js --ignore dungeon-maker/src --port 4000"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,9 @@
     "uuid": "^3.0.1"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.3.0",
     "nodemon": "^1.11.0"
   }
 }

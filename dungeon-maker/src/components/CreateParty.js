@@ -13,143 +13,112 @@ import Subheader from 'material-ui/Subheader';
 import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
 
-import { EntityClass, calcWeightPrice } from './EntityTemplate';
-// import { _Gear } from './_Gear';
+import * as Entity from '../lib/Entity';
 
-import axios from 'axios';
-import {Variables} from './Variables';
+import {Variables} from '../lib/Variables';
+import * as entitiesApi from '../api/entities-api';
+import * as partiesApi from '../api/parties-api';
 
 import '../css/CreateParty.css';
 
-class CreateParty extends Component{
+class CreateParty extends Component {
 
   constructor(props){
     super(props);
 
-    this.initialPartyState = { 
-      _id: false,
-      name: '',
-      _type: 'party',
-      members: []
-      
-    };
+    this.boundEntityAC      = this.props.boundEntityAC;
+    this.boundPartyAC       = this.props.boundPartyAC;
 
     this.handlePartyChange  = this.handlePartyChange.bind(this);
     this.handleMemberBuyer  = this.handleMemberBuyer.bind(this);
-    this.selectMember       = this.selectMember.bind(this);
+    this.addMember          = this.addMember.bind(this);
     this.loadInventoryItem  = this.loadInventoryItem.bind(this);
     this._updateInventory   = this._updateInventory.bind(this);
     this.handlePartySave    = this.handlePartySave.bind(this);
     this.handleNameChange   = this.handleNameChange.bind(this);
-    this.sortGear           = this.sortGear.bind(this);
 
     this.state = { 
       selectedParty: false,
       selectedMember: false,
-      availableCharacters: [],
-      availableParties: [],
-      availableGear: [],
       snackbarOpen: false,
-      snackbarMsg: '',
-      party: {
-        _id: false,
-        name: '',
-        _type: 'party',
-        members: []
-      }
+      snackbarMsg: ''
     };
   }
 
   componentDidMount() {
     window.addEventListener("click", this.handleMyEvent);
 
-    let _this = this;
-
-    axios.get(`${Variables.host}/findEntities?type=character`)
-    .then(res => {
-      let state = _this.state;
-      state.availableCharacters = res.data.character;
-      _this.setState( state );
-    }); 
-
-    axios.get(`${Variables.host}/findParties`)
-    .then(res => {
-      let state = _this.state;
-      state.availableParties = res.data;
-      _this.setState( state );
-    }); 
-
-    axios.get(`${Variables.host}/findGear`)
-    .then(res => {
-      let state = _this.state;
-      state.availableGear = res.data;
-      _this.setState( state );
-    });
+    // entitiesApi.findCharacters();
+    // partiesApi.findParties();
+    // gearApi.findGear();
   }
 
   handlePartySave = () => {
     let state = this.state;
     let _this = this;
 
-    axios.post(`${Variables.host}/saveParty`, state.party)
-    .then(res => {
-      let _id = res.data._id;
+    let party = partiesApi.saveParty(this.props.partiesState.party);
+    
+    party.then(res => {
+
       state.snackbarOpen = true;
       state.snackbarMsg = 'Party successfully saved';
-      state.party = Variables.clone(_this.initialPartyState);
       state.selectedParty = false;
       state.selectedMember = false;
-
-      let _i = state.availableParties.find(p => { return p._id === res.data._id});
-      if(_i !== -1){
-         state.availableParties[_i] = res.data;
-      } else {
-        state.availableParties.push(res.data);
-      }
-     
+    
       _this.setState( state );
     });
   }
 
   handlePartyChange = (e, index) => {
     let state = this.state;
-    state.selectedParty = state.availableParties[ index ]._id;
-    state.party = state.availableParties[ index ];
+    let availableParties = this.props.partiesState.availableParties;
+    state.selectedParty = availableParties[ index ]._id;
+
     this.setState(state);
+
+    this.boundPartyAC.updateParty( availableParties[ index ] );
   }
 
   handleNameChange = (e) => {
-    let state = this.state;
-    state.party.name = e.target.value;
-    this.setState(state);
+    let party = this.props.partiesState.party;
+    party.name = e.target.value;
+    this.boundPartyAC.updateParty(party);
   }
 
   handleMemberBuyer = (e, value) =>
   {
-    let state = this.state;
-    state.selectedMember = value;
-    this.setState(state);
-  }
+    let state = this.state, _this = this;
 
-  _updateInventory = (item, category, bolRemove, bolAddItem) => {
-    let state = this.state;
-    let _i = state.party.members.findIndex(member => { return member._id === this.state.selectedMember});
-    state.party.members[_i] = calcWeightPrice(state.party.members[_i], item, category, bolRemove, bolAddItem);
+    if(state.selectedMember){
+      entitiesApi.saveEntity(this.props.entitiesState.entity).then(res => {
+        state.snackbarMsg = 'Inventory Successfully updated';
+        state.snackbarOpen = true;
 
-    this.setState(state);
-  }
-
-  selectMember = (character, e) => {
-    let state = this.state;
-    let _i = state.party.members.find( (c, i) => { return c._id === character._id } );
-    
-    if(_i !== undefined ) {
-      state.party.members.splice(_i, 1);
+        _this.setState(state);
+        let _i = _this.props.availableCharacters.findIndex( c => { return c._id === value });
+        _this.boundEntityAC.updateKey( 'entity', Variables.clone( _this.props.availableCharacters[ _i ] ) );
+        _this.boundEntityAC.updateKey( 'selectedEntity', _i );
+      });
     } else {
-      state.party.members.push(character);
+      state.selectedMember = value;
+      _this.setState(state);
+
+      let _i = _this.props.availableCharacters.findIndex( c => { return c._id === value });
+      _this.boundEntityAC.updateKey( 'entity', Variables.clone( _this.props.availableCharacters[ _i ] ) );
+      _this.boundEntityAC.updateKey( 'selectedEntity', _i );
     }
 
-    this.setState(state);
+    
+  }
+
+  _updateInventory = (item, step) => {
+    this.boundEntityAC.updateEntityInventory(this.props.entitiesState.entity, item, step);
+  }
+
+  addMember = (character, e) => {
+console.log(character);
+    this.boundPartyAC.updatePartyMember(character._id);
   }
 
   loadInventoryItem = (item, index, category, inventory, coin_purse) => {
@@ -161,20 +130,24 @@ class CreateParty extends Component{
     let quantity = (inventory !== undefined && inventory.quantity !== undefined) ? inventory.quantity : 0;
     let bolNonAddable = (['shield', 'armor'].includes(category)) ? true : false;
     bolNonAddable = (!bolNonAddable && tmpItem.price > coin_purse) ? true : bolNonAddable;
+
+    let totalWeight = tmpItem.weight * (quantity/tmpItem.quantity);
+
     return (
       <TableRow key={index} style={ (quantity > 0) ? {background: 'rgba(0, 188, 212,.05)'} : {} } >
-        <TableRowColumn>{tmpItem.name}</TableRowColumn>
+        <TableRowColumn style={{width: '200px'}}>{tmpItem.name}</TableRowColumn>
         <TableRowColumn>{Variables.toProperCase(category)}</TableRowColumn>
-        <TableRowColumn style={{textAlign: 'right', width: '50px'}}>{tmpItem.price.toFixed(2)} gp</TableRowColumn>
+        <TableRowColumn style={{textAlign: 'right', width: '75px'}}>{tmpItem.price.toFixed(2)} gp</TableRowColumn>
+        <TableRowColumn style={{textAlign: 'right'}}>{tmpItem.weight + '('+(totalWeight)+')'}</TableRowColumn>
         <TableRowColumn style={{textAlign: 'center'}}>{tmpItem.quantity}</TableRowColumn>
         <TableRowColumn style={{textAlign: 'center'}}>{quantity}</TableRowColumn>
         <TableRowColumn style={{textAlign: 'center'}}>
           <FloatingActionButton className="button" mini={true} secondary={true} disabled={bolNonAddable}
-            onTouchTap={this._updateInventory.bind(this, tmpItem, category, false, true)}>
+            onTouchTap={this._updateInventory.bind(this, tmpItem, 'add')}>
             <ContentAdd />
           </FloatingActionButton>
           <FloatingActionButton className="button" mini={true} secondary={true} 
-            onTouchTap={this._updateInventory.bind(this, tmpItem, category, (['shield', 'armor', 'weapons'].includes(category)) ? 'category' : 'item', false) }>
+            onTouchTap={this._updateInventory.bind(this, tmpItem, 'remove') }>
             <ContentRemove />
           </FloatingActionButton>
         </TableRowColumn>
@@ -182,31 +155,18 @@ class CreateParty extends Component{
     );
   }
 
-  sortGear = (gear, inventory) => {
-    gear.sort(function(a, b) {
-      var nameA = a.name.toUpperCase(), nameB = b.name.toUpperCase(); // ignore upper and lowercase
-      if (nameA < nameB) {
-        return -1;
-      } else {
-        if (nameA > nameB) {
-          return 1;
-        }
-      }
-      return 0;
-    });
-    return gear;
-  }
-
   render() {
-    let { party, selectedMember, availableGear } = this.state;
-    let spm = party.members.find(member => { return member._id === selectedMember});
+    let { party, availableParties } = this.props.partiesState;
+    let availableCharacters = this.props.availableCharacters;
+    let { entity } = this.props.entitiesState;
+
+    let spm = entity; //availableCharacters.find(member => { return member._id === selectedMember});
     spm = (spm === undefined) ? { inventory: [], coin_purse: 0, encumbered: 0 } : spm;
     spm.inventory.sort( (a, b) => { return a.item.name.toUpperCase() + b.item.name.toUpperCase() } );
-    availableGear = this.sortGear(availableGear, spm.inventory);
     return (
       <div className="CreateParty inset">
         <SelectField  floatingLabelText={`Choose Party`} value={this.state.selectedParty} onChange={this.handlePartyChange} >
-            {this.state.availableParties.map( (party, index) => {
+            {availableParties.map( (party, index) => {
                 return (
                 <MenuItem 
                   key={index} value={party._id} primaryText={`${party.name}`} />
@@ -214,18 +174,21 @@ class CreateParty extends Component{
             })}
         </SelectField>
         <br/>
-        <TextField  floatingLabelText="Party name" value={this.state.party.name} name="name" onChange={this.handleNameChange} />
+        <TextField  floatingLabelText="Party name" value={party.name} name="name" onChange={this.handleNameChange} />
         <div className="Lists">
           <div>
             <Subheader>Party Members</Subheader>
             <RadioButtonGroup name="selectedMembers" className="SelectedPartyMembers list" onChange={this.handleMemberBuyer} >
-              {this.state.party.members.map( (member, index) => {
-                let icon_class = EntityClass[ member.class ].name;
+              {party.members.map( (member, index) => {
+                console.log(availableCharacters);
+                let _i = availableCharacters.findIndex(function(c) { return c._id === member});    
+                let icon_class = (_i === -1) ? '' : Entity._Class[ availableCharacters[_i].class ].name;
+                let charName = (_i === -1) ? '' : availableCharacters[_i].name;
                 return (
-                    <RadioButton key={index} value={member._id} 
+                    <RadioButton key={index} value={member} 
                       label={
                         <div style={ {marginLeft: '40px'} } key={index} >
-                          <Avatar className={`icon ${icon_class.toLowerCase()}`} /> {member.name}
+                          <Avatar className={`icon ${icon_class.toLowerCase()}`} /> {charName}
                         </div> 
                       }
                     />                    
@@ -236,11 +199,11 @@ class CreateParty extends Component{
           <div>
             <Subheader>Available Characters</Subheader>
             <List className="AvailableMembers list">
-              {this.state.availableCharacters.map( (character, index) => {
-                let icon_class = EntityClass[ character.class ].name;
+              {availableCharacters.map( (character, index) => {
+                let icon_class = Entity._Class[ character.class ].name;
                 return (
                   <ListItem key={index}
-                    onTouchTap={this.selectMember.bind(this, character)}
+                    onTouchTap={this.addMember.bind(this, character)}
                     primaryText={<div >{character.name}</div>}  
                     leftAvatar={<Avatar className={`icon ${icon_class.toLowerCase()}`} />}
                   />
@@ -260,11 +223,12 @@ class CreateParty extends Component{
           </div>
         </div>
         <Table className="AvailableGear">
-          <TableHeader displaySelectAll={false}>
+          <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
             <TableRow>
-              <TableHeaderColumn>Item</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '200px'}}>Item</TableHeaderColumn>
               <TableHeaderColumn>Category</TableHeaderColumn>
-              <TableHeaderColumn>Price</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '75px'}}>Price</TableHeaderColumn>
+              <TableHeaderColumn>Weight</TableHeaderColumn>
               <TableHeaderColumn>Quantity</TableHeaderColumn>
               <TableHeaderColumn>In Inventory</TableHeaderColumn>
               <TableHeaderColumn></TableHeaderColumn>
@@ -275,19 +239,22 @@ class CreateParty extends Component{
               let inventory = spm.inventory.find(inv => { 
                 let item_name = (inv.item === undefined) ? inv.name : inv.item.name;
                 let gear_name = (gear.item === undefined) ? gear.name : gear.item.name;
-                return item_name === gear_name
+                return item_name === gear_name && inv.item.quantity > 0;
               });
               var g;
               if( !['weapons', 'shield', 'armor'].includes(gear.category) ){
                 return false;
               } else {
+                if(inventory === undefined){
+                  return false;
+                }
                 g = Variables.clone(gear);
                 g.item.quantity = 1;
                 return this.loadInventoryItem(g.item, index, g.category, inventory, spm.coin_purse);   
               }       
                                      
             })}
-            {availableGear.map( (gear2, index) => {
+            {this.props.availableGear.map( (gear2, index) => {
               let inventory = spm.inventory.find(inv => { return inv.item.name === gear2.name});
               return this.loadInventoryItem(gear2, index, gear2.category, inventory, spm.coin_purse);   
             })}
