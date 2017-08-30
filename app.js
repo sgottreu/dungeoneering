@@ -10,6 +10,7 @@ var mongodb_config = (process.env.mongodb) ? process.env.mongodb : process.argv[
 mongodb_config = (!mongodb_config) ? dotenv['mongodb'] : mongodb_config;
 var mongo_url = 'mongodb://'+mongodb_config;
 var db = monk(mongo_url);
+const fs = require('fs');
 
 var app = express();
 
@@ -58,7 +59,6 @@ app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   if ('OPTIONS' == req.method) {
-    console.log('preflight');
    res.sendStatus(200);
   }
   else {
@@ -77,9 +77,9 @@ app.post('/saveEncounter', function (req, res) {
 
 	let payload = {
 		_type: 'encounter',
-		title: req.body.title,
-		encounterDungeons: req.body.encounterDungeons
-	};
+		name: req.body.name,
+		dungeons: req.body.dungeons
+	};console.log(payload);
 	 _Save(req, res, payload);		
 });
 
@@ -209,17 +209,32 @@ app.post('/saveEntity', function (req, res) {
 
 });
 
-app.get('/findEntities', function (req, res) {
-	console.log('Finding Entities');
-  let query = (req.query.type !== undefined) ? { _type: {"$in": [req.query.type] }} : { _type: {"$in": ["monster","character"] }};
+app.get('/findMonsters', function (req, res) {
+	console.log('Finding Monsters');
+  let query = { _type: {"$in": ["monster"] }};
 	dungeon_grid.find(query).then(function(docs) {
-    let entities = { "monster": [], "character": [] };
+    let entities = [];
 
     for(var x=0,len = docs.length;x<len;x++){
-    	entities[ docs[x]._type ].push(docs[x]);
+    	entities.push(docs[x]);
     }
 
-    console.log(`Found ${docs.length} entities`);
+    console.log(`Found ${docs.length} Monsters`);
+    sendJSON(res, entities);
+  });
+});
+
+app.get('/findCharacters', function (req, res) {
+	console.log('Finding Characters');
+  let query = { _type: {"$in": ["character"] }};
+	dungeon_grid.find(query).then(function(docs) {
+    let entities = [];
+
+    for(var x=0,len = docs.length;x<len;x++){
+    	entities.push(docs[x]);
+    }
+
+    console.log(`Found ${docs.length} Characters`);
     sendJSON(res, entities);
   });
 });
@@ -284,15 +299,30 @@ app.post('/saveGear', function (req, res) {
 });
 
 
+
+
+
 // ************* Admin ******************//
 app.get('/admin', function (req, res) {
-  console.log('admin');
-   
-  EntityArmor.map(armor => {
-    armor._id = monk.id();
-    console.log(JSON.stringify(armor));
-  });
-  res.sendStatus(200);
+  // let query = { _type: {"$in": ["monster"] }};
+	// dungeon_grid.find(query).then(function(docs) {
+  //   let entities = [];
+
+  //   for(var x=0,len = docs.length;x<len;x++){
+  //   	for(var y=0,len2 = docs[x].powers.length;y<len2;y++){
+  //       if( docs[x].powers[y]._id === undefined){
+  //         docs[x].powers[y]._id = uuidV4();
+  //       }
+  //     }
+  //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, docs[x] ).then(function (data) {
+  //       console.log(`${docs[x].name} updated!`);
+  //     }).catch(function(err){ 
+  //       console.log(err);
+  //     });
+  //   }
+
+  //   sendJSON(res, docs);
+  // });
 });
 
 /*********** Global  *************/
@@ -320,11 +350,45 @@ function _Save(req, res, payload){
 	}
 }
 
+// app.get('/reports/coverage', function (req, res) {
+//   res.sendFile(__dirname + '/dungeon-maker/reports/coverage.html');
+// });
+
+app.get('/reports/src/*', (req, res) => {
+  fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
+    if (err) {
+      var newPath = req.originalUrl.replace('/reports/', '');
+      // newPath = newPath.replace('/', '\\');
+      newPath = (newPath.indexOf('.html') > -1) ? newPath : newPath+'.html';
+      res.sendFile(__dirname + '/dungeon-maker/coverage/lcov-report/'+newPath);
+
+      //throw err;
+      return true;
+    }
+    res.sendFile(__dirname + '/dungeon-maker/public/'+req.originalUrl);
+  });  
+});
+
+app.get('/reports/*', (req, res) => {
+  fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
+    if (err) {
+      if(req.originalUrl.indexOf('/reports/data.json') > -1){
+        let json = require('./dungeon-maker/reports/data.json');
+        sendJSON(res, json);
+      } else {
+        res.sendFile(__dirname + '/dungeon-maker/'+req.originalUrl);
+      }
+     
+      //throw err;
+      return true;
+    }
+    res.sendFile(__dirname + '/dungeon-maker/public/'+req.originalUrl);
+  });  
+});
 
 app.get('*', (req, res) => {
   res.sendFile(__dirname + '/dungeon-maker/build/index.html');
 });
-
 
 
 app.listen(port, function () {

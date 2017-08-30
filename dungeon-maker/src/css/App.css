@@ -116,3 +116,7 @@
   background-color: #CCC !important;
   padding: 5px;
 }
+
+.bottomAlign {
+	vertical-align: bottom;
+}

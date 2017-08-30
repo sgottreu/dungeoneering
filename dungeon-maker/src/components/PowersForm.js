@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
-// import Die from './Die';
-import {_Powers, PowerTemplate} from './_Powers';
-import {EntityTemplate, EntityClass} from './EntityTemplate';
-import {Variables} from './Variables';
-import {Die} from './Die';
+
+import {Powers} from '../lib/Powers';
+import * as Entity from '../lib/Entity';
+import {Variables} from '../lib/Variables';
+import {Die} from '../lib/Die';
+import * as powersApi from '../api/powers-api';
+import uuidV4  from 'uuid/v4';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import '../css/PowersForm.css';
 
@@ -17,10 +20,12 @@ class PowersForm extends Component {
 	constructor(props){
 		super(props);
 
-		this.abilities = Variables.mapObj(EntityTemplate.abilities);
-		this.defense = Variables.mapObj(EntityTemplate.defense);
+		this.abilities = Variables.mapObj(Entity.Template.abilities);
+		this.defense = Variables.mapObj(Entity.Template.defense);
 
-		this._setEntityState = this._setEntityState.bind(this);
+    this.boundPowerAC = this.props.boundPowerAC;
+    this.boundEntityAC = this.props.boundEntityAC;
+
 		this.handleChoosePower = this.handleChoosePower.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleTypeChange = this.handleTypeChange.bind(this);
@@ -43,130 +48,110 @@ class PowersForm extends Component {
     this.loadMonsterDamageField = this.loadMonsterDamageField.bind(this);
     this.loadCharacterDamageField = this.loadCharacterDamageField.bind(this);
 
-		this.state = { 
-			current_power: false,
-			power: Variables.clone(PowerTemplate)
-		};
+    this.updateSnackBar = this.updateSnackBar.bind(this);
+
+    this.state = { 
+      snackbarOpen: false,
+      snackbarMsg: ''
+    };
+
 	}
 
   componentDidMount() {
-    let _this = this;
+
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if(nextProps.selEntity === false && this.props.selEntity){
-      let state = this.state;
-      state.power = Variables.clone(PowerTemplate);
-      state.current_power = false;
-      this.setState( state );
-    }
-
-    return true;
+  updateSnackBar = (msg, open=false) => {
+    this.setState( { snackbarMsg: msg, snackbarOpen: open } );
   }
 
   handleChoosePower(event, index) {
-  	let state = this.state;
-    state.power = Variables.clone(PowerTemplate);
-    if(index === 0){
-      state.power = Variables.clone(PowerTemplate);
-      state.current_power = false;
-    } else {
-      state.power = this.props.existingPowers[index-1];
-      state.current_power = index;
-    }
-  	
-  	this.setState( state );
-  	// this.props.onIncludePower(state.current_power);
+    let id = (index === 0) ? 0 : this.props.existingPowers[index-1]._id;
+    this.boundPowerAC.changeCurrentPower(id);
   }
 
   addPower(){
-    
-    if(this.props.onFindPowers !== undefined){
-      _Powers.savePower(this);
-      this.props.onFindPowers(this.state.power);
+    if(this.props.entityType === 'character'){
+      let updateSnackBar = this.updateSnackBar;
+      powersApi.savePower( this.props.power ).then( function(response){
+        updateSnackBar('Power saved.', true);
+      });
     } else {
-      this.props.onIncludePower(this.state.power, this.state.current_power);
-      let state = this.state;
-      state.power = Variables.clone(PowerTemplate);
-      state.current_power = false;
-      this.setState( state );
-    }
-    
-  }
-
-  _setEntityState(key, value){
-		let state = this.state;
-		state.power[ key ] = value;
-		this.setState( state );
+      if(this.props.entityType === 'monster'){
+        let power = this.props.power;
+        if(power._id === undefined){
+          power._id = uuidV4();
+        }
+        this.boundEntityAC.updateEntityMonsterPower( power );
+      }
+    }    
   }
 
   handleChange = (event) => {
-    this._setEntityState( event.target.name, event.target.value);
+    this.boundPowerAC.updateKey( event.target.name, event.target.value);
   }
 
   handleTypeChange = (event, index) => {
-  	let state = this.state;
-  	state.power.attack.for = _Powers.powerType[index].attack.for;
-  	state.power.attack.against = _Powers.powerType[index].attack.against;
-
-    state.power.class = _Powers.powerType[index].class;
-
-  	state.power.type = index;
-		this.setState( state );
+      Promise.all([
+        this.boundPowerAC.updateAttack( 'for', Powers.powerType[index].attack.for ),
+        this.boundPowerAC.updateAttack( 'against', Powers.powerType[index].attack.against ),
+        this.boundPowerAC.updateKey( 'class', Powers.powerType[index].class),
+        this.boundPowerAC.updateKey( 'type', index )
+      ]);
   }
 
   handleActionChange = (event, index) => {
-		this._setEntityState( 'action', index);
+		this.boundPowerAC.updateKey( 'action', index);
   }
 
   handleWeaponChange = (event, index) => {
     let weapons = this.props.weapons;
-    let state = this.state;
-    state.power.weapon = index;
     let _weapon = this.props.availableWeapons.find(function(w, i){ return w._id === weapons[index] });
-
+    let {boundPowerAC} = this.props;
     if(_weapon.damage.die === undefined) {
       let damage = _weapon.damage.split('d');
-      state.power.damage.die = `d${damage[1]}`;
-      state.power.damage.num = damage[0];
+      this.boundPowerAC.changeDieType( `d${damage[1]}` );
+      this.boundPowerAC.changeDieNumber( damage[0] );
     } else {
-      state.power.damage.die = _weapon.damage.die;
-      state.power.damage.num = _weapon.damage.num;
+      boundPowerAC.changeDieType( _weapon.damage.die );
+      boundPowerAC.changeDieNumber( _weapon.damage.num );
     }
-
-    this.setState( state );
   }
 
   handleRechargeChange = (event, index) => {
-		this._setEntityState( 'recharge', index);
+		this.boundPowerAC.updateKey( 'recharge', index);
   }
 
   handleAttackModifierChange = (event) => {
-    let state = this.state;
-		state.power.attack.modifier = event.target.value;
-		this.setState( state );
+		this.boundPowerAC.updateAttack( 'modifier', event.target.value );
   }
 
   handleAttackChange = (event, index) => {
-		let state = this.state;
-		state.power.attack.for = this.abilities[index];
-		this.setState( state );
+	  this.boundPowerAC.updateAttack( 'for', this.abilities[index] );
   }
 
   handleDefenseChange = (event, index) => {
-		let state = this.state;
-		state.power.attack.against =  this.defense[index];
-		this.setState( state );
+    this.boundPowerAC.updateAttack( 'against', this.defense[index]);
   }
 
   handleAbilityModifierChange = (event, index) => {
-		let state = this.state;
-		state.power.ability_modifier = (index === 0) ? false : this.abilities[index-1];
-		this.setState( state );
+		this.boundPowerAC.updateKey( 'ability_modifier', (index === 0) ? false : this.abilities[index-1] );
   }
 
   handleClassChange = (event, index) => {
-    this._setEntityState( 'class', EntityClass[index]);
+    this.boundPowerAC.updateKey( 'class', Entity._Class[index]);
+  }
+
+  handleDieNumChange = (event) => {
+    this.boundPowerAC.changeDieNumber(event.target.value);
+  }
+
+  handleDieChange = (event, index) => {
+    this.boundPowerAC.changeDieType(index);
+  }
+
+  handleDieModChange = (event) => {
+    this.boundPowerAC.changeDieModifier(event.target.value);
   }
 
   loadPowerAttackModifier(_power) {
@@ -183,8 +168,8 @@ class PowersForm extends Component {
 
   loadClassField(_power){
    return (
-      <SelectField maxHeight={200} style={Variables.getSelectListStyle(_power.class)} floatingLabelText="Power Class" value={EntityClass.findIndex((_class, index)=> { return _class.name === _power.class.name})} name="type" onChange={this.handleClassChange} >
-        {EntityClass.map( (_class, index) => (
+      <SelectField className="bottomAlign" maxHeight={200} floatingLabelText="Power Class" value={Entity._Class.findIndex((_class, index)=> { return _class.name === _power.class.name})} name="type" onChange={this.handleClassChange} >
+        {Entity._Class.map( (_class, index) => (
           <MenuItem key={index} value={index} primaryText={_class.name} />
         ))}
       </SelectField>
@@ -195,7 +180,7 @@ class PowersForm extends Component {
   loadWeaponsField(weapons){
     let availableWeapons = this.props.availableWeapons;
     return (
-      <SelectField   floatingLabelText="Weapon" value={this.state.power.weapon} onChange={this.handleWeaponChange} >
+      <SelectField className="bottomAlign"   floatingLabelText="Weapon" value={this.props.power.weapon} onChange={this.handleWeaponChange} >
         {weapons.map( (weapon, index) => {
           let _weapon = availableWeapons.find(function(w, i){ return w._id === weapon});
           return (
@@ -207,14 +192,13 @@ class PowersForm extends Component {
   }
 
   loadPowerChooser(){
-    let _power = this.state.power;
-    let existingPowers = this.props.existingPowers;
-
+    let { existingPowers, current_power } = this.props;
       return (
-        <SelectField floatingLabelText="Choose Power" value={this.state.current_power} onChange={this.handleChoosePower} >
+        <SelectField className="bottomAlign" floatingLabelText="Choose Power" value={current_power} onChange={this.handleChoosePower} >
           <MenuItem key={0} value={0} primaryText="Add New Power" />
-          {existingPowers.map( (power, index) => (
-            <MenuItem leftIcon={<div className={'icon icon_power_class '+(power.class.name === undefined? power.class : power.class.name.toLowerCase())} />} key={index+1} value={index+1} primaryText={power.name} />
+          {existingPowers.map( (p, index) => (
+            <MenuItem leftIcon={<div className={'icon icon_power_class '+(p.class.name === undefined? p.class : p.class.name.toLowerCase())} />} 
+              key={p._id} value={p._id} primaryText={p.name} />
           ))}
         </SelectField>
       );
@@ -225,8 +209,8 @@ class PowersForm extends Component {
     return (
       <div className="damage">
         <TextField className="mediumField" floatingLabelText="Num of Damage Die"      type="number" value={_power.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
-        <SelectField style={ { position: 'relative', top: 15 } } floatingLabelText="Damage" name="damage_die" value={_power.damage.die}  onChange={this.handleDieChange} >
-          {Die.map( (die, index) => (
+        <SelectField className="bottomAlign" floatingLabelText="Damage" name="damage_die" value={_power.damage.die}  onChange={this.handleDieChange} >
+          {Die.types.map( (die, index) => (
             <MenuItem key={index} value={`${die.label}`} primaryText={`${die.label}`} />
           ))}
         </SelectField>
@@ -241,7 +225,7 @@ class PowersForm extends Component {
       <div className="damage">
         <TextField className="mediumField" floatingLabelText="Weapon Modifier"  
           type="number" value={_power.weapon_modifier}      name="weapon_modifier"      onChange={this.handleChange} />
-        <SelectField floatingLabelText="Ability Modifier" value={this.abilities.findIndex( (val) => { return val === _power.ability_modifier })} onChange={this.handleAbilityModifierChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Ability Modifier" value={this.abilities.findIndex( (val) => { return val === _power.ability_modifier })} onChange={this.handleAbilityModifierChange} >
           <MenuItem key={-1} value={false} primaryText="None" />
           {this.abilities.map( (abl, index) => (
             <MenuItem key={index} value={index} primaryText={abl} />
@@ -251,66 +235,47 @@ class PowersForm extends Component {
     );
   }
 
-  handleDieNumChange = (event) => {
-    let state = this.state;
-    state.power.damage.num = event.target.value;
-    this.setState( state );
-  }
-
-  handleDieChange = (event, index) => {
-    let state = this.state;
-    state.power.damage.die = Die[index].label;
-    this.setState( state );
-  }
-
-  handleDieModChange = (event) => {
-    let state = this.state;
-    state.power.damage.modifier = event.target.value;
-    this.setState( state );
-  }
-
 	render(){
-		let { entityType, weapons } = this.props;
-		let _power = this.state.power;
+		let { entityType, weapons, power } = this.props;
 
 		return (
 			<div className={'PowersForm inset'}>
 				
 				{this.loadPowerChooser()}
         <br/>
-				<TextField className="" floatingLabelText="Power Name" value={_power.name} name="name" onChange={this.handleChange} />
-        { (entityType === 'character') ? this.loadPowerLevel(_power) : ''}
+				<TextField className="" floatingLabelText="Power Name" value={power.name} name="name" onChange={this.handleChange} />
+        { (entityType === 'character') ? this.loadPowerLevel(power) : ''}
 				<br/>
         <div className="selectRow">
-  				<SelectField maxHeight={200} style={Variables.getSelectListStyle(_power.type)} floatingLabelText="Power Type" value={_power.type} name="type" onChange={this.handleTypeChange} >
-            {_Powers.powerType.map( (type, index) => (
+  				<SelectField className="bottomAlign" maxHeight={200}  floatingLabelText="Power Type" value={power.type} name="type" onChange={this.handleTypeChange} >
+            {Powers.powerType.map( (type, index) => (
             	<MenuItem key={index} value={index} primaryText={type.name} />
             ))}
           </SelectField>
           
-  				<SelectField maxHeight={200} style={Variables.getSelectListStyle(_power.action)} floatingLabelText="Power Action" value={_power.action} name="action" onChange={this.handleActionChange} >
-            {_Powers.powerAction.map( (action, index) => (
+  				<SelectField className="bottomAlign" maxHeight={200}  floatingLabelText="Power Action" value={power.action} name="action" onChange={this.handleActionChange} >
+            {Powers.powerAction.map( (action, index) => (
             	<MenuItem key={index} value={index} primaryText={action} />
             ))}
           </SelectField>
           
-  				<SelectField maxHeight={200} style={Variables.getSelectListStyle(_power.recharge)} floatingLabelText="Power Recharge" value={_power.recharge} name="recharge" onChange={this.handleRechargeChange} >
-            {_Powers.powerRecharge.map( (recharge, index) => (
+  				<SelectField className="bottomAlign" maxHeight={200}  floatingLabelText="Power Recharge" value={power.recharge} name="recharge" onChange={this.handleRechargeChange} >
+            {Powers.powerRecharge.map( (recharge, index) => (
             	<MenuItem key={index} value={index} primaryText={recharge} />
             ))}
           </SelectField>
-          {(entityType === 'character') ? this.loadClassField(_power) : ''} 
+          {(entityType === 'character') ? this.loadClassField(power) : ''} 
         </div>
         <br/>
         <div className="attack">
-        	{this.loadPowerAttackModifier(_power)}
-        	<SelectField floatingLabelText="Offense" value={this.abilities.findIndex( (val) => { return val === _power.attack.for })} onChange={this.handleAttackChange} >
+        	{this.loadPowerAttackModifier(power)}
+        	<SelectField className="bottomAlign" floatingLabelText="Offense" value={this.abilities.findIndex( (val) => { return val === power.attack.for })} onChange={this.handleAttackChange} >
 	          {this.abilities.map( (abl, index) => (
 	          	<MenuItem key={index} value={index} primaryText={abl} />
 	          ))}
 	        </SelectField>
-	         vs. 
-	        <SelectField floatingLabelText="Defense" value={this.defense.findIndex( (val) => { return val === _power.attack.against })} onChange={this.handleDefenseChange} >
+	          vs.  
+	        <SelectField className="bottomAlign" floatingLabelText="Defense" value={this.defense.findIndex( (val) => { return val === power.attack.against })} onChange={this.handleDefenseChange} >
 	          {this.defense.map( (def, index) => (
 	          	<MenuItem key={index} value={index} primaryText={def} />
 	          ))}
@@ -318,12 +283,17 @@ class PowersForm extends Component {
         </div>
         {(entityType === 'monster') ? this.loadWeaponsField(weapons) : ''}
         <br/>
-        {(entityType === 'monster') ? this.loadMonsterDamageField(_power) : this.loadCharacterDamageField(_power) }
+        {(entityType === 'monster') ? this.loadMonsterDamageField(power) : this.loadCharacterDamageField(power) }
         <br/>
         <br/>
         <RaisedButton primary={true}
           label={'Add Power'}
           onTouchTap={this.addPower}
+        />
+        <Snackbar
+          open={this.state.snackbarOpen}
+          message={this.state.snackbarMsg}
+          autoHideDuration={4000}            
         />
         <br/>
 			</div>

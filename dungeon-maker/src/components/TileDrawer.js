@@ -1,59 +1,50 @@
-import React, {Component} from 'react';
+import React from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import Drawer from 'material-ui/Drawer';
-import TileOptions from './TileOptions';
+import TileOptions from '../lib/TileOptions';
 import TilePool from './TilePool';
 import '../css/TileDrawer.css';
-class TileDrawer extends Component {
-	
-	constructor(props){
-    super(props);
-    this.handleToggle = this.handleToggle.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    this.toggleWithKey = this.toggleWithKey.bind(this);
-    this.state = {open: false};
 
-  }
+const TileDrawer = ({ selectedTile, onOpenDrawer, open, onUpdateKey, selectedEntity }) => {
 
-  componentDidMount() {
-      window.addEventListener("keyup", this.toggleWithKey);
-  }
-
-  toggleWithKey = (e) => {
+  const toggleWithKey = (e) => {
     if(e.keyCode === 84 && e.altKey){
-      this.handleToggle();
+      onOpenDrawer('tile');
     } else {
 			if((e.keyCode === 77 || e.keyCode === 71 || e.keyCode === 84) && e.altKey){
-			  this.setState({open: false});
+			  onOpenDrawer('tile', false);
       }
 		}
   }
 
-	handleToggle = () => this.setState({open: !this.state.open});
+  window.addEventListener("keyup", toggleWithKey);
 
-  handleClose = () => this.setState({open: false});
-
-	render(){
-		let {onSelectTile, selectedTile } = this.props;
-		return (
-			<div className="TileDrawer">
-			 <RaisedButton
-          label="Show Tiles"
-          secondary={true} 
-          onTouchTap={this.handleToggle}
-					className="button"
+	return (
+		<div className="TileDrawer">
+		 <RaisedButton
+        label="Show Tiles"
+        secondary={true} 
+        onTouchTap={ () => {onOpenDrawer('tile')} }
+				className="button"
+      />
+      <Drawer
+        docked={false}
+        width={300}
+        open={open}
+        onRequestChange={(open) => {
+          onOpenDrawer('tile', false)
+        }}
+      >
+				<TilePool 
+          tiles={TileOptions} 
+          onUpdateKey={onUpdateKey} 
+          selectedTile={selectedTile} 
+          selectedEntity={selectedEntity}
         />
-        <Drawer
-          docked={false}
-          width={300}
-          open={this.state.open}
-          onRequestChange={(open) => this.setState({open})}
-        >
-					<TilePool tiles={TileOptions} onSelectTile={onSelectTile} selectedTile={selectedTile} />
-	      </Drawer>
-	    </div>
-	  )
-	}
+      </Drawer>
+    </div>
+  )
+	
 
 }
 
