@@ -6,7 +6,7 @@ import {Variables} from '../lib/Variables';
 import {Die} from '../lib/Die';
 import * as powersApi from '../api/powers-api';
 import uuidV4  from 'uuid/v4';
-
+import PowerTooltip from './PowerTooltip';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
@@ -25,6 +25,8 @@ class PowersForm extends Component {
 
     this.boundPowerAC = this.props.boundPowerAC;
     this.boundEntityAC = this.props.boundEntityAC;
+
+    this.powerField = null;
 
 		this.handleChoosePower = this.handleChoosePower.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -192,13 +194,23 @@ class PowersForm extends Component {
   }
 
   loadPowerChooser(){
-    let { existingPowers, current_power } = this.props;
+    let { existingPowers, current_power, boundEntityAC } = this.props;
       return (
         <SelectField className="bottomAlign" floatingLabelText="Choose Power" value={current_power} onChange={this.handleChoosePower} >
           <MenuItem key={0} value={0} primaryText="Add New Power" />
           {existingPowers.map( (p, index) => (
-            <MenuItem leftIcon={<div className={'icon icon_power_class '+(p.class.name === undefined? p.class : p.class.name.toLowerCase())} />} 
-              key={p._id} value={p._id} primaryText={p.name} />
+            <MenuItem 
+              leftIcon={<div className={'icon icon_power_class '+(p.class.name === undefined? p.class : p.class.name.toLowerCase())} />} 
+              key={p._id} 
+              value={p._id} 
+              primaryText={p.name} 
+              onMouseEnter={(e,i,v) => { 
+                boundEntityAC.updateMouseover(p, 'power', e) 
+              } } 
+              onMouseLeave={(e,i,v) => { 
+                boundEntityAC.updateMouseover(false, false, e) 
+              } }  
+            />
           ))}
         </SelectField>
       );
@@ -236,10 +248,17 @@ class PowersForm extends Component {
   }
 
 	render(){
-		let { entityType, weapons, power } = this.props;
+    let { entityType, weapons, powersState } = this.props;
+    let { current_power, power } = powersState;
 
 		return (
-			<div className={'PowersForm inset'}>
+      
+			<div 
+        className={'PowersForm inset'}
+        ref={(list) => { 
+          this.powerField = list; 
+        }}  
+      >
 				
 				{this.loadPowerChooser()}
         <br/>
@@ -296,6 +315,7 @@ class PowersForm extends Component {
           autoHideDuration={4000}            
         />
         <br/>
+        <PowerTooltip powerField={this.powerField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
 			</div>
 		);
 	}

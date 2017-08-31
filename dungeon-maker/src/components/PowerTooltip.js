@@ -10,6 +10,8 @@ import defenseIcon from '../img/defense.png';
 import damageIcon from '../img/pierced-heart.png';
 import weaponModIcon from '../img/weapon_modifier.png';
 
+import {_Icons as EntityIcons} from '../lib/Entity';
+
 const PowerTooltip = ({ hoverObj, mouse, powerField }) => {
   if(hoverObj === undefined){
     return false;
@@ -39,12 +41,25 @@ const PowerTooltip = ({ hoverObj, mouse, powerField }) => {
 
   let attackLabel = power.attack.for.substring(0, 3)+((power.attack.modifier > 0) ? '+'+power.attack.modifier : '')+' vs '+ power.attack.against;
   let hasWeaponMod = (power.weapon_modifier === undefined || power.weapon_modifier === 0) ? false : true;
+
+  let selClassIcon = '';
+  let powerClassName = ''
+  if(power.class !== undefined){
+    let _ClassIcon = EntityIcons.find(function(val){ return val.label === power.class.name });
+    selClassIcon = (_ClassIcon === undefined) ? '' : _ClassIcon.class;
+    powerClassName = power.class.name;
+  }
+
 	return (
 		<div className={className} style={style}>
       <List className="stats">
-        <ListItem primaryText={power.name} leftIcon={<div className={'tooltip_icon icon power_'+powerType.name.toLowerCase()} />}  />        
+        <ListItem primaryText={power.name} leftIcon={<div className={'tooltip_icon icon power_'+powerType.name.toLowerCase()} />}  />    
+        <ListItem className={((power.class !== undefined) ? '' : 'hide')} primaryText={`Class: ${powerClassName}`} leftIcon={<div className={`tooltip_icon icon ${selClassIcon}`} />}  />   
+        <ListItem primaryText={`Action: ${Powers.powerAction[power.action]}`} leftIcon={<div className={'tooltip_icon '} />}  />   
+        <ListItem primaryText={`Recharge: ${Powers.powerRecharge[power.recharge]}`} leftIcon={<div className={'tooltip_icon '} />}  />   
+        
         {<ListItem primaryText={
-          <div className="flex-horiz"> 
+          <div className="flex-vert"> 
             <TooltipChip key={uuidV4()} text={`${attackLabel}`} opts={{img: attackIcon}} />  
             <TooltipChip key={uuidV4()} text={`${damage}`} opts={{img: damageIcon}} />  
             <TooltipChip key={uuidV4()} text={`${power.weapon_modifier}`} opts={{img: weaponModIcon, show: hasWeaponMod}} />  

@@ -21,7 +21,11 @@ class AddPowersContainer extends Component {
 }
 
 var mapStateToProps = function(store) {
-  return store.powersState;
+  return {
+    existingPowers: store.powersState.existingPowers,
+    entitiesState: store.entitiesState,
+    powersState: store.powersState
+  }
 };
 
 function mapDispatchToProps(dispatch) {
