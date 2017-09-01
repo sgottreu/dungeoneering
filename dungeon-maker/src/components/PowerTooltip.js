@@ -3,6 +3,7 @@ import {List, ListItem} from 'material-ui/List';
 import TooltipChip from './TooltipChip';
 import uuidV4  from 'uuid/v4';
 import {Powers} from '../lib/Powers';
+import Avatar from 'material-ui/Avatar';
 import '../css/PowerTooltip.css';
 
 import attackIcon from '../img/attack.png';
@@ -43,22 +44,33 @@ const PowerTooltip = ({ hoverObj, mouse, powerField }) => {
   let hasWeaponMod = (power.weapon_modifier === undefined || power.weapon_modifier === 0) ? false : true;
 
   let selClassIcon = '';
-  let powerClassName = ''
+  let powerClassName = '';
+  let hasClass = 'hide';
   if(power.class !== undefined){
     let _ClassIcon = EntityIcons.find(function(val){ return val.label === power.class.name });
     selClassIcon = (_ClassIcon === undefined) ? '' : _ClassIcon.class;
     powerClassName = power.class.name;
+    hasClass = '';
+console.log(powerType.class.toLowerCase());
   }
 
 	return (
 		<div className={className} style={style}>
       <List className="stats">
-        <ListItem primaryText={power.name} leftIcon={<div className={'tooltip_icon icon power_'+powerType.name.toLowerCase()} />}  />    
-        <ListItem className={((power.class !== undefined) ? '' : 'hide')} primaryText={`Class: ${powerClassName}`} leftIcon={<div className={`tooltip_icon icon ${selClassIcon}`} />}  />   
+        <ListItem primaryText={power.name} 
+          leftIcon={
+            <span className='power_icons'>
+              <Avatar className={'icon weapon_'+powerType.class.toLowerCase()} />
+              <Avatar className={'icon '+selClassIcon+' '+hasClass} />
+              
+            </span>
+          }
+        />    
+ 
         <ListItem primaryText={`Action: ${Powers.powerAction[power.action]}`} leftIcon={<div className={'tooltip_icon '} />}  />   
         <ListItem primaryText={`Recharge: ${Powers.powerRecharge[power.recharge]}`} leftIcon={<div className={'tooltip_icon '} />}  />   
         
-        {<ListItem primaryText={
+        <ListItem primaryText={
           <div className="flex-vert"> 
             <TooltipChip key={uuidV4()} text={`${attackLabel}`} opts={{img: attackIcon}} />  
             <TooltipChip key={uuidV4()} text={`${damage}`} opts={{img: damageIcon}} />  
@@ -66,7 +78,7 @@ const PowerTooltip = ({ hoverObj, mouse, powerField }) => {
             <TooltipChip key={uuidV4()} text={`${power.level}`} opts={{icon: 'fa-area-chart', show: hasLevel}} />            
                       
           </div>
-        } />}
+        } />
       </List>
 		</div>
 	);

@@ -20,6 +20,8 @@ import Snackbar from 'material-ui/Snackbar';
 import Avatar from 'material-ui/Avatar';
 import Toggle from 'material-ui/Toggle';
 
+import SvgIcon from 'material-ui/SvgIcon';
+
 import '../css/EntityForm.css';
 
 class EntityForm extends Component {
@@ -295,11 +297,13 @@ class EntityForm extends Component {
           
           {_powers.map( (power, index) => {
             if(!entity.class){
+              console.log(power);
+              console.log(Powers.powerType);
               return (
                 <ListItem  key={index} 
                   primaryText={<div >{power.name}</div>}  
                   leftAvatar={<Avatar 
-                  className={'icon weapon_'+power.class} />}
+                  className={'icon weapon_'+Powers.powerType[power.type].class} />}
                   onMouseEnter={(e,i,v) => { 
                     _this.boundEntityAC.updateMouseover(power, 'power', e) 
                   } } 

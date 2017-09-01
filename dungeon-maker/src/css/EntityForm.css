@@ -156,5 +156,9 @@
 }
 
 .icon.weapon_both {
-	background-image: url(../img/weapon_both.png);
+	background-image: url(../img/weapon_melee_ranged.png);
+}
+
+.icon.weapon_blast_affect {
+	background-image: url(../img/weapon_blast_affect.png);
 }
