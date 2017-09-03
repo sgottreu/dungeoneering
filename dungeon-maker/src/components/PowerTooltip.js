@@ -57,18 +57,23 @@ console.log(powerType.class.toLowerCase());
 	return (
 		<div className={className} style={style}>
       <List className="stats">
-        <ListItem primaryText={power.name} 
-          leftIcon={
-            <span className='power_icons'>
-              <Avatar className={'icon weapon_'+powerType.class.toLowerCase()} />
-              <Avatar className={'icon '+selClassIcon+' '+hasClass} />
-              
-            </span>
-          }
+        <ListItem primaryText={
+            <div>
+              <div style={{ fontWeight: 'bold', textAlign: 'center'}}>{power.name}</div>
+              <div className='power_icons' style={{ display: 'flex'}}>
+                <Avatar className={'icon weapon_'+powerType.class.toLowerCase()} />
+                <Avatar className={'icon '+selClassIcon+' '+hasClass} />
+              </div>
+              <div className='addl_power_items' style={{ display: 'flex'}}>
+                <div>{`Action: ${Powers.powerAction[power.action]}`}</div>   
+                <div>{`Recharge: ${Powers.powerRecharge[power.recharge]}`}</div>   
+          
+              </div>
+            </div>
+          } 
+
         />    
  
-        <ListItem primaryText={`Action: ${Powers.powerAction[power.action]}`} leftIcon={<div className={'tooltip_icon '} />}  />   
-        <ListItem primaryText={`Recharge: ${Powers.powerRecharge[power.recharge]}`} leftIcon={<div className={'tooltip_icon '} />}  />   
         
         <ListItem primaryText={
           <div className="flex-vert"> 

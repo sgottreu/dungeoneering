@@ -4,7 +4,7 @@
     border-radius: 5px;
     padding: 15px;
     background-color: #EFEFEF;
-    width: 350px;
+    width: 400px;
     position: absolute;
     display: block;
     z-index: 9999;
@@ -37,14 +37,32 @@
     position: relative;
 }
 
-.icon.power_melee {
-    background-image: url(../img/weapon_melee.png);
+.power_icons{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    padding: 10px 0px;
+}
+
+.addl_power_items{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.addl_power_items div {
+    word-wrap: none;
+/*    display: inline;*/
+}
+
+/*.icon.power_melee {
+    background-image: url(../img/weapon_melee_black.png);
 }
 
 .icon.power_ranged {
-    background-image: url(../img/weapon_ranged.png);
+    background-image: url(../img/weapon_ranged_black.png);
 }
 
 .icon.power_both {
-    background-image: url(../img/weapon_melee_ranged.png);
-}
+    background-image: url(../img/weapon_melee_ranged_black.png);
+}*/
