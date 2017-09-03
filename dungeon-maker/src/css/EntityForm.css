@@ -128,33 +128,37 @@
 }
 
 .icon.ranger {
-	background-image: url(../img/ranger.png);
+	background-image: url(../img/class_ranger_black.png);
 }
 
 .icon.cleric {
-	background-image: url(../img/cleric.png);
+	background-image: url(../img/class_cleric_black.png);
 }
 
 .icon.warlock {
-	background-image: url(../img/warlock.png);
+	background-image: url(../img/class_warlock_black.png);
 }
 
 .icon.wizard {
-	background-image: url(../img/wizard.png);
+	background-image: url(../img/class_wizard_black.png);
 }
 
 .icon.fighter {
-	background-image: url(../img/fighter.png);
+	background-image: url(../img/class_fighter_black.png);
 }
 
 .icon.weapon_melee {
-	background-image: url(../img/weapon_melee.png);
+	background-image: url(../img/weapon_melee_black.png);
 }
 
 .icon.weapon_ranged {
-	background-image: url(../img/weapon_ranged.png);
+	background-image: url(../img/weapon_ranged_black.png);
 }
 
 .icon.weapon_both {
-	background-image: url(../img/weapon_both.png);
+	background-image: url(../img/weapon_melee_ranged_black.png);
+}
+
+.icon.weapon_blast_affect {
+	background-image: url(../img/weapon_blast_affect_black.png);
 }

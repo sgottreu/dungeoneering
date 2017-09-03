@@ -23,7 +23,11 @@ const AttackDialog = ( {
     onHandlePowerSelect, 
     onRollAttack,
     onResetAttack, 
-    onCloseAttackDialog
+    onCloseAttackDialog,
+    onHandleObjMouseOver,
+    onSetPowerField,
+    powerField
+
   }) => {
 
   const handleWeaponSelect = (attUuid, e, index) => {
@@ -75,9 +79,17 @@ const AttackDialog = ( {
   let showAttack = (att.attackRoll) ? true : false;
   let targetHP = target.hp + ((showHit) ? ' ( -'+trg.damage+' )' : '');
 
+  var attackField = null;
+
   return (
     <div className="AttackDialog">
-      <div className="Attacker">
+      <div className="Attacker"
+        ref={(list) => { 
+          if(powerField === false && list !== null){
+            onSetPowerField(list); 
+          }
+        }}
+      >
         <EntityTileIcon key={uuidV4()} entity={attacker} />
         <br/>
         {attacker.name}
@@ -87,7 +99,16 @@ const AttackDialog = ( {
         <SelectField  floatingLabelText={`Choose Power`} value={attacker.currentPower} onChange={(e,i) => { onHandlePowerSelect(attacker.uuid, e, i) } } >
 					{attacker.powers.map( (power, index) => {
 						return (
-							<MenuItem key={index} value={power.uuid} primaryText={`${power.name}`} />
+							<MenuItem key={index} 
+                value={power.uuid} 
+                primaryText={`${power.name}`} 
+                onMouseEnter={ (e,i,v) => { 
+                    onHandleObjMouseOver(power, 'power', e) 
+                } } 
+                onMouseLeave={ (e,i,v) => { 
+                    onHandleObjMouseOver(false, false, e) 
+                } } 
+              />
 						);
 					})}
 			  </SelectField>

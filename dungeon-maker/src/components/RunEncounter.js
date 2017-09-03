@@ -4,6 +4,7 @@ import DungeonGrid from './DungeonGrid';
 import AttackDialog from './AttackDialog';
 import EncounterLoadDrawer from './EncounterLoadDrawer';
 import EntityTooltip from './EntityTooltip';
+import PowerTooltip from './PowerTooltip';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
@@ -23,6 +24,7 @@ class RunEncounter extends Component {
     this.boundEntityAC      = this.props.boundEntityAC;
     this.boundDungeonAC       = this.props.boundDungeonAC;
 
+    this.setPowerField = this.setPowerField.bind(this);
     this.selectTile = this.selectTile.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.addTile = this.addTile.bind(this);
@@ -74,6 +76,7 @@ class RunEncounter extends Component {
       drawers: {
         encounter: false
       },
+      powerField: false,
       hoverObj: false,
       mouse: {
         clientX: false,
@@ -476,6 +479,12 @@ class RunEncounter extends Component {
     this.setState( state );
   }
 
+  setPowerField = (list) => {
+    let state = this.state;
+    state.powerField = list;
+    this.setState( state );
+  }
+
   loadAttackDialog = () => {
     return (<AttackDialog 
               onHandlePowerSelect={this.handlePowerSelect} 
@@ -486,6 +495,9 @@ class RunEncounter extends Component {
               attackStatus={this.state.attackStatus}
               onResetAttack={this.resetAttack}
               onCloseAttackDialog={this.closeAttackDialog}
+              onHandleObjMouseOver={this.handleObjMouseOver}
+              onSetPowerField={this.setPowerField}
+              powerField={this.state.powerField}
               />);
   }
 
@@ -574,6 +586,7 @@ class RunEncounter extends Component {
           </div>
           
            <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} combatList={combatList}/>
+           <PowerTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} powerField={this.state.powerField} />
            {this.state.showAttackDialog ? this.loadAttackDialog() : '' }
         </div>
     );
