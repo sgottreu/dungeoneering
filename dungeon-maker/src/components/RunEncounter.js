@@ -12,6 +12,7 @@ import {Die} from '../lib/Die';
 import * as Entity from '../lib/Entity';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
+import uuidV4  from 'uuid/v4';
 import '../css/RunEncounter.css';
 
 import * as dungeonsApi from '../api/dungeons-api';
@@ -36,7 +37,7 @@ class RunEncounter extends Component {
     this.handlePartyChange = this.handlePartyChange.bind(this);
     this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
-    this.handleMyEvent = this.handleMyEvent.bind(this);
+    // this.handleMyEvent = this.handleMyEvent.bind(this);
     this.selectEntity = this.selectEntity.bind(this);
     this.setEntity = this.setEntity.bind(this);
     this.rollInitiative = this.rollInitiative.bind(this);
@@ -137,7 +138,7 @@ class RunEncounter extends Component {
     let attacker = state.combatList.find(cb => { return cb.uuid === att.uuid } );
     let target = state.combatList.find(cb => { return cb.uuid === trg.uuid } );
 
-    let _power = attacker.powers.find(function(p, i){ return p.uuid === attacker.currentPower });
+    let _power = attacker.powers.find(function(p, i){ return p._id === attacker.currentPower });
 
     let _weapon = false;
     if(attacker.inventory !== undefined){
@@ -247,7 +248,7 @@ class RunEncounter extends Component {
     }
     let _i = state.combatList.findIndex( (cb, i) => { return cb.uuid === attUuid });
 
-    state.combatList[_i].currentPower = state.combatList[_i].powers[index].uuid;
+    state.combatList[_i].currentPower = state.combatList[_i].powers[index]._id;
 
     this.setState(state);
   }
@@ -395,16 +396,22 @@ class RunEncounter extends Component {
       entity = Variables.clone(state.slots[ slot-1 ].overlays.entity);
       entity.slot = state.slots[ slot-1 ].id;
 
-      if(entity._type === undefined){
-        let _uuid = Variables.clone(entity.uuid);
-        let _slot = Variables.clone(entity.slot);
+      if(entity._type === 'monster'){
+        entity.powers.map(p => {
+          p._id = uuidV4();
+          return p;
+        })
 
-        let _entity = state.availableMonsters.find( m => {
-          return m._id === entity._id;
-        });
-        entity = _entity;
-        entity.uuid = _uuid;
-        entity.slot = _slot;
+        // let _uuid = Variables.clone(entity.uuid);
+        // let _slot = Variables.clone(entity.slot);
+
+        // let _entity = state.availableMonsters.find( m => {
+        //   return m._id === entity._id;
+        // });
+        // entity = _entity;
+        // entity.uuid = _uuid;
+        // entity.slot = _slot;
+        // console.log(entity);
       }
 
 
@@ -498,6 +505,7 @@ class RunEncounter extends Component {
               onHandleObjMouseOver={this.handleObjMouseOver}
               onSetPowerField={this.setPowerField}
               powerField={this.state.powerField}
+              existingPowers={this.props.existingPowers}
               />);
   }
 

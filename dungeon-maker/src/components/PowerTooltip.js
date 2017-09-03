@@ -35,7 +35,7 @@ const PowerTooltip = ({ hoverObj, mouse, powerField }) => {
 
   let className = 'PowerTooltip'+(power === false ? ' hide' : '');
 
-  let top = (powerField !== null) ? powerField.offsetTop : 200;
+  let top = (powerField !== null) ? powerField.offsetTop+200 : 200;
   let left = (powerField !== null) ? powerField.offsetLeft+250 : 0;
 
   let style = (mouse) ? {left: `${left}px`, top: `${top}px` } : {};
@@ -51,7 +51,6 @@ const PowerTooltip = ({ hoverObj, mouse, powerField }) => {
     selClassIcon = (_ClassIcon === undefined) ? '' : _ClassIcon.class;
     powerClassName = power.class.name;
     hasClass = '';
-console.log(powerType.class.toLowerCase());
   }
 
 	return (

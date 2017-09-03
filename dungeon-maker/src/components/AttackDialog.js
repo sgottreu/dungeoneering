@@ -5,6 +5,7 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TooltipChip from './TooltipChip';
 import EntityTileIcon from './EntityTileIcon';
+import {Powers} from '../lib/Powers';
 import uuidV4  from 'uuid/v4';
 
 import d20 from '../img/d20.png';
@@ -26,11 +27,12 @@ const AttackDialog = ( {
     onCloseAttackDialog,
     onHandleObjMouseOver,
     onSetPowerField,
-    powerField
+    powerField,
+    existingPowers
 
   }) => {
 
-  const handleWeaponSelect = (attUuid, e, index) => {
+  const handleWeaponSelect = (attUuid, powerType, e, index) => {
     let _i = 0;
     let w_id = false;
 
@@ -38,6 +40,9 @@ const AttackDialog = ( {
 
     combatList[ _x ].inventory.forEach( (w, index2) => {
       if(w.category !== 'weapons') {
+        return false;
+      }
+      if(w.item.type.toLowerCase() !== powerType.class){
         return false;
       }
       if(_i === index){
@@ -49,16 +54,34 @@ const AttackDialog = ( {
     onHandleWeaponSelect(attUuid, w_id);
   }
 
-  const loadWeaponSelect = (attacker) => {
+  const loadWeaponSelect = (attacker, existingPowers) => {
     if(attacker.inventory === undefined){
       return false;
     }
+
+    let current_power = false;
+
+    if(attacker._type === 'character') {
+      current_power = existingPowers.find(p => { return p._id === attacker.currentPower});
+    } else {
+      current_power = attacker.powers.find(p => { return p._id === attacker.currentPower});
+    }
+
+    let power_type = (current_power === undefined) ? false : Powers.powerType[ current_power.type] ;
+
     return (
-      <SelectField  floatingLabelText={`Choose Weapon`} value={attacker.currentWeapon} onChange={(e,i) => { handleWeaponSelect(attacker.uuid, e, i)} } >
+      <SelectField  floatingLabelText={`Choose Weapon`} value={attacker.currentWeapon} onChange={(e,i) => { handleWeaponSelect(attacker.uuid, power_type, e, i)} } >
         {attacker.inventory.map( (w, index) => {
           if(w.category !== 'weapons') {
             return false;
           }
+          
+          let weapon_type = (w === undefined && w.item.type === undefined) ? false : w.item.type.toLowerCase();
+
+          if(power_type.class !== undefined && weapon_type !== power_type.class) {
+            return false; //current_power !== undefined && 
+          }
+
           return (
             <MenuItem key={w.item._id} value={w.item._id} primaryText={`${w.item.name}`} />
           );
@@ -100,7 +123,7 @@ const AttackDialog = ( {
 					{attacker.powers.map( (power, index) => {
 						return (
 							<MenuItem key={index} 
-                value={power.uuid} 
+                value={power._id} 
                 primaryText={`${power.name}`} 
                 onMouseEnter={ (e,i,v) => { 
                     onHandleObjMouseOver(power, 'power', e) 
@@ -113,7 +136,7 @@ const AttackDialog = ( {
 					})}
 			  </SelectField>
         <br/>
-        {loadWeaponSelect(attacker)}
+        {loadWeaponSelect(attacker, existingPowers)}
         
        </div>
       <div className="Target">
