@@ -91,13 +91,16 @@ _Dungeon.setAttackAttributes = (state, existingPowers) => {
   state.combatList.forEach( (cb, i) => {
     state.combatList[i].currentPower = false;
     state.combatList[i].currentWeapon = false;
-    cb.powers.forEach( (pp, j) => {
-      if(cb._type === 'character'){
-        let _power = existingPowers.find( p => { return p._id === pp});
-        state.combatList[i].powers[j] = Variables.clone( _power );
-      }
-      state.combatList[i].powers[j].uuid = uuidV4();
-    });
+
+    if(cb.powers !== undefined){
+      cb.powers.forEach( (pp, j) => {
+        if(cb._type === 'character'){
+          let _power = existingPowers.find( p => { return p._id === pp});
+          state.combatList[i].powers[j] = Variables.clone( _power );
+        }
+        state.combatList[i].powers[j].uuid = uuidV4();
+      });
+    }
   });
   return state;
 }

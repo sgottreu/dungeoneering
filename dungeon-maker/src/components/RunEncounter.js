@@ -396,24 +396,24 @@ class RunEncounter extends Component {
       entity = Variables.clone(state.slots[ slot-1 ].overlays.entity);
       entity.slot = state.slots[ slot-1 ].id;
 
-      if(entity._type === 'monster'){
+      if(entity._type === undefined || entity._type === 'monster'){
+        let _uuid = Variables.clone(entity.uuid);
+        let _slot = Variables.clone(entity.slot);
+
+        let _entity = this.props.availableMonsters.find( m => {
+          return m._id === entity._id;
+        });
+        entity = _entity;
+        entity.uuid = _uuid;
+        entity.slot = _slot;
+        console.log(entity);
+        
+        
         entity.powers.map(p => {
           p._id = uuidV4();
           return p;
         })
-
-        // let _uuid = Variables.clone(entity.uuid);
-        // let _slot = Variables.clone(entity.slot);
-
-        // let _entity = state.availableMonsters.find( m => {
-        //   return m._id === entity._id;
-        // });
-        // entity = _entity;
-        // entity.uuid = _uuid;
-        // entity.slot = _slot;
-        // console.log(entity);
       }
-
 
       let cb = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
       if(cb === undefined){
