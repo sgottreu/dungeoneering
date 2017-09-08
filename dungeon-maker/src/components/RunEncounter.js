@@ -26,6 +26,7 @@ class RunEncounter extends Component {
     this.boundDungeonAC       = this.props.boundDungeonAC;
 
     this.setPowerField = this.setPowerField.bind(this);
+    this.setWeaponField = this.setWeaponField.bind(this);
     this.selectTile = this.selectTile.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.addTile = this.addTile.bind(this);
@@ -78,6 +79,7 @@ class RunEncounter extends Component {
         encounter: false
       },
       powerField: false,
+      weaponField: false,
       hoverObj: false,
       mouse: {
         clientX: false,
@@ -489,6 +491,12 @@ class RunEncounter extends Component {
   setPowerField = (list) => {
     let state = this.state;
     state.powerField = list;
+    this.setState( state );
+  }
+
+  setWeaponField = (list) => {
+    let state = this.state;
+    state.weaponField = list;
     this.setState( state );
   }
 

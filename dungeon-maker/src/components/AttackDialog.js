@@ -28,6 +28,8 @@ const AttackDialog = ( {
     onHandleObjMouseOver,
     onSetPowerField,
     powerField,
+    onSetWeaponField,
+    weaponField,
     existingPowers
 
   }) => {
@@ -58,6 +60,7 @@ const AttackDialog = ( {
     if(attacker.inventory === undefined){
       return false;
     }
+    let {onHandleObjMouseOver} = this.props;
 
     let current_power = false;
 
@@ -83,7 +86,17 @@ const AttackDialog = ( {
           }
 
           return (
-            <MenuItem key={w.item._id} value={w.item._id} primaryText={`${w.item.name}`} />
+            <MenuItem 
+              key={w.item._id} 
+              value={w.item._id} 
+              primaryText={`${w.item.name}`} 
+              onMouseEnter={ (e,i,v) => { 
+                  onHandleObjMouseOver(w, 'weapon', e) 
+              } } 
+              onMouseLeave={ (e,i,v) => { 
+                  onHandleObjMouseOver(false, false, e) 
+              } }   
+            />
           );
         })}
       </SelectField>
@@ -110,6 +123,9 @@ const AttackDialog = ( {
         ref={(list) => { 
           if(powerField === false && list !== null){
             onSetPowerField(list); 
+          }
+          if(weaponField === false && list !== null){
+            onSetWeaponField(list); 
           }
         }}
       >
@@ -148,7 +164,7 @@ const AttackDialog = ( {
       </div>
       
       <div style={{clear :'both',float: 'none', paddingTop: '5px'}}>
-          <RaisedButton 
+        <RaisedButton 
           style={{ display: 'block', width: '200px', margin: '5px auto 30px' }}
           label="Roll Attack"
            icon={<img alt='Roll Attack' src={d20} style={{width :'30px',height: '30px'}} />}
