@@ -379,14 +379,27 @@ class RunEncounter extends Component {
       }
     } 
     if(state.attacking){
-        entity = state.combatList.find(function(val){ 
-          if(val === undefined){
-            return false;
-          }
-          return parseInt(val.slot, 10) === parseInt(slot, 10); 
+      entity = state.combatList.find(function(val){ 
+        if(val === undefined){
+          return false;
+        }
+        return parseInt(val.slot, 10) === parseInt(slot, 10); 
+      });
+
+      if(entity === undefined){
+        let _i = state.combatList.findIndex(function(val){ 
+          return (val === undefined);
         });
-        let _status = (state.selectedAttackers.length === 0) ? 'Attacker' : 'Target';
-        state.selectedAttackers.push( { uuid: entity.uuid, status: _status, attackRoll: false, natAttackRoll: false, attackMod: false, defense: false } );
+        console.log(_i);
+        state.combatList.splice(_i, 1);
+        state.attacking = false;
+        state.selectedAttackers = [];
+        this.setState( state );
+        return false;
+      }
+
+      let _status = (state.selectedAttackers.length === 0) ? 'Attacker' : 'Target';
+      state.selectedAttackers.push( { uuid: entity.uuid, status: _status, attackRoll: false, natAttackRoll: false, attackMod: false, defense: false } );
 
       if(state.selectedAttackers.length === 2){ //_status === 'Target'){
         state.attacking = false;
@@ -405,19 +418,19 @@ class RunEncounter extends Component {
         let _entity = this.props.availableMonsters.find( m => {
           return m._id === entity._id;
         });
-        entity = _entity;
+        entity = Variables.clone(_entity);
         entity.uuid = _uuid;
         entity.slot = _slot;
-        console.log(entity);
-        
-        
+
         entity.powers.map(p => {
           p._id = uuidV4();
           return p;
         })
       }
 
-      let cb = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
+      let cb = state.combatList.find(function(val){ 
+        return parseInt(val.slot, 10) === parseInt(slot, 10); 
+      });
       if(cb === undefined){
         state.combatList.push( entity );
       }

@@ -59,9 +59,10 @@ _Dungeon.addCharToMap = (party, slots, availableCharacters) => {
 _Dungeon.setUuidMonsters = (state) => {
   state.slots.map( (slot, x) => {
     if(slot.occupied && slot.overlays.entity && slot.overlays.entity.uuid === undefined){
-      state.slots[x].overlays.entity.uuid = uuidV4();
+      slot.overlays.entity.uuid = uuidV4();
+      return slot;
     }
-    return true;
+    return slot;
   });
 
   return state;

@@ -56,11 +56,12 @@ const AttackDialog = ( {
     onHandleWeaponSelect(attUuid, w_id);
   }
 
-  const loadWeaponSelect = (attacker, existingPowers) => {
+  const loadWeaponSelect = (attacker, existingPowers, onHandleObjMouseOver) => {
     if(attacker.inventory === undefined){
       return false;
     }
-    let {onHandleObjMouseOver} = this.props;
+    // console.log(this.props);
+    // let {onHandleObjMouseOver} = this.props;
 
     let current_power = false;
 
@@ -108,8 +109,12 @@ const AttackDialog = ( {
   }
 
   let [ att, trg ] = attackers;
-	let attacker = combatList.find(cb => { return cb.uuid === att.uuid } );
-  let target = combatList.find(cb => { return cb.uuid === trg.uuid } );
+	let attacker = combatList.find(cb => { 
+    return cb.uuid === att.uuid 
+  } );
+  let target = combatList.find(cb => { 
+    return cb.uuid === trg.uuid 
+  } );
 
   let showHit = (attackStatus === 'hit' && trg.damage !== undefined);
   let showAttack = (att.attackRoll) ? true : false;
@@ -152,7 +157,7 @@ const AttackDialog = ( {
 					})}
 			  </SelectField>
         <br/>
-        {loadWeaponSelect(attacker, existingPowers)}
+        {loadWeaponSelect(attacker, existingPowers, onHandleObjMouseOver)}
         
        </div>
       <div className="Target">
