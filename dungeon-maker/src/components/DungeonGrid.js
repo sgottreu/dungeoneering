@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { Component } from 'react';
 import DungeonGridSlot from './DungeonGridSlot';
 import '../css/DungeonGrid.css';
 
-const DungeonGrid = ({slots, onAddTile, combatList, selectedAttackers, availableMonsters, onSetAttackerStatus, currentActor, onHandleObjMouseOver}) => {
+class DungeonGrid extends Component {
+	shouldComponentUpdate(nextProps) {
+		return (nextProps.slots !== this.props.slots
+				 || nextProps.combatList !== this.props.combatList
+				 || nextProps.selectedDungeon !== this.props.selectedDungeon);
+	}
+  render (){
 
-  return (
+
+
+		let {slots, onAddTile, combatList, selectedAttackers, availableMonsters, onSetAttackerStatus, currentActor, onHandleObjMouseOver} = this.props;
+
+		return(
     <div className="DungeonGrid">
       {
         slots.map(slot => {
@@ -35,7 +45,8 @@ const DungeonGrid = ({slots, onAddTile, combatList, selectedAttackers, available
   		  })
       }
     </div>
-  );
+		);
+	}
    
 }
 
