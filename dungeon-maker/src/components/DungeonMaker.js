@@ -101,7 +101,7 @@ class DungeonMaker extends Component {
               value={dungeon.title} 
               onChange={(e) => { this.boundDungeonAC.updateDungeonKey('title', e.target.value); } } />
             <RaisedButton label="Save Dungeon" primary={true}  onClick={(e,i,v) => { 
-                dungeonsApi.saveDungeon(dungeon).then( function(response){
+                dungeonsApi.saveDungeon(selectedDungeon, dungeon).then( function(response){
                   updateSnackBar('Dungeon saved.', true)
                 });
               }} />

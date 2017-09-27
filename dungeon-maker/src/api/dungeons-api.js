@@ -20,7 +20,10 @@ export var findDungeon = (selectedDungeon) => {
     return res.data;
   }); 
 };
-export var saveDungeon = (dungeon) => {
+export var saveDungeon = (selectedDungeon, dungeon) => {
+  if(selectedDungeon){
+    dungeon._id = selectedDungeon;
+  }
   return axios.post(`${Variables.host}/saveDungeonGrids`, dungeon)
   .then(res => {
     store.dispatch(updateExistingDungeon(res.data._id, res.data.title));
