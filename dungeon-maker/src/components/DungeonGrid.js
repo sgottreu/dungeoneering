@@ -3,11 +3,14 @@ import DungeonGridSlot from './DungeonGridSlot';
 import '../css/DungeonGrid.css';
 
 class DungeonGrid extends Component {
-	shouldComponentUpdate(nextProps) {
-		return (nextProps.slots !== this.props.slots
-				 || nextProps.combatList !== this.props.combatList
-				 || nextProps.selectedDungeon !== this.props.selectedDungeon);
-	}
+	// shouldComponentUpdate(nextProps) {
+	// 	console.log(this.props.slots[0]);
+	// 	return (JSON.stringify(nextProps.slots) !== JSON.stringify(this.props.slots)
+	// 			 || JSON.stringify(nextProps.combatList) !== JSON.stringify(this.props.combatList) 
+	// 			 || nextProps.selectedDungeon !== this.props.selectedDungeon
+	// 			 || JSON.stringify(nextProps.currentActor) !== JSON.stringify(this.props.currentActor)
+	// 	)
+	// }
   render (){
 
 

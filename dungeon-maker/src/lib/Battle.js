@@ -1,9 +1,9 @@
 import {Variables} from '../lib/Variables';
+import uuidV4  from 'uuid/v4';
 
 //************ Variables *******************/
 
-export var Battle = {
-    editCombatList: function(state){
+export var editCombatList = function(state, slot, availableMonsters){
         let entity = Variables.clone(state.slots[ slot-1 ].overlays.entity);
         entity.slot = state.slots[ slot-1 ].id;
     
@@ -11,7 +11,7 @@ export var Battle = {
           let _uuid = Variables.clone(entity.uuid);
           let _slot = Variables.clone(entity.slot);
     
-          let _entity = this.props.availableMonsters.find( m => {
+          let _entity = availableMonsters.find( m => {
             return m._id === entity._id;
           });
           entity = Variables.clone(_entity);
@@ -33,5 +33,5 @@ export var Battle = {
 
         return state;
     }
-}
+
 

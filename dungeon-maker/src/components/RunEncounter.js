@@ -10,6 +10,7 @@ import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import {Die} from '../lib/Die';
 import * as Entity from '../lib/Entity';
+import * as Battle from '../lib/Battle';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
 import uuidV4  from 'uuid/v4';
@@ -86,6 +87,13 @@ class RunEncounter extends Component {
         clientY: false
       }
     };
+
+    let saved_state = window.localStorage.getItem('dungeoneering--runEncounter');
+
+    if(saved_state && saved_state !== null){
+      this.state = JSON.parse(saved_state);
+    }
+
   }
 
   componentDidMount() {
@@ -315,6 +323,8 @@ class RunEncounter extends Component {
       state.selectedDungeon = selectedDungeon;
 
       _this.setState(state);
+
+      localStorage.setItem('dungeoneering--runEncounter', JSON.stringify(state) );
     })
     .catch(function (error) {
       console.log(error);
@@ -345,7 +355,12 @@ class RunEncounter extends Component {
       state.slots[ slot - 1 ].overlays.entity = Variables.clone(state.selectedEntity);
       state.slots[ slot - 1 ].occupied = true;
 
-      state.combatList.map(function(val){ if(val.uuid === state.selectedEntity.uuid) {val.slot = slot} return val; });
+      state.combatList.map(function(val){ 
+        if(val.uuid === state.selectedEntity.uuid) {
+          val.slot = slot
+        } 
+        return val; 
+      });
     }    
     return state;
   }
@@ -362,9 +377,13 @@ class RunEncounter extends Component {
 
     if(state.moving !== false){
       if(!state.selectedEntity){
-        state.moving = slot;
-        entity = state.slots[ slot-1 ].overlays.entity; //state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
-        state = this.selectEntity(entity.uuid, entity._type, state, entity);
+        entity = state.slots[ slot-1 ].overlays.entity;
+
+        if(entity){
+          state.moving = slot;
+          state = this.selectEntity(entity.uuid, entity._type, state, entity);
+        }
+        console.log(state);
       } else {
         // Add Entity to new slot
         state = this.setEntity(e, state, slot);
@@ -408,33 +427,7 @@ class RunEncounter extends Component {
     } 
 
     if(state.pickingCombat){
-      entity = Variables.clone(state.slots[ slot-1 ].overlays.entity);
-      entity.slot = state.slots[ slot-1 ].id;
-
-      if(entity._type === undefined || entity._type === 'monster'){
-        let _uuid = Variables.clone(entity.uuid);
-        let _slot = Variables.clone(entity.slot);
-
-        let _entity = this.props.availableMonsters.find( m => {
-          return m._id === entity._id;
-        });
-        entity = Variables.clone(_entity);
-        entity.uuid = _uuid;
-        entity.slot = _slot;
-
-        entity.powers.map(p => {
-          p._id = uuidV4();
-          return p;
-        })
-      }
-
-      let cb = state.combatList.find(function(val){ 
-        return parseInt(val.slot, 10) === parseInt(slot, 10); 
-      });
-      if(cb === undefined){
-        state.combatList.push( entity );
-      }
-      
+      state = Battle.editCombatList(state, slot, this.props.availableMonsters);
     } 
 
     if(state !== undefined){
@@ -610,6 +603,17 @@ class RunEncounter extends Component {
                 <Avatar size={32}><i className="fa fa-trophy" aria-hidden="true"></i></Avatar>
                 {this.state.partyXP}
               </Chip>
+            </div>
+            <div className="combatList">
+              {
+                combatList.map( (cl,x) => {
+                  return(
+                    <div className="combatant" key={x} data-slot={cl.slot}>
+                      {cl.name}
+                    </div>
+                  );
+                })
+              }
             </div>
 
           </div>
