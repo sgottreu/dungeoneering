@@ -218,6 +218,12 @@ class RunEncounter extends Component {
     
  
     let index = state.combatList.findIndex( (cmb) => {
+      if(cmb === undefined){
+        return false;
+      }
+      if(cmb.uuid === state.currentActor.uuid && cmb.hp < 0){
+        return false;
+      }
       return cmb.uuid === state.currentActor.uuid; 
     });
 
@@ -239,6 +245,7 @@ class RunEncounter extends Component {
         delete state.combatList[x];
       }
     }
+    state.combatList = state.combatList.filter(function(){return true;});
 
     this.setState(state);
   }
