@@ -38,6 +38,7 @@ class CreateEncounter extends Component {
     this.handleDungeonChoice = this.handleDungeonChoice.bind(this);
     this.getDroppedItem = this.getDroppedItem.bind(this);
     this.moveItem = this.moveItem.bind(this);
+    this.removeDungeon = this.removeDungeon.bind(this);
 
     this.updateSnackBar = this.updateSnackBar.bind(this);
     this.changeEncounter = this.changeEncounter.bind(this);
@@ -69,6 +70,18 @@ class CreateEncounter extends Component {
 
   handleMyEvent(e) {
   
+  }
+
+  removeDungeon = (grid) => {
+    let encounter = this.props.encountersState.encounter;
+    
+    let _i = encounter.dungeons.findIndex(function(m) { return m === grid});
+    
+    if(_i > -1) {
+      encounter.dungeons.splice(_i, 1);
+    }
+
+    this.boundEncounterAC.updateEncounter( encounter );
   }
 
   handleObjMouseOver = (obj, _type, eve) => {
@@ -106,7 +119,7 @@ class CreateEncounter extends Component {
   }
 
   setDungeon(selectedDungeon){
-    dungeonsApi.findDungeons(selectedDungeon);
+    dungeonsApi.findDungeon(selectedDungeon);
   }
 
   handleDungeonChoice(id, event){
@@ -145,6 +158,11 @@ class CreateEncounter extends Component {
     let { encounter, availableEncounters } = this.props.encountersState;
     let updateSnackBar = this.updateSnackBar;
 
+    if(this.props.dungeonsState.dungeon._id !== false){
+      slots = this.props.dungeonsState.dungeon.slots;
+    }
+    
+
     return (    	
       <div className="CreateEncounter">
         <DungeonGrid 
@@ -175,7 +193,13 @@ class CreateEncounter extends Component {
             );
           })}
         </List>
-        <DroppableList onMoveItem={this.moveItem} availableDungeons={availableDungeons} encounterDungeons={encounter.dungeons} onHandleDungeonChoice={this.handleDungeonChoice}/>
+        <DroppableList 
+          onMoveItem={this.moveItem} 
+          availableDungeons={availableDungeons} 
+          encounterDungeons={encounter.dungeons} 
+          onHandleDungeonChoice={this.handleDungeonChoice}
+          onRemoveDungeon={this.removeDungeon}  
+        />
         <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
         <br/>
 				
