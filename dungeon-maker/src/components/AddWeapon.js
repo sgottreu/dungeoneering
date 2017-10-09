@@ -27,6 +27,10 @@ class AddWeapon extends Component {
     this.handleHandsChange      = this.handleHandsChange.bind(this);
     this.loadRangeField         = this.loadRangeField.bind(this);
     this.handleMagicalChange    = this.handleMagicalChange.bind(this);
+    this.loadMagicalField       = this.loadMagicalField.bind(this);
+
+    this.handleMagicLevelChange = this.handleMagicLevelChange.bind(this);
+    this.handleMagicEnchantChange = this.handleMagicEnchantChange.bind(this);
 
     this.updateSnackBar = this.updateSnackBar.bind(this);
 
@@ -58,8 +62,12 @@ class AddWeapon extends Component {
 
   handleMagicalChange = (event) => {
     let _weapon = this.props.weapon;
-    _weapon.magical = (_weapon.magical === undefined) ? false : _weapon.magical;
-    this.boundWeaponAC.updateKey( 'magical', !_weapon.magical );
+
+    if(_weapon.magical === undefined){
+      _weapon.magical = {status: false, level: 0, enchantment: 0}
+    }
+    _weapon.magical.status = !_weapon.magical.status;
+    this.boundWeaponAC.updateKey( 'magical', _weapon.magical );
   }
 
   handleRangeChange = (event) => {
@@ -106,10 +114,33 @@ class AddWeapon extends Component {
     );
   }
 
+  loadMagicalField(weapon){
+    return (
+      <div>
+        <TextField className="shortField" floatingLabelText="Level" type="number" value={weapon.magical.level} name="level" onChange={this.handleMagicLevelChange} />
+        <TextField className="shortField" floatingLabelText="Enchantment" type="number" value={weapon.magical.enchantment} name="high" onChange={this.handleMagicEnchantChange} />
+      </div>
+    );
+  }
+  handleMagicLevelChange(event){
+    let magical = this.props.weapon.magical;
+    magical.level = event.target.value;
+    this.boundWeaponAC.updateKey( 'magical', magical);
+  }
+  handleMagicEnchantChange(event){
+    let magical = this.props.weapon.magical;
+    magical.enchantment = event.target.value;
+    this.boundWeaponAC.updateKey( 'magical', magical);
+  }
+
 	render() {
     let _weapon = this.props.weapon;
     let availableWeapons = this.props.availableWeapons;
     let _i = availableWeapons.findIndex( (w, index) => { return w._id === _weapon._id });
+
+    if(_weapon.magical === undefined){
+      _weapon.magical = {status: false, level: 0, enchantment: 0}
+    }
 
 		return (
 			<div className="AddWeapon">
@@ -147,11 +178,12 @@ class AddWeapon extends Component {
         </div>
         <Toggle
           label="Magical"
-          defaultToggled={_weapon.magical}
+          defaultToggled={_weapon.magical.status}
           name="magical" 
           onToggle={this.handleMagicalChange}
           style={ {width: '250px'} }
         />
+        {(_weapon.magical.status) ? this.loadMagicalField(_weapon) : ''}    
         <br/>
         <div className="damage">
           <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_weapon.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
