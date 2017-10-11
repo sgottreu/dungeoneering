@@ -9,7 +9,7 @@ const Tile = ( { id, tile, onUpdateKey, selectedTile, selectedEntity } ) => {
 		width: (75 * ((tile.size === undefined) ? 1 : tile.size.width)),
 		height: (75 * ((tile.size === undefined) ? 1 : tile.size.height)),
 	}
-	
+
   return (
     <div style={style} className={className} 
     	onClick={() => {

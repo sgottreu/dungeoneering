@@ -347,6 +347,8 @@ class RunEncounter extends Component {
   selectTile(id) {
     let selectedTile = this.state.selectedTile;
     this.setState( { selectedTile: (selectedTile === id) ? '' : id });
+
+    console.log(id);
   }
 
   handleMouseOver = (entity, type, eve) => {
@@ -379,6 +381,8 @@ class RunEncounter extends Component {
     }
   
     let slot = e.target.dataset.slot;
+
+    console.log(state.slots[ slot-1 ]);
 
     let entity;
 

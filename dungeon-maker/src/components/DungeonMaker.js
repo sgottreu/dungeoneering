@@ -93,7 +93,7 @@ class DungeonMaker extends Component {
             }}
           />
           <div>
-
+{console.log(dungeon)}
             <br/>
             <TextField 
               hintText="Dungeon Name" 
@@ -101,7 +101,7 @@ class DungeonMaker extends Component {
               value={dungeon.title} 
               onChange={(e) => { this.boundDungeonAC.updateDungeonKey('title', e.target.value); } } />
             <RaisedButton label="Save Dungeon" primary={true}  onClick={(e,i,v) => { 
-              console.log(dungeon)
+              
                 dungeonsApi.saveDungeon(selectedDungeon, dungeon).then( function(response){
                   updateSnackBar('Dungeon saved.', true)
                 });
