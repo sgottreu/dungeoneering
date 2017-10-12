@@ -304,16 +304,14 @@ app.post('/saveGear', function (req, res) {
 
 // ************* Admin ******************//
 app.get('/admin', function (req, res) {
-  // let query = { _type: {"$in": ["monster"] }};
+  // let query = { _type: {"$in": ["weapon"] }};
 	// dungeon_grid.find(query).then(function(docs) {
   //   let entities = [];
 
   //   for(var x=0,len = docs.length;x<len;x++){
-  //   	for(var y=0,len2 = docs[x].powers.length;y<len2;y++){
-  //       if( docs[x].powers[y]._id === undefined){
-  //         docs[x].powers[y]._id = uuidV4();
-  //       }
-  //     }
+  //     // docs[x].slot = false;
+  //     docs[x].rare = false;
+
   //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, docs[x] ).then(function (data) {
   //       console.log(`${docs[x].name} updated!`);
   //     }).catch(function(err){ 
