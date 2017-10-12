@@ -4,13 +4,16 @@ import DungeonGrid from './DungeonGrid';
 import AttackDialog from './AttackDialog';
 import EncounterLoadDrawer from './EncounterLoadDrawer';
 import EntityTooltip from './EntityTooltip';
+import PowerTooltip from './PowerTooltip';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Variables} from '../lib/Variables';
 import {_Dungeon} from './_Dungeon';
 import {Die} from '../lib/Die';
 import * as Entity from '../lib/Entity';
+import * as Battle from '../lib/Battle';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
+import uuidV4  from 'uuid/v4';
 import '../css/RunEncounter.css';
 
 import * as dungeonsApi from '../api/dungeons-api';
@@ -23,6 +26,8 @@ class RunEncounter extends Component {
     this.boundEntityAC      = this.props.boundEntityAC;
     this.boundDungeonAC       = this.props.boundDungeonAC;
 
+    this.setPowerField = this.setPowerField.bind(this);
+    this.setWeaponField = this.setWeaponField.bind(this);
     this.selectTile = this.selectTile.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
     this.addTile = this.addTile.bind(this);
@@ -34,7 +39,7 @@ class RunEncounter extends Component {
     this.handlePartyChange = this.handlePartyChange.bind(this);
     this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
-    this.handleMyEvent = this.handleMyEvent.bind(this);
+    // this.handleMyEvent = this.handleMyEvent.bind(this);
     this.selectEntity = this.selectEntity.bind(this);
     this.setEntity = this.setEntity.bind(this);
     this.rollInitiative = this.rollInitiative.bind(this);
@@ -74,12 +79,21 @@ class RunEncounter extends Component {
       drawers: {
         encounter: false
       },
+      powerField: false,
+      weaponField: false,
       hoverObj: false,
       mouse: {
         clientX: false,
         clientY: false
       }
     };
+
+    let saved_state = window.localStorage.getItem('dungeoneering--runEncounter');
+
+    if(saved_state && saved_state !== null){
+      this.state = JSON.parse(saved_state);
+    }
+
   }
 
   componentDidMount() {
@@ -134,7 +148,7 @@ class RunEncounter extends Component {
     let attacker = state.combatList.find(cb => { return cb.uuid === att.uuid } );
     let target = state.combatList.find(cb => { return cb.uuid === trg.uuid } );
 
-    let _power = attacker.powers.find(function(p, i){ return p.uuid === attacker.currentPower });
+    let _power = attacker.powers.find(function(p, i){ return p._id === attacker.currentPower });
 
     let _weapon = false;
     if(attacker.inventory !== undefined){
@@ -204,6 +218,12 @@ class RunEncounter extends Component {
     
  
     let index = state.combatList.findIndex( (cmb) => {
+      if(cmb === undefined){
+        return false;
+      }
+      if(cmb.uuid === state.currentActor.uuid && cmb.hp < 0){
+        return false;
+      }
       return cmb.uuid === state.currentActor.uuid; 
     });
 
@@ -225,6 +245,7 @@ class RunEncounter extends Component {
         delete state.combatList[x];
       }
     }
+    state.combatList = state.combatList.filter(function(){return true;});
 
     this.setState(state);
   }
@@ -244,7 +265,7 @@ class RunEncounter extends Component {
     }
     let _i = state.combatList.findIndex( (cb, i) => { return cb.uuid === attUuid });
 
-    state.combatList[_i].currentPower = state.combatList[_i].powers[index].uuid;
+    state.combatList[_i].currentPower = state.combatList[_i].powers[index]._id;
 
     this.setState(state);
   }
@@ -309,6 +330,8 @@ class RunEncounter extends Component {
       state.selectedDungeon = selectedDungeon;
 
       _this.setState(state);
+
+      localStorage.setItem('dungeoneering--runEncounter', JSON.stringify(state) );
     })
     .catch(function (error) {
       console.log(error);
@@ -324,6 +347,8 @@ class RunEncounter extends Component {
   selectTile(id) {
     let selectedTile = this.state.selectedTile;
     this.setState( { selectedTile: (selectedTile === id) ? '' : id });
+
+    console.log(id);
   }
 
   handleMouseOver = (entity, type, eve) => {
@@ -339,7 +364,12 @@ class RunEncounter extends Component {
       state.slots[ slot - 1 ].overlays.entity = Variables.clone(state.selectedEntity);
       state.slots[ slot - 1 ].occupied = true;
 
-      state.combatList.map(function(val){ if(val.uuid === state.selectedEntity.uuid) {val.slot = slot} return val; });
+      state.combatList.map(function(val){ 
+        if(val.uuid === state.selectedEntity.uuid) {
+          val.slot = slot
+        } 
+        return val; 
+      });
     }    
     return state;
   }
@@ -352,13 +382,19 @@ class RunEncounter extends Component {
   
     let slot = e.target.dataset.slot;
 
+    console.log(state.slots[ slot-1 ]);
+
     let entity;
 
     if(state.moving !== false){
       if(!state.selectedEntity){
-        state.moving = slot;
-        entity = state.slots[ slot-1 ].overlays.entity; //state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
-        state = this.selectEntity(entity.uuid, entity._type, state, entity);
+        entity = state.slots[ slot-1 ].overlays.entity;
+
+        if(entity){
+          state.moving = slot;
+          state = this.selectEntity(entity.uuid, entity._type, state, entity);
+        }
+        console.log(state);
       } else {
         // Add Entity to new slot
         state = this.setEntity(e, state, slot);
@@ -373,14 +409,27 @@ class RunEncounter extends Component {
       }
     } 
     if(state.attacking){
-        entity = state.combatList.find(function(val){ 
-          if(val === undefined){
-            return false;
-          }
-          return parseInt(val.slot, 10) === parseInt(slot, 10); 
+      entity = state.combatList.find(function(val){ 
+        if(val === undefined){
+          return false;
+        }
+        return parseInt(val.slot, 10) === parseInt(slot, 10); 
+      });
+
+      if(entity === undefined){
+        let _i = state.combatList.findIndex(function(val){ 
+          return (val === undefined);
         });
-        let _status = (state.selectedAttackers.length === 0) ? 'Attacker' : 'Target';
-        state.selectedAttackers.push( { uuid: entity.uuid, status: _status, attackRoll: false, natAttackRoll: false, attackMod: false, defense: false } );
+        console.log(_i);
+        state.combatList.splice(_i, 1);
+        state.attacking = false;
+        state.selectedAttackers = [];
+        this.setState( state );
+        return false;
+      }
+
+      let _status = (state.selectedAttackers.length === 0) ? 'Attacker' : 'Target';
+      state.selectedAttackers.push( { uuid: entity.uuid, status: _status, attackRoll: false, natAttackRoll: false, attackMod: false, defense: false } );
 
       if(state.selectedAttackers.length === 2){ //_status === 'Target'){
         state.attacking = false;
@@ -389,27 +438,7 @@ class RunEncounter extends Component {
     } 
 
     if(state.pickingCombat){
-      entity = Variables.clone(state.slots[ slot-1 ].overlays.entity);
-      entity.slot = state.slots[ slot-1 ].id;
-
-      if(entity._type === undefined){
-        let _uuid = Variables.clone(entity.uuid);
-        let _slot = Variables.clone(entity.slot);
-
-        let _entity = state.availableMonsters.find( m => {
-          return m._id === entity._id;
-        });
-        entity = _entity;
-        entity.uuid = _uuid;
-        entity.slot = _slot;
-      }
-
-
-      let cb = state.combatList.find(function(val){ return parseInt(val.slot, 10) === parseInt(slot, 10); });
-      if(cb === undefined){
-        state.combatList.push( entity );
-      }
-      
+      state = Battle.editCombatList(state, slot, this.props.availableMonsters);
     } 
 
     if(state !== undefined){
@@ -476,6 +505,18 @@ class RunEncounter extends Component {
     this.setState( state );
   }
 
+  setPowerField = (list) => {
+    let state = this.state;
+    state.powerField = list;
+    this.setState( state );
+  }
+
+  setWeaponField = (list) => {
+    let state = this.state;
+    state.weaponField = list;
+    this.setState( state );
+  }
+
   loadAttackDialog = () => {
     return (<AttackDialog 
               onHandlePowerSelect={this.handlePowerSelect} 
@@ -486,6 +527,10 @@ class RunEncounter extends Component {
               attackStatus={this.state.attackStatus}
               onResetAttack={this.resetAttack}
               onCloseAttackDialog={this.closeAttackDialog}
+              onHandleObjMouseOver={this.handleObjMouseOver}
+              onSetPowerField={this.setPowerField}
+              powerField={this.state.powerField}
+              existingPowers={this.props.existingPowers}
               />);
   }
 
@@ -570,10 +615,22 @@ class RunEncounter extends Component {
                 {this.state.partyXP}
               </Chip>
             </div>
+            <div className="combatList">
+              {
+                combatList.map( (cl,x) => {
+                  return(
+                    <div className="combatant" key={x} data-slot={cl.slot}>
+                      {cl.name}
+                    </div>
+                  );
+                })
+              }
+            </div>
 
           </div>
           
            <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} combatList={combatList}/>
+           <PowerTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} powerField={this.state.powerField} />
            {this.state.showAttackDialog ? this.loadAttackDialog() : '' }
         </div>
     );

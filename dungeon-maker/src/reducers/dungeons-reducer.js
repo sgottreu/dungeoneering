@@ -67,7 +67,7 @@ const dungeonsReducer = function(state = initialState, action) {
     case types.UPDATE_DUNGEON_KEY:
       dungeon = Variables.clone(state.dungeon);
       dungeon[ action.key ] = action.value;
-      
+
       return Object.assign({}, state, {
         dungeon: dungeon
       });
@@ -83,10 +83,11 @@ const dungeonsReducer = function(state = initialState, action) {
         slots[ s ].occupied = true;
       }
 
+      dungeon = Variables.clone(state.dungeon);
+      dungeon.slots = slots;
+
       return Object.assign({}, state, {
-        dungeon: {
-          slots: slots
-        }
+        dungeon: dungeon
       });
 
     case types.ADD_TILE:
@@ -110,10 +111,11 @@ const dungeonsReducer = function(state = initialState, action) {
         }
       }
 
+      dungeon = Variables.clone(state.dungeon);
+      dungeon.slots = slots;
+
       return Object.assign({}, state, {
-        dungeon: {
-          slots: slots
-        }
+        dungeon: dungeon
       });
 
     default:

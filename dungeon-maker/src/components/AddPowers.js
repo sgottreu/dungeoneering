@@ -1,15 +1,17 @@
 import React from 'react';
 import PowersForm from './PowersForm';
 
-function AddPowers( {existingPowers, current_power, power, boundPowerAC} )
+function AddPowers( {existingPowers, current_power, power, boundPowerAC, entitiesState, powersState, boundEntityAC} )
 { 
     return (
       <div className="AddPowers">
-		    <PowersForm entityType='character' 
+		    <PowersForm 
+          entityType='character' 
           existingPowers={existingPowers}  
-          current_power={current_power}
-          power={power}
           boundPowerAC={boundPowerAC}
+          entitiesState={entitiesState}
+          powersState={powersState}
+          boundEntityAC={boundEntityAC}
         /> 
       </div>
 		);

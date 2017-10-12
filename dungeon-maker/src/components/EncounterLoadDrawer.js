@@ -30,7 +30,7 @@ const EncounterLoadDrawer = (
 	
   
 	let _encounter = availableEncounters.find(enc => { return enc._id === selectedEncounter});
-	let encounterDungeons = (!selectedEncounter) ? [] : _encounter.dungeons; 
+	let encounterDungeons = (!selectedEncounter || _encounter === undefined) ? [] : _encounter.dungeons; 
 
 	return (
 		<div className="EncounterLoadDrawer">
@@ -68,9 +68,13 @@ const EncounterLoadDrawer = (
 				<SelectField onChange={(e,i,v) => {handleDungeonChange(e,i,v) }} value={selectedDungeon} floatingLabelText="Saved Dungeon Grids" >
 					{encounterDungeons.map( (_dungeon, x) => {
 						let dungeon = availableDungeons.find(d => { return d._id === _dungeon});
-						let label = (dungeon.title) ? dungeon.title : dungeon._id;
+						let label = '', dungeon_id = false;
+						if(dungeon !== undefined) {
+							label = (dungeon.title) ? dungeon.title : dungeon._id;
+							dungeon_id =  dungeon._id;
+						} 
 						return (
-							<MenuItem key={x} value={dungeon._id} primaryText={label} />
+							<MenuItem key={x} value={dungeon_id} primaryText={label} />
 						)
 					})}
 				</SelectField>

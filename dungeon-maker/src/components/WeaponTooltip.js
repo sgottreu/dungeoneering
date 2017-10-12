@@ -2,6 +2,7 @@ import React from 'react';
 import {List, ListItem} from 'material-ui/List';
 import TooltipChip from './TooltipChip';
 import uuidV4  from 'uuid/v4';
+import Avatar from 'material-ui/Avatar';
 import '../css/WeaponTooltip.css';
 
 const WeaponTooltip = ({ hoverObj, mouse, weaponField }) => {
@@ -31,7 +32,11 @@ const WeaponTooltip = ({ hoverObj, mouse, weaponField }) => {
 	return (
 		<div className={className} style={style}>
       <List className="stats">
-        <ListItem primaryText={weapon.name} leftIcon={<div className={'tooltip_icon icon weapon_'+weapon.type.toLowerCase()} />}  />        
+        <ListItem primaryText={weapon.name} 
+          leftIcon={
+            <Avatar className={'tooltip_icon icon weapon_'+weapon.type.toLowerCase()} />
+          }  
+        />        
         {<ListItem primaryText={
           <div className="flex-horiz">
             <TooltipChip key={uuidV4()} text={`${weapon.price}`} opts={{icon: 'fa-usd'}} />  
