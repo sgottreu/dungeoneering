@@ -7,30 +7,24 @@ import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
-import Toggle from 'material-ui/Toggle';
 
 import '../css/AddWeapon.css';
 
 class AddWeapon extends Component {
   constructor(props){
     super(props);
-    this.boundWeaponAC          = this.props.boundWeaponAC;
-    this.handleChooseWeapon     = this.handleChooseWeapon.bind(this);
-    this.handleChange           = this.handleChange.bind(this);
-    this.handleRangeChange      = this.handleRangeChange.bind(this);
-    this.handleWeaponSave       = this.handleWeaponSave.bind(this);
-    this.handleDieChange        = this.handleDieChange.bind(this);
-    this.handleDieNumChange     = this.handleDieNumChange.bind(this);
-    this.handleProfChange       = this.handleProfChange.bind(this);
-    this.handleCategoryChange   = this.handleCategoryChange.bind(this);
-    this.handleTypeChange       = this.handleTypeChange.bind(this);
-    this.handleHandsChange      = this.handleHandsChange.bind(this);
-    this.loadRangeField         = this.loadRangeField.bind(this);
-    this.handleMagicalChange    = this.handleMagicalChange.bind(this);
-    this.loadMagicalField       = this.loadMagicalField.bind(this);
-
-    this.handleMagicLevelChange = this.handleMagicLevelChange.bind(this);
-    this.handleMagicEnchantChange = this.handleMagicEnchantChange.bind(this);
+    this.boundWeaponAC = this.props.boundWeaponAC;
+    this.handleChooseWeapon = this.handleChooseWeapon.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleRangeChange = this.handleRangeChange.bind(this);
+    this.handleWeaponSave = this.handleWeaponSave.bind(this);
+    this.handleDieChange = this.handleDieChange.bind(this);
+    this.handleDieNumChange = this.handleDieNumChange.bind(this);
+    this.handleProfChange = this.handleProfChange.bind(this);
+    this.handleCategoryChange = this.handleCategoryChange.bind(this);
+    this.handleTypeChange = this.handleTypeChange.bind(this);
+    this.handleHandsChange = this.handleHandsChange.bind(this);
+    this.loadRangeField = this.loadRangeField.bind(this);
 
     this.updateSnackBar = this.updateSnackBar.bind(this);
 
@@ -58,16 +52,6 @@ class AddWeapon extends Component {
 
   handleChange = (event) => {
     this.boundWeaponAC.updateKey( event.target.name, event.target.value );
-  }
-
-  handleMagicalChange = (event) => {
-    let _weapon = this.props.weapon;
-
-    if(_weapon.magical === undefined){
-      _weapon.magical = {status: false, level: 0, enchantment: 0}
-    }
-    _weapon.magical.status = !_weapon.magical.status;
-    this.boundWeaponAC.updateKey( 'magical', _weapon.magical );
   }
 
   handleRangeChange = (event) => {
@@ -114,33 +98,10 @@ class AddWeapon extends Component {
     );
   }
 
-  loadMagicalField(weapon){
-    return (
-      <div>
-        <TextField className="shortField" floatingLabelText="Level" type="number" value={weapon.magical.level} name="level" onChange={this.handleMagicLevelChange} />
-        <TextField className="shortField" floatingLabelText="Enchantment" type="number" value={weapon.magical.enchantment} name="high" onChange={this.handleMagicEnchantChange} />
-      </div>
-    );
-  }
-  handleMagicLevelChange(event){
-    let magical = this.props.weapon.magical;
-    magical.level = event.target.value;
-    this.boundWeaponAC.updateKey( 'magical', magical);
-  }
-  handleMagicEnchantChange(event){
-    let magical = this.props.weapon.magical;
-    magical.enchantment = event.target.value;
-    this.boundWeaponAC.updateKey( 'magical', magical);
-  }
-
 	render() {
     let _weapon = this.props.weapon;
     let availableWeapons = this.props.availableWeapons;
     let _i = availableWeapons.findIndex( (w, index) => { return w._id === _weapon._id });
-
-    if(_weapon.magical === undefined){
-      _weapon.magical = {status: false, level: 0, enchantment: 0}
-    }
 
 		return (
 			<div className="AddWeapon">
@@ -176,14 +137,6 @@ class AddWeapon extends Component {
           <MenuItem key={1} value={3} primaryText='+3' />
         </SelectField>
         </div>
-        <Toggle
-          label="Magical"
-          defaultToggled={_weapon.magical.status}
-          name="magical" 
-          onToggle={this.handleMagicalChange}
-          style={ {width: '250px'} }
-        />
-        {(_weapon.magical.status) ? this.loadMagicalField(_weapon) : ''}    
         <br/>
         <div className="damage">
           <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_weapon.damage.num}      name="damage_num"      onChange={this.handleDieNumChange} />
