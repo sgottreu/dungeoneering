@@ -46,13 +46,14 @@ class DungeonMaker extends Component {
 
   render() {
     let { selectedTile, availableDungeons, selectedDungeon, selectedEntity, tileType, dungeon} = this.props.dungeonsState;
-    let availableMonsters = this.props.availableMonsters
+    let {availableMonsters, availableCharacters} = this.props;
     let hideDupeButton = (selectedDungeon) ? '': ' hide ';
     let updateSnackBar = this.updateSnackBar;
     return (    	
 	      <div className="DungeonMaker">
           <DungeonGrid 
             availableMonsters={availableMonsters}
+            availableCharacters={availableCharacters}
             slots={dungeon.slots} 
             onAddTile={this.boundDungeonAC.addTile} 
             selectedDungeon={selectedDungeon} 

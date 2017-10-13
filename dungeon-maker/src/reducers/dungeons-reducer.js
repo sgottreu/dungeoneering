@@ -75,11 +75,11 @@ const dungeonsReducer = function(state = initialState, action) {
     case types.SET_SLOT_ENTITY:
       s = action.slot - 1;
 
-      if(slots[ s ].occupied === true && !action.id){
+      if(slots[ s ].occupied === true && action.id){
         slots[ s ].overlays.entity = false;
         slots[ s ].occupied = false;
       } else {
-        slots[ s ].overlays.entity = action.id;
+        slots[ s ].overlays.entity = { _id: action.id, _type: action._type, uuid: action.uuid };
         slots[ s ].occupied = true;
       }
 

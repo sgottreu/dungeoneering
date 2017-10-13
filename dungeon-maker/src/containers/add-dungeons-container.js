@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux';
 import DungeonMaker from '../components/DungeonMaker';
+import uuidV4  from 'uuid/v4';
 
 import * as dungeonsApi from '../api/dungeons-api';
 import * as entitiesApi from '../api/entities-api';
@@ -35,7 +36,8 @@ class AddDungeonsContainer extends Component {
     let { selectedEntity } = this.props.dungeonsState;
 
     if(selectedEntity){
-      this.props.boundDungeonAC.setSlotEntity(selectedEntity, slot);
+      var uuid = uuidV4();
+      this.props.boundDungeonAC.setSlotEntity(selectedEntity, slot, uuid);
     }
   }
 
