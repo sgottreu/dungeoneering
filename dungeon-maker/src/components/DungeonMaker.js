@@ -93,7 +93,7 @@ class DungeonMaker extends Component {
             }}
           />
           <div>
-{console.log(dungeon)}
+
             <br/>
             <TextField 
               hintText="Dungeon Name" 

@@ -29,7 +29,21 @@ class DungeonGrid extends Component {
   						}
   						return item.uuid === slot.overlays.entity
             });
-  				} 
+  				} else {
+						if(slot.occupied){
+							if(entity._type === 'monster'){
+								let e = availableMonsters.find( m => { return m._id === entity._id} );
+								if(e !== undefined){
+										entity = e;
+								}
+							} else {
+								let e = availableMonsters.find( m => { return m._id === entity._id} );
+								if(e !== undefined){
+										entity = e;
+								}
+							}
+						}
+					}
   				return (	          
   					<DungeonGridSlot key={slot.id} 
   						availableMonsters={availableMonsters}
