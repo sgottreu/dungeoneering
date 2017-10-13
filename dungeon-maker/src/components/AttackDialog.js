@@ -120,7 +120,7 @@ const AttackDialog = ( {
   let showAttack = (att.attackRoll) ? true : false;
   let targetHP = target.hp + ((showHit) ? ' ( -'+trg.damage+' )' : '');
 
-  var attackField = null;
+  // var attackField = null;
 
   return (
     <div className="AttackDialog">

@@ -13,7 +13,7 @@ import * as Entity from '../lib/Entity';
 import * as Battle from '../lib/Battle';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
-import uuidV4  from 'uuid/v4';
+// import uuidV4  from 'uuid/v4';
 import '../css/RunEncounter.css';
 
 import * as dungeonsApi from '../api/dungeons-api';
