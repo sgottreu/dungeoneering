@@ -249,8 +249,7 @@ class PowersForm extends Component {
 
 	render(){
     let { entityType, weapons, powersState } = this.props;
-    let { current_power, power } = powersState;
-
+    let { power } = powersState;
 		return (
       
 			<div 
@@ -315,7 +314,7 @@ class PowersForm extends Component {
           autoHideDuration={4000}            
         />
         <br/>
-        <PowerTooltip powerField={this.powerField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
+        <PowerTooltip powerField={this.powerField} hoverObj={this.props.hoverObj} mouse={this.props.mouse} />
 			</div>
 		);
 	}

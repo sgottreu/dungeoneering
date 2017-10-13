@@ -13,7 +13,7 @@ import * as Entity from '../lib/Entity';
 import * as Battle from '../lib/Battle';
 import Chip from 'material-ui/Chip';
 import Avatar from 'material-ui/Avatar';
-import uuidV4  from 'uuid/v4';
+// import uuidV4  from 'uuid/v4';
 import '../css/RunEncounter.css';
 
 import * as dungeonsApi from '../api/dungeons-api';
@@ -382,25 +382,26 @@ class RunEncounter extends Component {
   
     let slot = e.target.dataset.slot;
 
-    console.log(state.slots[ slot-1 ]);
-
     let entity;
 
     if(state.moving !== false){
       if(!state.selectedEntity){
         entity = state.slots[ slot-1 ].overlays.entity;
 
+        entity = Entity.getEntity({monsters: this.props.availableMonsters, characters: this.props.availableCharacters}, entity);
+
         if(entity){
           state.moving = slot;
           state = this.selectEntity(entity.uuid, entity._type, state, entity);
         }
-        console.log(state);
       } else {
         // Add Entity to new slot
         state = this.setEntity(e, state, slot);
-        if(state.currentActor.uuid === state.selectedEntity.uuid){
-          state.currentActor.slot = slot;
-        }
+        // if(state.currentActor.uuid === state.selectedEntity.uuid && state.currentActor.slot){
+          // state.slots[ state.currentActor.slot ].overlays.entity = false;
+          // state.slots[ state.selectedEntity.slot ].overlays.entity = false;
+          // state.currentActor.slot = slot;
+        // }
         
         // Remove Entity from old slot
         state = this.setEntity(e, state, state.moving);
@@ -420,7 +421,7 @@ class RunEncounter extends Component {
         let _i = state.combatList.findIndex(function(val){ 
           return (val === undefined);
         });
-        console.log(_i);
+
         state.combatList.splice(_i, 1);
         state.attacking = false;
         state.selectedAttackers = [];
@@ -438,7 +439,7 @@ class RunEncounter extends Component {
     } 
 
     if(state.pickingCombat){
-      state = Battle.editCombatList(state, slot, this.props.availableMonsters);
+      state = Battle.editCombatList(state, slot, {monsters: this.props.availableMonsters, characters: this.props.availableCharacters} );
     } 
 
     if(state !== undefined){

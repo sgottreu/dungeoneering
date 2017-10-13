@@ -365,3 +365,20 @@ export var findEntitySize = (label) => {
   }
   return false;
 };
+
+
+export var getEntity = (availableEntities, entity) => {
+  if(entity._type === 'monster'){
+    let e = availableEntities.monsters.find( m => { return m._id === entity._id} );
+    if(e !== undefined){
+        entity = e;
+    }
+  } else {
+    let e = availableEntities.characters.find( m => { return m._id === entity._id} );
+    if(e !== undefined){
+        entity = e;
+    }
+  }
+
+  return entity;
+}

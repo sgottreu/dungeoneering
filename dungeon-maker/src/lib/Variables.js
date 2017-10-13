@@ -1,12 +1,16 @@
-let host;
+let host, env;
+
 if(process !== undefined && process.env !== undefined && process.env.NODE_ENV === 'development'){
   host = 'http://localhost:4000';
+  env = 'development';
 } else {
   host = 'https://dungeoneering.herokuapp.com';
+  env = 'production';
 }
 
 export var Variables = {
   host: host,
+  env: env,
   clone: (data) => {
 		return (data === undefined) ? {} : JSON.parse(JSON.stringify(data));
   },

@@ -7,7 +7,7 @@ import Avatar from 'material-ui/Avatar';
 import '../css/PowerTooltip.css';
 
 import attackIcon from '../img/attack.png';
-import defenseIcon from '../img/defense.png';
+// import defenseIcon from '../img/defense.png';
 import damageIcon from '../img/pierced-heart.png';
 import weaponModIcon from '../img/weapon_modifier.png';
 
@@ -44,12 +44,12 @@ const PowerTooltip = ({ hoverObj, mouse, powerField }) => {
   let hasWeaponMod = (power.weapon_modifier === undefined || power.weapon_modifier === 0) ? false : true;
 
   let selClassIcon = '';
-  let powerClassName = '';
+  // let powerClassName = '';
   let hasClass = 'hide';
   if(power.class !== undefined){
     let _ClassIcon = EntityIcons.find(function(val){ return val.label === power.class.name });
     selClassIcon = (_ClassIcon === undefined) ? '' : _ClassIcon.class;
-    powerClassName = power.class.name;
+    // powerClassName = power.class.name;
     hasClass = '';
   }
 

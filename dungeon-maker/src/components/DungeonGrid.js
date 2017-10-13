@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import DungeonGridSlot from './DungeonGridSlot';
 import '../css/DungeonGrid.css';
+import {getEntity} from '../lib/Entity';
 
 class DungeonGrid extends Component {
 	// shouldComponentUpdate(nextProps) {
@@ -15,35 +16,26 @@ class DungeonGrid extends Component {
 
 
 
-		let {slots, onAddTile, combatList, selectedAttackers, availableMonsters, onSetAttackerStatus, currentActor, onHandleObjMouseOver} = this.props;
+		let {slots, onAddTile, combatList, selectedAttackers, availableMonsters, availableCharacters, onSetAttackerStatus, currentActor, onHandleObjMouseOver} = this.props;
 
 		return(
     <div className="DungeonGrid">
       {
         slots.map(slot => {
   				let entity;
-  				if(slot.occupied && combatList !== undefined){
-  					entity = combatList.find(item => { 
-  						if(item === undefined){
-  							return false;
-  						}
-  						return item.uuid === slot.overlays.entity
-            });
-  				} else {
-						if(slot.occupied){
-							if(entity._type === 'monster'){
-								let e = availableMonsters.find( m => { return m._id === entity._id} );
-								if(e !== undefined){
-										entity = e;
-								}
-							} else {
-								let e = availableMonsters.find( m => { return m._id === entity._id} );
-								if(e !== undefined){
-										entity = e;
-								}
-							}
-						}
-					}
+  				if(slot.occupied){
+            if(combatList !== undefined){
+              entity = combatList.find(item => { 
+                if(item === undefined){
+                  return false;
+                }
+                return item.uuid === slot.overlays.entity.uuid;
+              });
+
+            } else {
+              entity = getEntity({monsters: availableMonsters, characters: availableCharacters}, slot.overlays.entity);
+            }
+  				} 
   				return (	          
   					<DungeonGridSlot key={slot.id} 
   						availableMonsters={availableMonsters}

@@ -13,6 +13,7 @@ class AddMonstersContainer extends Component {
   componentDidMount() {
     weaponsApi.findWeapons();
     entitiesApi.findMonsters();
+    entitiesApi.findCharacters();
   }
 
   render() {
@@ -26,6 +27,7 @@ const mapStateToProps = function(store) {
   return {
     availableMonsters: store.entitiesState.availableMonsters,
     availableWeapons: store.weaponsState.availableWeapons,
+    availableCharacters: store.entitiesState.availableCharacters,
     entitiesState: store.entitiesState,
     powersState: store.powersState,
     EntityType: 'monster'
