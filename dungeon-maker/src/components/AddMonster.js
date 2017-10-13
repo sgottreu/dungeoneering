@@ -6,7 +6,7 @@ class AddMonster extends Component {
 	render() {
 		return (
 			<div className="AddMonster">
-				<EntityForm type="monster" />
+				<EntityForm type="monster"  {...this.props} />
 			</div>
 		);
 

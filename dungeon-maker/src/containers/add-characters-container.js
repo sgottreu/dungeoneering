@@ -8,6 +8,7 @@ import * as entitiesApi from '../api/entities-api';
 import * as Entity from '../lib/Entity';
 
 import * as EntityActionCreators from '../actions/entities-actions';
+import * as PowerActionCreators from '../actions/powers-actions';
 
 class AddCharactersContainer extends Component {
 
@@ -35,6 +36,7 @@ const mapStateToProps = function(store) {
     availableWeapons: store.weaponsState.availableWeapons,
     existingPowers: store.powersState.existingPowers,
     entitiesState: store.entitiesState,
+    powersState: store.powersState,
     EntityType: 'character'
   };
 };

@@ -181,8 +181,9 @@ class PowersForm extends Component {
 
   loadWeaponsField(weapons){
     let availableWeapons = this.props.availableWeapons;
+    let {power} = this.props.powersState;
     return (
-      <SelectField className="bottomAlign"   floatingLabelText="Weapon" value={this.props.power.weapon} onChange={this.handleWeaponChange} >
+      <SelectField className="bottomAlign"   floatingLabelText="Weapon" value={power.weapon} onChange={this.handleWeaponChange} >
         {weapons.map( (weapon, index) => {
           let _weapon = availableWeapons.find(function(w, i){ return w._id === weapon});
           return (
@@ -249,7 +250,8 @@ class PowersForm extends Component {
 
 	render(){
     let { entityType, weapons, powersState } = this.props;
-    let { power } = powersState;
+
+    let { power, current_power } = powersState;
 		return (
       
 			<div 

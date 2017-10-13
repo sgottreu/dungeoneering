@@ -242,8 +242,8 @@ class EntityForm extends Component {
         selEntity={selectedEntity} 
         existingPowers={entity.powers} 
         entityType="monster" 
-        power={this.props.powersState.power}
-        current_power={this.props.powersState.current_power}
+        powersState={this.props.powersState}
+
         availableWeapons={this.props.availableWeapons} 
         weapons={entity.weapons}
         hoverObj={this.props.entitiesState.hoverObj} 

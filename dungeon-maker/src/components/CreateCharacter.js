@@ -6,7 +6,7 @@ class CreateCharacter extends Component {
 	render() {
 		return (
 			<div className="CreateCharacter">
-				<EntityForm type="character" />
+				<EntityForm type="character"  {...this.props} />
 			</div>
 		);
 
