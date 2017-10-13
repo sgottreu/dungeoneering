@@ -19,8 +19,8 @@ import Chip from 'material-ui/Chip';
 import Snackbar from 'material-ui/Snackbar';
 import Avatar from 'material-ui/Avatar';
 import Toggle from 'material-ui/Toggle';
-
-import SvgIcon from 'material-ui/SvgIcon';
+import uuidV4  from 'uuid/v4';
+// import SvgIcon from 'material-ui/SvgIcon';
 
 import '../css/EntityForm.css';
 
@@ -165,6 +165,9 @@ class EntityForm extends Component {
   handleEntitySave = () => {
     let updateSnackBar = this.updateSnackBar;
     let key = (this.EntityType === 'monster') ? 'Monster' : 'Character';
+    if(this.props.entitiesState.entity.uuid === undefined){
+      this.props.entitiesState.entity.uuid = uuidV4();
+    }
     entitiesApi.saveEntity(this.props.entitiesState.entity)
     .then( function(response){
       updateSnackBar(key+' saved.', true);
@@ -232,6 +235,9 @@ class EntityForm extends Component {
 
   loadPowersForm() {
     let {entity, selectedEntity} = this.props.entitiesState;
+
+    entity = Entity.getEntity({monsters: this.props.availableMonsters, characters: this.props.availableCharacters}, entity);
+
     return (
       <PowersForm 
         boundPowerAC={this.props.boundPowerAC}
@@ -242,6 +248,8 @@ class EntityForm extends Component {
         current_power={this.props.powersState.current_power}
         availableWeapons={this.props.availableWeapons} 
         weapons={entity.weapons}
+        hoverObj={this.props.entitiesState.hoverObj} 
+        mouse={this.props.entitiesState.mouse}
       />
     );
   }
@@ -297,8 +305,6 @@ class EntityForm extends Component {
           
           {_powers.map( (power, index) => {
             if(!entity.class){
-              console.log(power);
-              console.log(Powers.powerType);
               return (
                 <ListItem  key={index} 
                   primaryText={<div >{power.name}</div>}  

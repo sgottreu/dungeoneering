@@ -40,11 +40,12 @@ export function updateDungeonKey(key, value) {
 
 
 
-export function setSlotEntity(entity, slot) {
+export function setSlotEntity(entity, slot, uuid) {
   return {
     type: types.SET_SLOT_ENTITY,
     id: entity._id,
     _type: entity._type,
+    uuid: uuid,
     slot: slot
   };
 }
