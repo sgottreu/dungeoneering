@@ -7,7 +7,6 @@ import entitiesReducer from './reducers/entities-reducer';
 import partiesReducer from './reducers/parties-reducer';
 import encountersReducer from './reducers/encounters-reducer';
 import gearReducer from './reducers/gear-reducer';
-import { logger } from 'redux-logger';
 
 // Use ES6 object literal shorthand syntax to define the object shape
 const rootReducer = combineReducers({
@@ -20,9 +19,17 @@ const rootReducer = combineReducers({
   gearState: gearReducer
 });
 
+const middlewares = [thunk];
+
+if (process.env.NODE_ENV === `development`) {
+ const { logger } = require(`redux-logger`);
+
+ middlewares.push(logger);
+}
+
 const store = createStore(
   rootReducer,
-  applyMiddleware(logger, thunk)
+  applyMiddleware(...middlewares)
 );
 
 export default store;
