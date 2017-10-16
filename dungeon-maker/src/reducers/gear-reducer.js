@@ -1,15 +1,27 @@
 import * as types from '../actions/action-types';
 import SortByKey from '../lib/SortByKey';
+import {Variables} from '../lib/Variables';
 
 const initialState = {
   availableGear: [],
-  gear: {}
+  gear: {
+    _id: false,
+    "category": "",
+    "name": "",
+    "price": 0,
+    "weight": 0,
+    "quantity": 0,
+    "_type": "gear",
+    "slot": false,
+    "rare": false
+}
 };
 
 const gearReducer = function(state = initialState, action) {
   if(action === undefined){
     return state;
   }
+  var gear = false;
 
   switch(action.type) {
     case types.LOAD_AVAILABLE_GEAR:
@@ -19,6 +31,40 @@ const gearReducer = function(state = initialState, action) {
         availableGear: action.gear
       });
 
+    case types.UPDATE_KEY:
+      gear = Variables.clone(state.gear);
+      gear[ action.key ] = action.value;
+      
+      return Object.assign({}, state, {
+        gear: gear
+      });
+
+    case types.CHANGE_GEAR:
+      gear = state.availableGear[ action.index - 1];
+
+      if(gear === undefined){
+        gear = initialState.gear;
+      }
+
+      return Object.assign({}, state, {
+        gear: gear
+      });
+
+    case types.UPDATE_EXISTING_GEAR:
+      let availableGear = state.availableGear;
+      if(!action.gear.id){
+        availableGear.push(action.gear);
+      } else {
+        let _i = availableGear.findIndex( (grid, i) => { return grid._id === action.id });
+        if(_i > -1){
+          availableGear[_i] = action.gear; 
+        }
+      }      
+      
+      availableGear.sort(SortByKey('name'));
+      return Object.assign({}, state, {
+        availableGear: availableGear
+      });
 
     default:
       return state;    

@@ -17,6 +17,7 @@ import AddCharactersContainer from './containers/add-characters-container';
 import AddDungeonsContainer from './containers/add-dungeons-container';
 import CreatePartyContainer from './containers/create-party-container';
 import CreateEncounterContainer from './containers/create-encounter-container';
+import AddGearContainer from './containers/add-gear-container';
 
 
 import './css/App.css';
@@ -64,6 +65,7 @@ class App extends Component {
           <Link to="/createCharacter" ><MenuItem onTouchTap={this.activateMenu} primaryText="Create Character" /></Link>
           <Link to="/addMonster"  ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Monster" /></Link>
           <Link to="/addWeapon" ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Weapons" /></Link>
+          <Link to="/addGear" ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Gear" /></Link>
           <Link to="/addPowers" ><MenuItem onTouchTap={this.activateMenu} primaryText="Add Powers" /></Link>
         
           
@@ -78,6 +80,7 @@ class App extends Component {
         <Route path="/createCharacter" component={ () => (<AddCharactersContainer />) } />
         <Route path="/addMonster" component={ () => (<AddMonstersContainer />) } />
         <Route path="/addWeapon" component={() => (<AddWeaponsContainer />)} />
+        <Route path="/addGear" component={() => (<AddGearContainer />)} />
         <Route path="/addPowers" component={() => (<AddPowersContainer />)} />
       </div>
 

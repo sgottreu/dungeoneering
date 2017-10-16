@@ -290,6 +290,27 @@ app.get('/findGear', function (req, res) {
   });
 });
 
+app.get('/findGearCategories', function (req, res) {
+  console.log('Finding Gear Categories');
+  dungeon_grid.find({ _type: 'gear' }, 
+    { sort : { category : 1 } }).then(function(docs) {
+    var categories = [];
+
+    for(var x=0,len=docs.length;x<len;x++){
+      let i = categories.findIndex(function(item){
+        return item === docs[x].category;
+      });
+
+      if(i === -1){
+        categories.push(docs[x].category);
+      }
+    }
+    console.log(`Found ${categories.length} gear`);
+
+    sendJSON(res, categories);
+  });
+});
+
 app.post('/saveGear', function (req, res) {
   console.log('Saving Gear');
   
