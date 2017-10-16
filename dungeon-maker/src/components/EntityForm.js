@@ -243,7 +243,6 @@ class EntityForm extends Component {
         existingPowers={entity.powers} 
         entityType="monster" 
         powersState={this.props.powersState}
-
         availableWeapons={this.props.availableWeapons} 
         weapons={entity.weapons}
         hoverObj={this.props.entitiesState.hoverObj} 

@@ -1,7 +1,7 @@
 import React from 'react';
 import PowersForm from './PowersForm';
 
-function AddPowers( {existingPowers, current_power, power, boundPowerAC, entitiesState, powersState, boundEntityAC} )
+function AddPowers( {existingPowers, boundPowerAC, entitiesState, powersState, boundEntityAC} )
 { 
     return (
       <div className="AddPowers">
