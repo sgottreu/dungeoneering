@@ -117,7 +117,6 @@ class CreateParty extends Component {
   }
 
   addMember = (character, e) => {
-console.log(character);
     this.boundPartyAC.updatePartyMember(character._id);
   }
 

@@ -6,14 +6,19 @@ const initialState = {
   availableGear: [],
   gear: {
     _id: false,
-    "category": "",
-    "name": "",
-    "price": 0,
-    "weight": 0,
-    "quantity": 0,
-    "_type": "gear",
-    "slot": false,
-    "rare": false
+    category: "",
+    name: "",
+    price: 0,
+    weight: 0,
+    quantity: 0,
+    _type: "gear",
+    slot: false,
+    rare: false,
+    attackModifier: false,
+    damage: { die: '1d6', num: 0},
+    abilityMod: 0, 
+    armorBonus: 0,
+    speedBonus: 0
 }
 };
 

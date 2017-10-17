@@ -2,7 +2,7 @@ var express = require('express');
 var mongo = require('mongodb');
 var monk = require('monk');
 var bodyParser = require('body-parser');
-const uuidV4 = require('uuid/v4');
+var uuidV4 = require('uuid/v4');
 var dotenv = require('dotenv');
 var methodOverride = require('method-override');
 
@@ -10,7 +10,7 @@ var mongodb_config = (process.env.mongodb) ? process.env.mongodb : process.argv[
 mongodb_config = (!mongodb_config) ? dotenv['mongodb'] : mongodb_config;
 var mongo_url = 'mongodb://'+mongodb_config;
 var db = monk(mongo_url);
-const fs = require('fs');
+var fs = require('fs');
 
 var app = express();
 
@@ -27,7 +27,7 @@ app.use(logErrors);
 app.use(clientErrorHandler);
 app.use(errorHandler);
 
-const dungeon_grid = db.get('dungeoneering');
+var dungeon_grid = db.get('dungeoneering');
 
 function logErrors (err, req, res, next) {
   console.error(err.stack)
@@ -75,19 +75,20 @@ app.get('/', function (req, res) {
 app.post('/saveEncounter', function (req, res) {
 	console.log('Saving encounter');
 
-	let payload = {
+	var payload = {
 		_type: 'encounter',
 		name: req.body.name,
 		dungeons: req.body.dungeons
-	};console.log(payload);
-	 _Save(req, res, payload);		
+  };
+  console.log(payload);
+	_Save(req, res, payload);		
 });
 
 app.get('/findEncounters', function (req, res) {
 	console.log('Finding encounters');
 
 	dungeon_grid.find({ _type: 'encounter' }).then(function(docs) {
-	  console.log(`Found ${docs.length} grids`);
+	  console.log('Found '+docs.length+' encounters');
     sendJSON(res, docs);
   }).catch(function(err){ 
     console.log(err);
@@ -113,9 +114,11 @@ app.get('/findDungeonGrids', function (req, res) {
 	console.log('Finding grids');
 
 	dungeon_grid.find({ _type: 'dungeon' }).then(function(docs) {
-	  console.log(`Found ${docs.length} grids`);
-    let grids = [];
-    docs.map( (grid, i) => { grids.push({_id: docs[i]._id, title: docs[i].title }) });
+	  console.log('Found '+docs.length+' grids');
+    var grids = [];
+    docs.map( function(grid, i) { 
+      grids.push({_id: docs[i]._id, title: docs[i].title }) 
+    });
     sendJSON(res, grids);
   }).catch(function(err){ 
     console.log(err);
@@ -125,7 +128,7 @@ app.get('/findDungeonGrids', function (req, res) {
 app.post('/saveDungeonGrids', function (req, res) {
 	console.log('Saving grid');
 
-	let payload = {
+	var payload = {
 		_type: 'dungeon',
 		title: req.body.title,
 		slots: req.body.slots
@@ -139,7 +142,7 @@ app.post('/saveDungeonGrids', function (req, res) {
 app.post('/saveParty', function (req, res) {
 	console.log('Saving Party');
 
-  let payload = JSON.parse(JSON.stringify(req.body));
+  var payload = JSON.parse(JSON.stringify(req.body));
 
   _Save(req, res, payload);
 
@@ -148,7 +151,7 @@ app.post('/saveParty', function (req, res) {
 app.get('/findParties', function (req, res) {
 	console.log('Finding Parties');
   dungeon_grid.find( { _type: "party"} ).then(function(docs) {
-    console.log(`Found ${docs.length} Parties`);
+    console.log('Found '+docs.length+' Parties');
     sendJSON(res, docs);
   });
 });
@@ -159,7 +162,7 @@ app.get('/findParties', function (req, res) {
 app.post('/saveEntity', function (req, res) {
 	console.log('Saving Entity');
 
-  let payload = JSON.parse(JSON.stringify(req.body));
+  var payload = JSON.parse(JSON.stringify(req.body));
   _Save(req, res, payload);
 
   if(payload._type == 'monster'){
@@ -211,30 +214,30 @@ app.post('/saveEntity', function (req, res) {
 
 app.get('/findMonsters', function (req, res) {
 	console.log('Finding Monsters');
-  let query = { _type: {"$in": ["monster"] }};
+  var query = { _type: {"$in": ["monster"] }};
 	dungeon_grid.find(query).then(function(docs) {
-    let entities = [];
+    var entities = [];
 
     for(var x=0,len = docs.length;x<len;x++){
     	entities.push(docs[x]);
     }
 
-    console.log(`Found ${docs.length} Monsters`);
+    console.log('Found '+docs.length+' Monsters');
     sendJSON(res, entities);
   });
 });
 
 app.get('/findCharacters', function (req, res) {
 	console.log('Finding Characters');
-  let query = { _type: {"$in": ["character"] }};
+  var query = { _type: {"$in": ["character"] }};
 	dungeon_grid.find(query).then(function(docs) {
-    let entities = [];
+    var entities = [];
 
     for(var x=0,len = docs.length;x<len;x++){
     	entities.push(docs[x]);
     }
 
-    console.log(`Found ${docs.length} Characters`);
+    console.log('Found '+docs.length+' Characters');
     sendJSON(res, entities);
   });
 });
@@ -255,7 +258,7 @@ app.get('/findPowers', function (req, res) {
 
 app.post('/savePower', function (req, res) {
 	console.log('Saving Power');
-  let payload = JSON.parse(JSON.stringify(req.body));
+  var payload = JSON.parse(JSON.stringify(req.body));
   payload._type = "power";
   _Save(req, res, payload);
 });
@@ -266,7 +269,7 @@ app.get('/findWeapons', function (req, res) {
   console.log('Finding Weapons');
   dungeon_grid.find({ _type: 'weapon' }, 
     { sort : { name : 1 } }).then(function(docs) {
-    console.log(`Found ${docs.length} weapons`);
+    console.log('Found '+docs.length+' weapons');
     sendJSON(res, docs);
   });
 });
@@ -274,7 +277,7 @@ app.get('/findWeapons', function (req, res) {
 app.post('/saveWeapon', function (req, res) {
   console.log('Saving Weapon');
   
-  let payload = JSON.parse(JSON.stringify(req.body));
+  var payload = JSON.parse(JSON.stringify(req.body));
   payload._type = 'weapon';
   _Save(req, res, payload);
 });
@@ -285,7 +288,7 @@ app.get('/findGear', function (req, res) {
   console.log('Finding Gear');
   dungeon_grid.find({ _type: 'gear' }, 
     { sort : { name : 1 } }).then(function(docs) {
-    console.log(`Found ${docs.length} gear`);
+    console.log('Found '+docs.length+' gear');
     sendJSON(res, docs);
   });
 });
@@ -297,7 +300,7 @@ app.get('/findGearCategories', function (req, res) {
     var categories = [];
 
     for(var x=0,len=docs.length;x<len;x++){
-      let i = categories.findIndex(function(item){
+      var i = categories.findIndex(function(item){
         return item === docs[x].category;
       });
 
@@ -305,7 +308,7 @@ app.get('/findGearCategories', function (req, res) {
         categories.push(docs[x].category);
       }
     }
-    console.log(`Found ${categories.length} gear`);
+    console.log('Found '+categories.length+' gear');
 
     sendJSON(res, categories);
   });
@@ -314,7 +317,7 @@ app.get('/findGearCategories', function (req, res) {
 app.post('/saveGear', function (req, res) {
   console.log('Saving Gear');
   
-  let payload = JSON.parse(JSON.stringify(req.body));
+  var payload = JSON.parse(JSON.stringify(req.body));
   payload._type = 'gear';
   _Save(req, res, payload);
 });
@@ -325,15 +328,14 @@ app.post('/saveGear', function (req, res) {
 
 // ************* Admin ******************//
 app.get('/admin', function (req, res) {
-  // let query = { _type: {"$in": ["monster"] }};
+  // var query = { _type: {"$in": ["gear"] }};
+  // var query = { _type: "gear" };
 	// dungeon_grid.find(query).then(function(docs) {
-  //   let entities = [];
+  //   var entities = [];
 
   //   for(var x=0,len = docs.length;x<len;x++){
-  //     docs[x].powers.map(p => {
-  //       p._id = uuidV4();
-  //       return p;
-  //     })
+  //     docs[x].attackModifier = 0;
+
 
   //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, docs[x] ).then(function (data) {
   //       console.log(`${docs[x].name} updated!`);
@@ -358,14 +360,14 @@ function _Save(req, res, payload){
   
   if(req.body._id) {
     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(req.body._id) }, payload ).then(function (data) {
-      console.log(`${payload._type} updated!`);
+      console.log(payload._type+' updated!');
       sendJSON(res, data);
     }).catch(function(err){ 
       console.log(err);
     });
 	} else {
 		dungeon_grid.insert( payload ).then(function (data) {
-			console.log(`${payload._type} inserted!`);
+			console.log(payload._type+' inserted!');
       sendJSON(res, data);
 		});
 	}
@@ -375,8 +377,8 @@ function _Save(req, res, payload){
 //   res.sendFile(__dirname + '/dungeon-maker/reports/coverage.html');
 // });
 
-app.get('/reports/src/*', (req, res) => {
-  fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
+app.get('/reports/src/*', function(req, res)  {
+  fs.readFile(__dirname + '/'+req.originalUrl, function(err, data)  {
     if (err) {
       var newPath = req.originalUrl.replace('/reports/', '');
       // newPath = newPath.replace('/', '\\');
@@ -390,11 +392,11 @@ app.get('/reports/src/*', (req, res) => {
   });  
 });
 
-app.get('/reports/*', (req, res) => {
-  fs.readFile(__dirname + '/'+req.originalUrl, (err, data) => {
+app.get('/reports/*', function(req, res)  {
+  fs.readFile(__dirname + '/'+req.originalUrl, function(err, data) {
     if (err) {
       if(req.originalUrl.indexOf('/reports/data.json') > -1){
-        let json = require('./dungeon-maker/reports/data.json');
+        var json = require('./dungeon-maker/reports/data.json');
         sendJSON(res, json);
       } else {
         res.sendFile(__dirname + '/dungeon-maker/'+req.originalUrl);
@@ -407,7 +409,7 @@ app.get('/reports/*', (req, res) => {
   });  
 });
 
-app.get('*', (req, res) => {
+app.get('*', function(req, res) {
   res.sendFile(__dirname + '/dungeon-maker/build/index.html');
 });
 

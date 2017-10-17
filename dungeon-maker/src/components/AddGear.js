@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import * as Gear from '../lib/Gear';
 import * as gearApi from '../api/gear-api';
+import {Die} from '../lib/Die';
+import {Variables} from '../lib/Variables';
 
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
@@ -74,7 +76,7 @@ class AddGear extends Component {
               let value = (i === 0) ? false : Gear.GearCategories[i-1];
               this.boundGearAC.updateKey( 'category', value );
             }} >
-              <MenuItem key={0} value={false} primaryText="Select Category" />
+              <MenuItem key={0} value={false} primaryText="" />
               { Gear.GearCategories.map( (cat, index) => (
                 <MenuItem key={index+1} value={`${cat}`} primaryText={`${cat}`} />
               ))
@@ -85,15 +87,42 @@ class AddGear extends Component {
         <br/>
 
         <TextField className="shortField" floatingLabelText="Price"      type="number" value={_gear.price}      name="price"      onChange={this.handleChange} />
-        <TextField className="shortField" floatingLabelText="Weight"      type="number" value={_gear.weight}      name="weight"      onChange={this.handleChange} />
-        <TextField className="shortField" floatingLabelText="Quantity"      type="number" value={_gear.quantity}      name="quantity"      onChange={this.handleChange} />
+        <TextField className="shortField" floatingLabelText="Weight"     type="number" value={_gear.weight}     name="weight"     onChange={this.handleChange} />
+        <TextField className="shortField" floatingLabelText="Quantity"   type="number" value={_gear.quantity}   name="quantity"   onChange={this.handleChange} />
         <br/>
-        <SelectField className="bottomAlign" floatingLabelText="Category" value={_gear.slot}  
+
+        <div className="damage">
+          <TextField className="" floatingLabelText="Attack Modifier"   type="number" value={_gear.attackModifier}   name="attackModifier"   onChange={this.handleChange} />
+          <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_gear.damage.num}      name="damage_num"      
+            onChange={ (event) => {
+              let dmg = Variables.clone(_gear.damage);
+              dmg.num = event.target.value;
+              this.boundGearAC.updateKey( 'damage', dmg );
+            }} />
+          <SelectField className="bottomAlign" floatingLabelText="Damage" name="damage_die" value={_gear.damage.die}  
+            onChange={ (event, i) => {
+              let dmg = Variables.clone(_gear.damage);
+              dmg.die = Die.types[ i ].label;
+              this.boundGearAC.updateKey( 'damage', dmg );     
+            }} >
+            {Die.types.map( (die, index) => (
+              <MenuItem key={index} value={`${die.label}`} primaryText={`${die.label}`} />
+            ))}
+          </SelectField>
+        </div>
+        <br/>
+
+        <TextField className="shortField" floatingLabelText="Armor Bonus"      type="number" value={_gear.armorBonus}      name="armorBonus"      onChange={this.handleChange} />
+        <TextField className="shortField" floatingLabelText="Ability Mod"     type="number" value={_gear.abilityMod}     name="abilityMod"     onChange={this.handleChange} />
+        <TextField className="shortField" floatingLabelText="Speed Bonus"   type="number" value={_gear.speedBonus}   name="speedBonus"   onChange={this.handleChange} />
+        <br/>
+
+        <SelectField className="bottomAlign" floatingLabelText="Item Slot" value={_gear.slot}  
           onChange={(e, i) => {
             let value = (i === 0) ? false : Gear.GearSlots[i-1];
             this.boundGearAC.updateKey( 'slot', value );
           }} >
-          <MenuItem key={0} value={false} primaryText="Select Slot" />
+          <MenuItem key={0} value={false} primaryText="" />
           { Gear.GearSlots.map( (cat, index) => (
             <MenuItem key={index+1} value={`${cat}`} primaryText={`${cat}`} />
           ))

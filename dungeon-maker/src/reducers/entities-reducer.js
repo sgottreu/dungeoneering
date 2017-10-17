@@ -100,7 +100,7 @@ const entitiesReducer = function(state = initialState, action) {
       } else {
         _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'add');
         _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'add');
-         _entity.inventory = Entity.addInventory(item, item.category, _entity.inventory)
+        _entity.inventory = Entity.addInventory(item, item.category, _entity.inventory)
         _entity.inventory_log = Entity.addInventoryLog(item, item.category, _entity.inventory_log)
       }
       return Object.assign({}, state, { entity: _entity } );
