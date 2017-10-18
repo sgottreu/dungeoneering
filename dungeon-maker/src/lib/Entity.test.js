@@ -42,12 +42,12 @@ describe('Entity', function() {
       });
       
       it('Entity:updateEncumbrance  |-| increase encumbrance to 45', function() {
-        let encumbered = Entity.updateEncumbrance(_state.entity.encumbered, _state.entity.coin_purse, item, 'add');
+        let encumbered = Entity.updateEncumbrance(_state.entity, item, 'add');
         assert.equal(encumbered, 45); // with optional message
       });
 
       it('Entity:updateEncumbrance  |-| decrease encumbrance to 15', function() {
-        let encumbered = Entity.updateEncumbrance(_state.entity.encumbered, _state.entity.coin_purse, item, 'remove');
+        let encumbered = Entity.updateEncumbrance(_state.entity, item, 'remove');
         assert.equal(encumbered, 15); // with optional message
       });
     });
@@ -62,7 +62,7 @@ describe('Entity', function() {
       });
       
       it('Entity:updateEncumbrance  |-| leave encumbrance at 30', function() {
-        let encumbered = Entity.updateEncumbrance(_state.entity.encumbered, _state.entity.coin_purse, item, 'add');
+        let encumbered = Entity.updateEncumbrance(_state.entity, item, 'add');
         assert.equal(encumbered, 30); // with optional message
       });
     });

@@ -323,9 +323,6 @@ app.post('/saveGear', function (req, res) {
 });
 
 
-
-
-
 // ************* Admin ******************//
 app.get('/admin', function (req, res) {
   // var query = { _type: {"$in": ["gear"] }};
@@ -334,8 +331,10 @@ app.get('/admin', function (req, res) {
   //   var entities = [];
 
   //   for(var x=0,len = docs.length;x<len;x++){
-  //     docs[x].attackModifier = 0;
-
+  //     delete docs[x].enchanceBonus;
+  //     docs[x].keywords = '';
+  //     docs[x].critical = '';
+  //     docs[x].property = '';
 
   //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, docs[x] ).then(function (data) {
   //       console.log(`${docs[x].name} updated!`);

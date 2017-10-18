@@ -94,11 +94,11 @@ const entitiesReducer = function(state = initialState, action) {
       item = action.item;
 
       if( action.step === 'remove' ){        
-        _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'remove');
+        _entity.encumbered = Entity.updateEncumbrance(_entity, item, 'remove');
         _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'remove');
         _entity.inventory = Entity.removeInventoryItem(item, item.category, _entity.inventory)     
       } else {
-        _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'add');
+        _entity.encumbered = Entity.updateEncumbrance(_entity, item, 'add');
         _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'add');
         _entity.inventory = Entity.addInventory(item, item.category, _entity.inventory)
         _entity.inventory_log = Entity.addInventoryLog(item, item.category, _entity.inventory_log)
@@ -115,7 +115,7 @@ const entitiesReducer = function(state = initialState, action) {
       if( _entity.weapons.includes(action.id) ){
         _i = _entity.weapons.findIndex(function(w) { return w === action.id});
         if(_entity._type === 'character'){
-          _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'remove') 
+          _entity.encumbered = Entity.updateEncumbrance(_entity, item, 'remove') 
           _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'remove') 
         }
         _entity.inventory = Entity.removeInventoryItem(item, 'weapon', _entity.inventory)     
@@ -129,7 +129,7 @@ const entitiesReducer = function(state = initialState, action) {
       } else {
 
         if(_entity._type === 'character'){
-          _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'add') 
+          _entity.encumbered = Entity.updateEncumbrance(_entity, item, 'add') 
           _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'add') 
         }
         _entity.inventory = Entity.addInventory(item, 'weapon', _entity.inventory)
@@ -143,23 +143,23 @@ const entitiesReducer = function(state = initialState, action) {
 
     case types.UPDATE_ENTITY_ARMOR:
       _entity = _state.entity;
-      item = Entity._Armor[action.index]
+      item = action.availableGear.find( gear => { return action._id === gear._id} );
 
       // Remove Old Armor
-      _i = _entity.inventory_log.findIndex((it, index) => { return it.category === 'armor'} );
-      if(_i !== -1){   
-        let log = _entity.inventory_log[_i] ;
-        if(_entity._type === 'character'){
-          _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, log.item, 'remove') 
-          _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, log.item, 'remove') 
-        }
-        _entity.inventory = Entity.removeInventoryCategory('armor', _entity.inventory)
-        _entity.inventory_log = Entity.removeInventoryLog(log.item, 'armor', _entity.inventory_log) 
-      }
+      // _i = _entity.inventory_log.findIndex((it, index) => { return it.category === 'armor'} );
+      // if(_i !== -1){   
+      //   let log = _entity.inventory_log[_i] ;
+      //   if(_entity._type === 'character'){
+      //     _entity.encumbered = Entity.updateEncumbrance(_entity, log.item, 'remove') 
+      //     _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, log.item, 'remove') 
+      //   }
+      //   _entity.inventory = Entity.removeInventoryCategory('armor', _entity.inventory)
+      //   _entity.inventory_log = Entity.removeInventoryLog(log.item, 'armor', _entity.inventory_log) 
+      // }
 
       // Add New Armor
       if(_entity._type === 'character'){
-        _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'add') 
+        _entity.encumbered = Entity.updateEncumbrance(_entity, item, 'add') 
         _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'add') 
       }
       _entity.inventory = Entity.addInventory(item, 'armor', _entity.inventory)
@@ -169,7 +169,7 @@ const entitiesReducer = function(state = initialState, action) {
       _entity.armor = action.index;
 
       // Update Armor Class
-      _entity.defense.armorClass = Entity.calculateArmorClass(_entity);
+      //_entity.defense.armorClass = Entity.calculateArmorClass(_entity);
       _state.entity = _entity;
 
       return Object.assign( {}, state, _state );
@@ -177,6 +177,8 @@ const entitiesReducer = function(state = initialState, action) {
 
     case types.UPDATE_ENTITY_SHIELD:
       _entity = _state.entity;
+
+//Lookup Inventory
 
       _i = Entity._Shield.findIndex((shd, s) => { return shd.score === action.score});
       item = Entity._Shield[_i];
@@ -186,7 +188,7 @@ const entitiesReducer = function(state = initialState, action) {
       if(_i !== -1){   
         let log = _entity.inventory_log[_i] ;
         if(_entity._type === 'character'){
-          _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, log.item, 'remove') 
+          _entity.encumbered = Entity.updateEncumbrance(_entity, log.item, 'remove') 
           _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, log.item, 'remove') 
         }
         _entity.inventory = Entity.removeInventoryCategory('shield', _entity.inventory)
@@ -195,7 +197,7 @@ const entitiesReducer = function(state = initialState, action) {
 
       // Add New Shield
       if(_entity._type === 'character'){
-        _entity.encumbered = Entity.updateEncumbrance(_entity.encumbered, _entity.coin_purse, item, 'add') 
+        _entity.encumbered = Entity.updateEncumbrance(_entity, item, 'add') 
         _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'add') 
       }
       _entity.inventory = Entity.addInventory(item, 'shield', _entity.inventory)

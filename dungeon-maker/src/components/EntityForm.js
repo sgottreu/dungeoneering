@@ -107,7 +107,9 @@ class EntityForm extends Component {
 	}
 
   handleArmorChange = (event, index) => {
-    this.boundEntityAC.updateEntityArmor( index );
+    //This needs to be changed to use the Gear ID
+    
+    // this.boundEntityAC.updateEntityArmor( index );
   }
 
   handleShieldChoice = (event, isInputChecked) => {
@@ -358,7 +360,7 @@ class EntityForm extends Component {
                 onMouseEnter={(e,i,v) => { 
                   boundEntityAC.updateMouseover(weapon, 'weapon', e) 
                 } } 
-                onMouseLeave={(e,i,v) => { 
+                onMouseOut={(e,i,v) => { 
                   boundEntityAC.updateMouseover(false, false, e) 
                 } }
               />

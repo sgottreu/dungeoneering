@@ -70,7 +70,7 @@ class AddGear extends Component {
         <h3>Add New Gear</h3>
         <TextField className="" floatingLabelText="Name"      type="text" value={_gear.name}      name="name"      onChange={this.handleChange} />
         <br/>
-        <div className="damage">
+        <div className="">
             <SelectField className="bottomAlign" floatingLabelText="Category" value={_gear.category} 
               onChange={(e, i) => {
               let value = (i === 0) ? false : Gear.GearCategories[i-1];
@@ -92,8 +92,9 @@ class AddGear extends Component {
         <br/>
 
         <div className="damage">
-          <TextField className="" floatingLabelText="Attack Modifier"   type="number" value={_gear.attackModifier}   name="attackModifier"   onChange={this.handleChange} />
-          <TextField className="" floatingLabelText="Num of Damage Die"      type="number" value={_gear.damage.num}      name="damage_num"      
+          <TextField className="shortField" floatingLabelText="Level"      type="number" value={_gear.level}      name="level"      onChange={this.handleChange} />
+          <TextField className="mediumField" floatingLabelText="Attack Modifier"   type="number" value={_gear.attackModifier}   name="attackModifier"   onChange={this.handleChange} />
+          <TextField className="mediumField" floatingLabelText="Num of Damage Die"      type="number" value={_gear.damage.num}      name="damage_num"      
             onChange={ (event) => {
               let dmg = Variables.clone(_gear.damage);
               dmg.num = event.target.value;
@@ -113,6 +114,7 @@ class AddGear extends Component {
         <br/>
 
         <TextField className="shortField" floatingLabelText="Armor Bonus"      type="number" value={_gear.armorBonus}      name="armorBonus"      onChange={this.handleChange} />
+        <TextField className="mediumField" floatingLabelText="Enhancement Bonus"      type="number" value={_gear.enhanceBonus}      name="enhanceBonus"      onChange={this.handleChange} />
         <TextField className="shortField" floatingLabelText="Ability Mod"     type="number" value={_gear.abilityMod}     name="abilityMod"     onChange={this.handleChange} />
         <TextField className="shortField" floatingLabelText="Speed Bonus"   type="number" value={_gear.speedBonus}   name="speedBonus"   onChange={this.handleChange} />
         <br/>

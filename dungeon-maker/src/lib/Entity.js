@@ -163,21 +163,42 @@ export var calcRemainingPoints = (points, entity, target) => {
   return points;
 }
 
-export var updateEncumbrance = (encumbered, coin_purse, item, action) => {
-  if(action === 'add'){
-    if(coin_purse < item.price){
-      return encumbered;
-    }
-    encumbered += parseFloat(item.weight, 10);
-  } else {
-    encumbered -= parseFloat(item.weight, 10);
+export var checkCarryingCapacity = (entity, item) => {
+  let carrying = entity.abilities.strength.score * 10;
+  let final = entity.encumbered + parseFloat(item.weight, 10);
+  if(final > carrying){
+    return false;
   }
-  return encumbered;
+  return true;
+}
+
+export var checkCoinPurse = (coin_purse, item) => {
+  if(coin_purse < item.price && (item.loot === undefined || !item.loot)){
+    return false;
+  } 
+  return true;
+}
+
+export var updateEncumbrance = (entity, item, action) => {
+  if(action === 'add'){
+    if(!checkCarryingCapacity(entity, item)){
+      return entity.encumbered;
+    }
+    let carrying = entity.abilities.strength.score * 10;
+    let final = entity.encumbered + parseFloat(item.weight, 10);
+    if(final > carrying){
+      return entity.encumbered;
+    }
+    entity.encumbered += parseFloat(item.weight, 10);
+  } else {
+    entity.encumbered -= parseFloat(item.weight, 10);
+  }
+  return entity.encumbered;
 }
 
 export var updateCoinPurse = (coin_purse, item, action) => {
   if(action === 'add'){
-    if(coin_purse < item.price){
+    if(!checkCoinPurse(coin_purse, item)){
       return coin_purse;
     }
     coin_purse -= parseFloat(item.price, 10);
@@ -186,6 +207,8 @@ export var updateCoinPurse = (coin_purse, item, action) => {
   }
   return coin_purse;
 }
+
+
 
 export var removeInventoryCategory = (category, inventory) => {
   let _i = inventory.findIndex((inv, i) => { return inv.category === category});
@@ -285,8 +308,24 @@ export var calculateArmorClass = function(entity, value=false){
   let ac = entity.defense.armorClass;
   let ability = (!entity.class) ? 'constitution' : _Class[ entity.class ].ability;
 
-  ac.armorBonus = _Armor[ entity.armor ].score;
-  if(_Armor[ entity.armor ].weight <= 15){
+  let _armor = entity.inventory.find(inv => {
+    return inv.item.equipped && inv.category.toLowerCase() === 'armor'
+  });
+
+  if(_armor === undefined){
+    _armor = {
+      weight: 0,
+      enhanceBonus: 0,
+      armorBonus: 0
+    };
+  } else {
+    _armor.weight = parseInt( _armor.item.weight, 10);
+    _armor.enhanceBonus = parseInt( _armor.item.enhanceBonus, 10);
+    _armor.armorBonus = parseInt( _armor.item.armorBonus, 10);
+  }
+
+  ac.armorBonus = _armor.armorBonus;
+  if(_armor.weight <= 15){
     ac.armorBonus += getDefenseModifier(entity, 'reflex');
   }
   
@@ -296,7 +335,7 @@ export var calculateArmorClass = function(entity, value=false){
   let subTotal = ac.default + ac.halfLvl + ac.abilityMod + ac.armorBonus + ac.shield;
 
   ac.misc = (value) ? value - subTotal : 0;
-  ac.total = subTotal + ac.misc;
+  ac.total = subTotal + ac.misc + _armor.enhanceBonus;
 
   return ac;
 };

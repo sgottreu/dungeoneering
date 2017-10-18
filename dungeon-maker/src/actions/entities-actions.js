@@ -70,10 +70,11 @@ export function updateEntityWeapon(id) {
   };
 }
 
-export function updateEntityArmor(index) {
+export function updateEntityArmor(_id, availableGear, buying=true) {
   return {
     type: types.UPDATE_ENTITY_ARMOR,
-    index: index
+    _id: _id,
+    availableGear: availableGear
   };
 }
 

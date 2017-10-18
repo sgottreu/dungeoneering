@@ -12,8 +12,12 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Subheader from 'material-ui/Subheader';
 import RaisedButton from 'material-ui/RaisedButton';
 import Snackbar from 'material-ui/Snackbar';
+import EntityTooltip from './EntityTooltip';
+import Toggle from 'material-ui/Toggle';
+import uuidV4  from 'uuid/v4';
 
 import * as Entity from '../lib/Entity';
+import * as Gear from '../lib/Gear';
 
 import {Variables} from '../lib/Variables';
 import * as entitiesApi from '../api/entities-api';
@@ -37,9 +41,12 @@ class CreateParty extends Component {
     this.handlePartySave    = this.handlePartySave.bind(this);
     this.handleNameChange   = this.handleNameChange.bind(this);
 
+    this.entityField = null;
+
     this.state = { 
       selectedParty: false,
       selectedMember: false,
+      selectedCategory: false,
       snackbarOpen: false,
       snackbarMsg: ''
     };
@@ -73,11 +80,11 @@ class CreateParty extends Component {
   handlePartyChange = (e, index) => {
     let state = this.state;
     let availableParties = this.props.partiesState.availableParties;
-    state.selectedParty = availableParties[ index ]._id;
+    state.selectedParty = availableParties[ index-1 ]._id;
 
     this.setState(state);
 
-    this.boundPartyAC.updateParty( availableParties[ index ] );
+    this.boundPartyAC.updateParty( availableParties[ index-1 ] );
   }
 
   handleNameChange = (e) => {
@@ -113,7 +120,21 @@ class CreateParty extends Component {
   }
 
   _updateInventory = (item, step) => {
-    this.boundEntityAC.updateEntityInventory(this.props.entitiesState.entity, item, step);
+    let _this = this;
+    let { entity } = this.props.entitiesState;
+    let carrying = Entity.checkCarryingCapacity(entity, item);
+    let coin_purse = Entity.checkCoinPurse(entity.coin_purse, item);
+
+    if(carrying && coin_purse){
+      this.boundEntityAC.updateEntityInventory(this.props.entitiesState.entity, item, step);
+    } else {
+      let state = this.state;
+      state.snackbarMsg = 'Unable to add to Inventory';
+      state.snackbarOpen = true;
+
+      this.setState(state);
+    }
+    
   }
 
   addMember = (character, e) => {
@@ -124,28 +145,65 @@ class CreateParty extends Component {
     let tmpItem = Variables.clone(item);
     tmpItem.price = parseFloat(tmpItem.price, 10);
     tmpItem.quantity = (tmpItem.quantity !== undefined) ? tmpItem.quantity : 1;
-
+    // console.log(item);
     inventory =  (inventory === undefined || inventory.item === undefined) ? inventory : inventory.item;
     let quantity = (inventory !== undefined && inventory.quantity !== undefined) ? inventory.quantity : 0;
-    let bolNonAddable = (['shield', 'armor'].includes(category)) ? true : false;
+    let equipped = (inventory !== undefined && inventory.equipped !== undefined) ? inventory.equipped : false;
+    let bolNonAddable = false; //(['shield'].includes(category)) ? true : false;
     bolNonAddable = (!bolNonAddable && tmpItem.price > coin_purse) ? true : bolNonAddable;
 
     let totalWeight = tmpItem.weight * (quantity/tmpItem.quantity);
+
+    let itemWeight = (totalWeight === 0) ? tmpItem.weight : tmpItem.weight + ' ('+(totalWeight)+')';
+
+    let showEquipped = (['shield', 'weapons', 'armor'].includes(category.toLowerCase()) && item.character) ? '' : 'hide';
+
+    let boundEntityAC = this.boundEntityAC;
+    let {availableGear} = this.props;
+    let _inventory = this.props.entitiesState.entity.inventory;
+    _inventory = (_inventory === undefined) ? [] : _inventory;
 
     return (
       <TableRow key={index} style={ (quantity > 0) ? {background: 'rgba(0, 188, 212,.05)'} : {} } >
         <TableRowColumn style={{width: '200px'}}>{tmpItem.name}</TableRowColumn>
         <TableRowColumn>{Variables.toProperCase(category)}</TableRowColumn>
         <TableRowColumn style={{textAlign: 'right', width: '75px'}}>{tmpItem.price.toFixed(2)} gp</TableRowColumn>
-        <TableRowColumn style={{textAlign: 'right'}}>{tmpItem.weight + '('+(totalWeight)+')'}</TableRowColumn>
+        <TableRowColumn style={{textAlign: 'right'}}>{itemWeight}</TableRowColumn>
         <TableRowColumn style={{textAlign: 'center'}}>{tmpItem.quantity}</TableRowColumn>
         <TableRowColumn style={{textAlign: 'center'}}>{quantity}</TableRowColumn>
+        <TableRowColumn style={{textAlign: 'center', width: '75px', padding: '1px 12px'}}>
+          <Toggle
+            className={showEquipped}
+            label=""
+            defaultToggled={equipped}
+            name="equipped" 
+            onToggle={(e, v) => { 
+              if(category.toLowerCase() === 'armor' || tmpItem.category.toLowerCase() === 'armor'){
+                _inventory = _inventory.map( invt => {
+                  invt.item.equipped = (invt.item._id === tmpItem._id) ? true : false;
+                  return invt;
+                });
+                boundEntityAC.updateEntityKey( 'inventory', _inventory );
+                boundEntityAC.updateEntityArmorclass();
+              }
+              if(category.toLowerCase() === 'shield' || tmpItem.category.toLowerCase() === 'shield'){
+                _inventory = _inventory.map( invt => {
+                  invt.item.equipped = (invt.item._id === tmpItem._id) ? true : false;
+                  return invt;
+                });
+                boundEntityAC.updateEntityKey( 'inventory', _inventory );
+                boundEntityAC.updateEntityShield();
+              }
+            }}
+            
+          />
+        </TableRowColumn>
         <TableRowColumn style={{textAlign: 'center'}}>
           <FloatingActionButton className="button" mini={true} secondary={true} disabled={bolNonAddable}
             onTouchTap={this._updateInventory.bind(this, tmpItem, 'add')}>
             <ContentAdd />
           </FloatingActionButton>
-          <FloatingActionButton className="button" mini={true} secondary={true} 
+          <FloatingActionButton className="button" mini={true} secondary={true} disabled={(quantity<=0)}
             onTouchTap={this._updateInventory.bind(this, tmpItem, 'remove') }>
             <ContentRemove />
           </FloatingActionButton>
@@ -165,6 +223,7 @@ class CreateParty extends Component {
     return (
       <div className="CreateParty inset">
         <SelectField  floatingLabelText={`Choose Party`} value={this.state.selectedParty} onChange={this.handlePartyChange} >
+          <MenuItem key={uuidV4()} value={null} primaryText="" />
             {availableParties.map( (party, index) => {
                 return (
                 <MenuItem 
@@ -177,17 +236,32 @@ class CreateParty extends Component {
         <div className="Lists">
           <div>
             <Subheader>Party Members</Subheader>
-            <RadioButtonGroup name="selectedMembers" className="SelectedPartyMembers list" onChange={this.handleMemberBuyer} >
+            <RadioButtonGroup name="selectedMembers" 
+              className="SelectedPartyMembers list" onChange={this.handleMemberBuyer} 
+              ref={(list) => { this.entityField = list; }}
+            >
               {party.members.map( (member, index) => {
-                console.log(availableCharacters);
+                
                 let _i = availableCharacters.findIndex(function(c) { return c._id === member});    
                 let icon_class = (_i === -1) ? '' : Entity._Class[ availableCharacters[_i].class ].name;
                 let charName = (_i === -1) ? '' : availableCharacters[_i].name;
+                let boundEntityAC = this.boundEntityAC;
                 return (
                     <RadioButton key={index} value={member} 
+                      onMouseEnter={(e,i,v) => { 
+                        if(this.props.entitiesState.entity._id !== member){
+                          return false;
+                        }
+                        boundEntityAC.updateMouseover(this.props.entitiesState.entity, 'entity', e) } 
+                      } 
+                      onMouseOut ={(e,i,v) => { 
+                        boundEntityAC.updateMouseover(false, false, e) } 
+                      }
                       label={
                         <div style={ {marginLeft: '40px'} } key={index} >
-                          <Avatar className={`icon ${icon_class.toLowerCase()}`} /> {charName}
+                          <Avatar className={`icon ${icon_class.toLowerCase()}`} 
+                            
+                          /> {charName}
                         </div> 
                       }
                     />                    
@@ -200,11 +274,14 @@ class CreateParty extends Component {
             <List className="AvailableMembers list">
               {availableCharacters.map( (character, index) => {
                 let icon_class = Entity._Class[ character.class ].name;
+                
                 return (
                   <ListItem key={index}
                     onTouchTap={this.addMember.bind(this, character)}
                     primaryText={<div >{character.name}</div>}  
-                    leftAvatar={<Avatar className={`icon ${icon_class.toLowerCase()}`} />}
+                    leftAvatar={
+                      <Avatar className={`icon ${icon_class.toLowerCase()}`} />
+                    }
                   />
                 );
               })}
@@ -216,10 +293,35 @@ class CreateParty extends Component {
             <Subheader>Coin Purse</Subheader>
             <span className="value">{parseFloat(spm.coin_purse,10).toFixed(2)}</span>
           </div>
+          <div className="carryingCapacity">
+            <Subheader>Carrying Capacity</Subheader>
+            <span className="value">{parseInt(spm.abilities.strength.score * 10,10)}</span>
+          </div>
+          
           <div className="inventoryWeight">
             <Subheader>Pack Weight</Subheader>
             <span className="value">{parseInt(spm.encumbered,10)}</span>
           </div>
+
+
+        </div>
+        <div className="">
+            <SelectField className="bottomAlign" floatingLabelText="Gear Category" value={this.state.selectedCategory} 
+              onChange={(e, i) => {
+                let value = (i === 0) ? null : Gear.GearCategories[i-1];
+                let state = Variables.clone(this.state);
+                state.selectedCategory = value;
+
+                this.setState(state);
+              }
+            } >
+              <MenuItem key={null} value={false} primaryText="" />
+              { Gear.GearCategories.map( (cat, index) => (
+                <MenuItem key={index+1} value={`${cat}`} primaryText={`${cat}`} />
+              ))
+              }
+
+            </SelectField>
         </div>
         <Table className="AvailableGear">
           <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
@@ -230,31 +332,49 @@ class CreateParty extends Component {
               <TableHeaderColumn>Weight</TableHeaderColumn>
               <TableHeaderColumn>Quantity</TableHeaderColumn>
               <TableHeaderColumn>In Inventory</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '75px', padding: '1px 12px'}}>Equipped</TableHeaderColumn>
               <TableHeaderColumn></TableHeaderColumn>
             </TableRow>
           </TableHeader>
           <TableBody displayRowCheckbox={false} >
             {spm.inventory.map( (gear, index) => {
               let inventory = spm.inventory.find(inv => { 
+                if(inv.item === undefined){
+                  inv.character = true;
+                } else {
+                  inv.item.character = true;
+                }
                 let item_name = (inv.item === undefined) ? inv.name : inv.item.name;
                 let gear_name = (gear.item === undefined) ? gear.name : gear.item.name;
                 return item_name === gear_name && inv.item.quantity > 0;
               });
               var g;
-              if( !['weapons', 'shield', 'armor'].includes(gear.category) ){
+
+
+              if(inventory === undefined){
                 return false;
-              } else {
-                if(inventory === undefined){
-                  return false;
-                }
-                g = Variables.clone(gear);
-                g.item.quantity = 1;
-                return this.loadInventoryItem(g.item, index, g.category, inventory, spm.coin_purse);   
-              }       
+              }
+              g = Variables.clone(gear);
+              g.item.quantity = 1;
+console.log(g.category)
+              return this.loadInventoryItem(g.item, index, g.category, inventory, spm.coin_purse);   
+    
                                      
             })}
             {this.props.availableGear.map( (gear2, index) => {
-              let inventory = spm.inventory.find(inv => { return inv.item.name === gear2.name});
+              if(this.state.selectedCategory !== gear2.category){
+                if(this.state.selectedCategory){
+                  return false;
+                }
+              }
+              gear2.character = false;
+
+              let inventory = spm.inventory.find(inv => { 
+                return inv.item.name === gear2.name
+              });
+              if(inventory !== undefined){
+                return false;
+              }
               return this.loadInventoryItem(gear2, index, gear2.category, inventory, spm.coin_purse);   
             })}
           </TableBody>
@@ -270,6 +390,7 @@ class CreateParty extends Component {
           message={this.state.snackbarMsg}
           autoHideDuration={4000}    
         />
+        <EntityTooltip entityField={this.entityField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
       </div>
     );
   }
