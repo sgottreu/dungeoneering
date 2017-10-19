@@ -20,7 +20,14 @@ const initialState = {
     damage: { die: '1d6', num: 0},
     abilityMod: 0, 
     armorBonus: 0,
-    speedBonus: 0
+    speedBonus: 0,
+    "weapon": {
+      "category": "",
+      "type": "",
+      "prof": false,
+      "range": false,
+      "hands": false
+  }
 }
 };
 

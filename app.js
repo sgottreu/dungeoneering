@@ -327,16 +327,16 @@ app.post('/saveGear', function (req, res) {
 app.get('/admin', function (req, res) {
   // var query = { _type: {"$in": ["gear"] }};
   // var query = { _type: "gear" };
+
 	// dungeon_grid.find(query).then(function(docs) {
-  //   var entities = [];
+
 
   //   for(var x=0,len = docs.length;x<len;x++){
-  //     delete docs[x].enchanceBonus;
-  //     docs[x].keywords = '';
-  //     docs[x].critical = '';
-  //     docs[x].property = '';
+  //     var _gear = JSON.parse( JSON.stringify( gear ) );
 
-  //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, docs[x] ).then(function (data) {
+
+
+  //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, _gear ).then(function (data) {
   //       console.log(`${docs[x].name} updated!`);
   //     }).catch(function(err){ 
   //       console.log(err);

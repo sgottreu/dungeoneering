@@ -70,16 +70,21 @@ class AddWeapon extends Component {
     this.boundWeaponAC.updateKey( 'magical', _weapon.magical );
   }
 
-  handleRangeChange = (event) => {
-    this.boundWeaponAC.updateRange( event.target.name, event.target.value );
-  }
-
   handleDieNumChange = (event) => {
     this.boundWeaponAC.changeDieNumber( event.target.value );
   }
 
   handleDieChange = (event, index) => {
     this.boundWeaponAC.changeDieType( index );
+  }
+
+  handleChooseWeapon(event, index) {
+    this.boundWeaponAC.changeWeapon( index );
+  }
+
+
+  handleRangeChange = (event) => {
+    this.boundWeaponAC.updateRange( event.target.name, event.target.value );
   }
 
   handleCategoryChange = (event, index) => {    
@@ -94,14 +99,8 @@ class AddWeapon extends Component {
     this.boundWeaponAC.updateKey( 'type', this.weaponType[index]);
   }
 
-
-
   handleProfChange = (event, index) => {
     this.boundWeaponAC.updateKey( 'prof', index+2);
-  }
-
-  handleChooseWeapon(event, index) {
-    this.boundWeaponAC.changeWeapon( index );
   }
 
   loadRangeField(weapon){
@@ -157,24 +156,24 @@ class AddWeapon extends Component {
         <TextField className="" floatingLabelText="Name"      type="text" value={_weapon.name}      name="name"      onChange={this.handleChange} />
         <br/>
         <div className="damage">
-        <SelectField className="bottomAlign" floatingLabelText="Category" value={_weapon.category}  onChange={this.handleCategoryChange} >
-          <MenuItem key={0} value={'Simple'} primaryText='Simple' />
-          <MenuItem key={1} value={'Military'} primaryText='Military' />
-          <MenuItem key={2} value={'Superior'} primaryText='Superior' />
-        </SelectField>
-        <SelectField className="bottomAlign" floatingLabelText="Type" value={_weapon.type}  onChange={this.handleTypeChange} >
-          {this.weaponType.map( (type, index) => (
-            <MenuItem key={index} value={type} primaryText={type} />
-          ))}          
-        </SelectField>
-        <SelectField className="bottomAlign" floatingLabelText="Hands" value={_weapon.hands}  onChange={this.handleHandsChange} >
-          <MenuItem key={0} value={'One-Handed'} primaryText='One-Handed' />
-          <MenuItem key={1} value={'Two-Handed'} primaryText='Two-Handed' />
-        </SelectField>
-        <SelectField className="bottomAlign" floatingLabelText="Proficiency" value={_weapon.prof}  onChange={this.handleProfChange} >
-          <MenuItem key={0} value={2} primaryText='+2' />
-          <MenuItem key={1} value={3} primaryText='+3' />
-        </SelectField>
+          <SelectField className="bottomAlign" floatingLabelText="Category" value={_weapon.category}  onChange={this.handleCategoryChange} >
+            <MenuItem key={0} value={'Simple'} primaryText='Simple' />
+            <MenuItem key={1} value={'Military'} primaryText='Military' />
+            <MenuItem key={2} value={'Superior'} primaryText='Superior' />
+          </SelectField>
+          <SelectField className="bottomAlign" floatingLabelText="Type" value={_weapon.type}  onChange={this.handleTypeChange} >
+            {this.weaponType.map( (type, index) => (
+              <MenuItem key={index} value={type} primaryText={type} />
+            ))}          
+          </SelectField>
+          <SelectField className="bottomAlign" floatingLabelText="Hands" value={_weapon.hands}  onChange={this.handleHandsChange} >
+            <MenuItem key={0} value={'One-Handed'} primaryText='One-Handed' />
+            <MenuItem key={1} value={'Two-Handed'} primaryText='Two-Handed' />
+          </SelectField>
+          <SelectField className="bottomAlign" floatingLabelText="Proficiency" value={_weapon.prof}  onChange={this.handleProfChange} >
+            <MenuItem key={0} value={2} primaryText='+2' />
+            <MenuItem key={1} value={3} primaryText='+3' />
+          </SelectField>
         </div>
         <Toggle
           label="Magical"

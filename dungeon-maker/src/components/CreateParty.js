@@ -306,7 +306,7 @@ class CreateParty extends Component {
 
         </div>
         <div className="">
-            <SelectField className="bottomAlign" floatingLabelText="Gear Category" value={this.state.selectedCategory} 
+            <SelectField className="bottomAlign" floatingLabelText="Category Filter" value={this.state.selectedCategory} 
               onChange={(e, i) => {
                 let value = (i === 0) ? null : Gear.GearCategories[i-1];
                 let state = Variables.clone(this.state);
