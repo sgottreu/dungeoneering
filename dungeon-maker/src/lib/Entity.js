@@ -124,20 +124,15 @@ export var _Race = [
   { name: 'Tiefling', abilityMod: {}, size: 'Medium', speed: 5, skillBonus: {} }
 ];
 
-export var _Armor = [
-  {"name":"None","score":0,"check":0,"speed":0,"price":0,"weight":0,"_id":"58d18cd2481cfb2b38b54bc1"},
-  {"name":"Cloth","score":0,"check":0,"speed":0,"price":1,"weight":4,"_id":"58d18cd2481cfb2b38b54bc2"},
-  {"name":"Leather","score":2,"check":0,"speed":0,"price":25,"weight":15,"_id":"58d18cd2481cfb2b38b54bc3"},
-  {"name":"Hide","score":3,"check":-1,"speed":0,"price":30,"weight":25,"_id":"58d18cd2481cfb2b38b54bc4"},
-  {"name":"Chainmail","score":6,"check":-1,"speed":-1,"price":40,"weight":40,"_id":"58d18cd2481cfb2b38b54bc5"},
-  {"name":"Scale","score":7,"check":0,"speed":-1,"price":45,"weight":45,"_id":"58d18cd2481cfb2b38b54bc6"},
-  {"name":"Plate","score":8,"check":-2,"speed":-1,"price":50,"weight":50,"_id":"58d18cd2481cfb2b38b54bc7"}
-];
-
-export var _Shield = [
-  { _id: '58d18c0025fde44650d30373', key: "light", name: 'Light Shield', score: 1, check: 0, speed: 0, price: 5, weight: 6 },
-  { _id: '58d18c0025fde44650d30374', key: "heavy", name: 'Heavy Shield', score: 2, check: -2, speed: 0, price: 10, weight: 15 }
-];
+// export var _Armor = [
+//   {"name":"None","score":0,"check":0,"speed":0,"price":0,"weight":0,"_id":"58d18cd2481cfb2b38b54bc1"},
+//   {"name":"Cloth","score":0,"check":0,"speed":0,"price":1,"weight":4,"_id":"58d18cd2481cfb2b38b54bc2"},
+//   {"name":"Leather","score":2,"check":0,"speed":0,"price":25,"weight":15,"_id":"58d18cd2481cfb2b38b54bc3"},
+//   {"name":"Hide","score":3,"check":-1,"speed":0,"price":30,"weight":25,"_id":"58d18cd2481cfb2b38b54bc4"},
+//   {"name":"Chainmail","score":6,"check":-1,"speed":-1,"price":40,"weight":40,"_id":"58d18cd2481cfb2b38b54bc5"},
+//   {"name":"Scale","score":7,"check":0,"speed":-1,"price":45,"weight":45,"_id":"58d18cd2481cfb2b38b54bc6"},
+//   {"name":"Plate","score":8,"check":-2,"speed":-1,"price":50,"weight":50,"_id":"58d18cd2481cfb2b38b54bc7"}
+// ];
 
 ///*********** Functions *******************/
 

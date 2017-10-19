@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {Variables} from '../lib/Variables';
 import {Powers} from '../lib/Powers';
 import * as Entity from '../lib/Entity';
+import * as Gear from '../lib/Gear';
 import * as entitiesApi from '../api/entities-api';
 import PowersForm from './PowersForm';
 import SortByKey from '../lib/SortByKey';
@@ -17,7 +18,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Chip from 'material-ui/Chip';
 import Snackbar from 'material-ui/Snackbar';
 import Avatar from 'material-ui/Avatar';
-import Toggle from 'material-ui/Toggle';
 import uuidV4  from 'uuid/v4';
 // import SvgIcon from 'material-ui/SvgIcon';
 
@@ -41,7 +41,6 @@ class EntityForm extends Component {
     this.handleSizeChange = this.handleSizeChange.bind(this);
     this.handleRaceChange = this.handleRaceChange.bind(this);
     this.handleClassChange = this.handleClassChange.bind(this);
-    this.handleArmorChange = this.handleArmorChange.bind(this);
     this.handleHPChange = this.handleHPChange.bind(this);
     this.handleLevelChange = this.handleLevelChange.bind(this);
     this.changeAbility = this.changeAbility.bind(this);
@@ -53,7 +52,7 @@ class EntityForm extends Component {
     this.handleFortitudeChange = this.handleFortitudeChange.bind(this);
     this.handleReflexChange = this.handleReflexChange.bind(this);
     this.handleWillpowerChange = this.handleWillpowerChange.bind(this);
-    this.handleShieldChoice = this.handleShieldChoice.bind(this);
+    
 
     this.loadRoleField = this.loadRoleField.bind(this);
     this.loadXPField = this.loadXPField.bind(this);
@@ -106,18 +105,6 @@ class EntityForm extends Component {
 		this.boundEntityAC.updateEntityKey('role', index);
 	}
 
-  handleArmorChange = (event, index) => {
-    //This needs to be changed to use the Gear ID
-    
-    // this.boundEntityAC.updateEntityArmor( index );
-  }
-
-  handleShieldChoice = (event, isInputChecked) => {
-    let {entity} = this.props;  
-    let shield = (isInputChecked === true && entity.shield !== event.target.dataset.shield) ? parseInt(event.target.dataset.shield, 10) : false;
-
-    this.boundEntityAC.updateEntityShield( shield );
-  }
 
 	handleSizeChange = (event, index) => {
 		this.boundEntityAC.updateEntityKey('size', Entity._Size[index].label);
@@ -144,7 +131,7 @@ class EntityForm extends Component {
   }
 
   handleArmorClassChange(event){
-    this.boundEntityAC.updateEntityArmorclass('armorClass', event.target.value);
+    this.boundEntityAC.updateEntityArmorclass(event.target.value);
   }
 
   handleFortitudeChange(event){
@@ -381,6 +368,10 @@ class EntityForm extends Component {
 
     let selectedStyle = Variables.getSelectListStyle(this.props.selectedEntity, saveEntities, true);
 
+    let _armor = Gear.regularArmor(this.props.availableGear);
+    let entityArmor = Gear.getEntityArmor(entity.inventory);
+    entityArmor = (entityArmor === undefined) ? {_id: false} : entityArmor.item;
+
 		return (
 			<div className={`EntityForm inset ${formClassName}`}>
         <WeaponTooltip weaponField={this.weaponField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
@@ -412,9 +403,17 @@ class EntityForm extends Component {
             <MenuItem key={index} value={index} primaryText={`${size.label}`} />
           ))}
         </SelectField>
-        <SelectField className="bottomAlign" floatingLabelText="Armor" value={entity.armor} onChange={this.handleArmorChange} >
-          {Entity._Armor.map( (armor, index) => (
-            <MenuItem key={index} value={index} primaryText={`${armor.name}`} />
+        <SelectField className="bottomAlign" floatingLabelText="Armor" value={entityArmor._id} 
+          onChange={(e,i,v) => {
+            let entityArmor = Gear.findItem(v, this.props.availableGear);
+            if(entity._type === 'monster'){
+              this.boundEntityAC.updateEntityArmor( v, entityArmor );
+            }
+          }} 
+        >
+          <MenuItem key={-1} value={false} primaryText="None" />
+          {_armor.map( (armor, index) => (
+            <MenuItem key={index} value={armor._id} primaryText={`${armor.name}`} />
           ))}
         </SelectField>
         <br/>
@@ -454,19 +453,7 @@ class EntityForm extends Component {
           {this.loadWeaponsField()}
         </div>
         <br/>
-        <div className="shields">
-          <Subheader>Shield</Subheader>
-          {Entity._Shield.map( (shield, index) => {
-            return (
-              <Toggle key={index}
-                label={shield.name}
-                toggled={ entity.shield === shield.score ? true : false }
-                data-shield={shield.score}
-                onToggle={this.handleShieldChoice}
-              />
-            );
-            })}
-        </div>
+        
         {(this.EntityType === 'monster') ? this.loadPowersForm() : ''}   
         <br/><br/>
         <RaisedButton primary={true}

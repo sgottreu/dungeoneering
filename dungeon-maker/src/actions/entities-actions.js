@@ -70,11 +70,11 @@ export function updateEntityWeapon(id) {
   };
 }
 
-export function updateEntityArmor(_id, availableGear, buying=true) {
+export function updateEntityArmor(_id, item) {
   return {
     type: types.UPDATE_ENTITY_ARMOR,
     _id: _id,
-    availableGear: availableGear
+    item: item
   };
 }
 
@@ -85,10 +85,10 @@ export function updateEntityArmorclass(value) {
   };
 }
 
-export function updateEntityShield(score) {
+export function updateEntityShield(item) {
   return {
     type: types.UPDATE_ENTITY_SHIELD,
-    score: score
+    item: item
   };
 }
 

@@ -143,19 +143,20 @@ const entitiesReducer = function(state = initialState, action) {
 
     case types.UPDATE_ENTITY_ARMOR:
       _entity = _state.entity;
-      item = action.availableGear.find( gear => { return action._id === gear._id} );
+      item = action.item;
+      item.equipped = true;
 
       // Remove Old Armor
-      // _i = _entity.inventory_log.findIndex((it, index) => { return it.category === 'armor'} );
-      // if(_i !== -1){   
-      //   let log = _entity.inventory_log[_i] ;
-      //   if(_entity._type === 'character'){
-      //     _entity.encumbered = Entity.updateEncumbrance(_entity, log.item, 'remove') 
-      //     _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, log.item, 'remove') 
-      //   }
-      //   _entity.inventory = Entity.removeInventoryCategory('armor', _entity.inventory)
-      //   _entity.inventory_log = Entity.removeInventoryLog(log.item, 'armor', _entity.inventory_log) 
-      // }
+      _i = _entity.inventory_log.findIndex((it, index) => { return it.category === 'armor'} );
+      if(_i !== -1){   
+        let log = _entity.inventory_log[_i] ;
+        if(_entity._type === 'character'){
+          _entity.encumbered = Entity.updateEncumbrance(_entity, log.item, 'remove') 
+          _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, log.item, 'remove') 
+        }
+        _entity.inventory = Entity.removeInventoryCategory('armor', _entity.inventory)
+        _entity.inventory_log = Entity.removeInventoryLog(log.item, 'armor', _entity.inventory_log) 
+      }
 
       // Add New Armor
       if(_entity._type === 'character'){
@@ -166,48 +167,24 @@ const entitiesReducer = function(state = initialState, action) {
       _entity.inventory_log = Entity.addInventoryLog(item, 'armor', _entity.inventory_log)
 
       // Update Armor
-      _entity.armor = action.index;
+      // _entity.armor = action.index;
 
       // Update Armor Class
-      //_entity.defense.armorClass = Entity.calculateArmorClass(_entity);
+      if(_entity._type === 'monster'){
+        _entity.defense.armorClass = Entity.calculateArmorClass(_entity);
+      }
       _state.entity = _entity;
 
       return Object.assign( {}, state, _state );
-    //UPDATE_ENTITY_ARMOR
+    // UPDATE_ENTITY_ARMOR
 
     case types.UPDATE_ENTITY_SHIELD:
       _entity = _state.entity;
 
-//Lookup Inventory
-
-      _i = Entity._Shield.findIndex((shd, s) => { return shd.score === action.score});
-      item = Entity._Shield[_i];
-
-      // Remove Old Shield
-      _i = _entity.inventory_log.findIndex((it, index) => { return it.category === 'shield'} );
-      if(_i !== -1){   
-        let log = _entity.inventory_log[_i] ;
-        if(_entity._type === 'character'){
-          _entity.encumbered = Entity.updateEncumbrance(_entity, log.item, 'remove') 
-          _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, log.item, 'remove') 
-        }
-        _entity.inventory = Entity.removeInventoryCategory('shield', _entity.inventory)
-        _entity.inventory_log = Entity.removeInventoryLog(log.item, 'shield', _entity.inventory_log) 
-      }
-
-      // Add New Shield
-      if(_entity._type === 'character'){
-        _entity.encumbered = Entity.updateEncumbrance(_entity, item, 'add') 
-        _entity.coin_purse = Entity.updateCoinPurse(_entity.coin_purse, item, 'add') 
-      }
-      _entity.inventory = Entity.addInventory(item, 'shield', _entity.inventory)
-      _entity.inventory_log = Entity.addInventoryLog(item, 'shield', _entity.inventory_log)
-
-      // Update Armor
-      _entity.shield = action.score;
+      item = action.item;
 
       // Update Armor Class
-      _entity.defense.armorClass.shield = (!action.score) ? 0 : action.score;
+      _entity.defense.armorClass.shield = (!action.item.equipped) ? 0 : parseInt(action.item.armorBonus,10) + parseInt(action.item.enhanceBonus,10);
 
       _entity.defense.armorClass = Entity.calculateArmorClass(_entity);
       _state.entity = _entity;

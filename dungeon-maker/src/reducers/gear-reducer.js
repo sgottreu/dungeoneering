@@ -17,18 +17,22 @@ const initialState = {
     level: false,
     enhanceBonus: 0,
     attackModifier: 0,
-    damage: { die: '1d6', num: 0},
+    damage: { die: 'd6', num: 0},
     abilityMod: 0, 
     armorBonus: 0,
     speedBonus: 0,
+    equipped: false,
+    keywords: '',
+    critical: '',
+    property: '',
     "weapon": {
       "category": "",
       "type": "",
       "prof": false,
       "range": false,
       "hands": false
+    }
   }
-}
 };
 
 const gearReducer = function(state = initialState, action) {
@@ -54,7 +58,7 @@ const gearReducer = function(state = initialState, action) {
       });
 
     case types.CHANGE_GEAR:
-      gear = state.availableGear[ action.index - 1];
+      gear = action.gear;
 
       if(gear === undefined){
         gear = initialState.gear;

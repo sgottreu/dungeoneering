@@ -5,6 +5,7 @@ import EntityForm from '../components/EntityForm';
 import * as weaponsApi from '../api/weapons-api';
 import * as powersApi from '../api/powers-api';
 import * as entitiesApi from '../api/entities-api';
+import * as gearApi from '../api/gear-api';
 import * as Entity from '../lib/Entity';
 
 import * as EntityActionCreators from '../actions/entities-actions';
@@ -16,6 +17,7 @@ class AddCharactersContainer extends Component {
     entitiesApi.findCharacters();
     powersApi.findPowers();
     weaponsApi.findWeapons();
+    gearApi.findGear();
 
     let _state = this.props.entitiesState;
     let _points = Entity.calcRemainingPoints(_state.points, _state.entity);
@@ -35,6 +37,7 @@ const mapStateToProps = function(store) {
     availableCharacters: store.entitiesState.availableCharacters,
     availableWeapons: store.weaponsState.availableWeapons,
     existingPowers: store.powersState.existingPowers,
+    availableGear: store.gearState.availableGear,
     entitiesState: store.entitiesState,
     powersState: store.powersState,
     EntityType: 'character'

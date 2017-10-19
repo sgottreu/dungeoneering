@@ -15,10 +15,10 @@ export function updateKey(key, value) {
   };
 }
 
-export function changeGear(index) {
+export function changeGear(gear) {
   return {
     type: types.CHANGE_GEAR,
-    index: index
+    gear: gear
   };
 }
 

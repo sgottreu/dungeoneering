@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import EntityForm from '../components/EntityForm';
 import * as weaponsApi from '../api/weapons-api';
 import * as entitiesApi from '../api/entities-api';
+import * as gearApi from '../api/gear-api';
 
 import * as EntityActionCreators from '../actions/entities-actions';
 import * as PowerActionCreators from '../actions/powers-actions';
@@ -14,6 +15,7 @@ class AddMonstersContainer extends Component {
     weaponsApi.findWeapons();
     entitiesApi.findMonsters();
     entitiesApi.findCharacters();
+    gearApi.findGear();
   }
 
   render() {
@@ -30,6 +32,7 @@ const mapStateToProps = function(store) {
     availableCharacters: store.entitiesState.availableCharacters,
     entitiesState: store.entitiesState,
     powersState: store.powersState,
+    availableGear: store.gearState.availableGear,
     EntityType: 'monster'
   };
 };

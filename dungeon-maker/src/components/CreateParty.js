@@ -99,7 +99,7 @@ class CreateParty extends Component {
 
     if(state.selectedMember){
       entitiesApi.saveEntity(this.props.entitiesState.entity).then(res => {
-        state.snackbarMsg = 'Inventory Successfully updated';
+        state.snackbarMsg = 'Character Inventory Successfully updated';
         state.snackbarOpen = true;
 
         _this.setState(state);
@@ -125,16 +125,18 @@ class CreateParty extends Component {
     let carrying = Entity.checkCarryingCapacity(entity, item);
     let coin_purse = Entity.checkCoinPurse(entity.coin_purse, item);
 
+    let state = this.state;
+
     if(carrying && coin_purse){
       this.boundEntityAC.updateEntityInventory(this.props.entitiesState.entity, item, step);
+      state.snackbarMsg = 'Added to Inventory';
     } else {
-      let state = this.state;
       state.snackbarMsg = 'Unable to add to Inventory';
-      state.snackbarOpen = true;
-
-      this.setState(state);
     }
     
+    state.snackbarOpen = true;
+
+    this.setState(state);
   }
 
   addMember = (character, e) => {
@@ -156,7 +158,7 @@ class CreateParty extends Component {
 
     let itemWeight = (totalWeight === 0) ? tmpItem.weight : tmpItem.weight + ' ('+(totalWeight)+')';
 
-    let showEquipped = (['shield', 'weapons', 'armor'].includes(category.toLowerCase()) && item.character) ? '' : 'hide';
+    let showEquipped = (['shield', 'armor'].includes(category.toLowerCase()) && item.character) ? '' : 'hide';
 
     let boundEntityAC = this.boundEntityAC;
     let {availableGear} = this.props;
@@ -176,11 +178,13 @@ class CreateParty extends Component {
             className={showEquipped}
             label=""
             defaultToggled={equipped}
-            name="equipped" 
+            name={'equipped_'+tmpItem._id} 
             onToggle={(e, v) => { 
               if(category.toLowerCase() === 'armor' || tmpItem.category.toLowerCase() === 'armor'){
                 _inventory = _inventory.map( invt => {
-                  invt.item.equipped = (invt.item._id === tmpItem._id) ? true : false;
+                  if(invt.category.toLowerCase() === 'armor'){
+                    invt.item.equipped = (invt.item._id === tmpItem._id && v) ? true : false;
+                  }
                   return invt;
                 });
                 boundEntityAC.updateEntityKey( 'inventory', _inventory );
@@ -188,18 +192,21 @@ class CreateParty extends Component {
               }
               if(category.toLowerCase() === 'shield' || tmpItem.category.toLowerCase() === 'shield'){
                 _inventory = _inventory.map( invt => {
-                  invt.item.equipped = (invt.item._id === tmpItem._id) ? true : false;
+                  if(invt.category.toLowerCase() === 'shield'){
+                    invt.item.equipped = (invt.item._id === tmpItem._id && v) ? true : false;
+                    tmpItem = invt.item;
+                  }
                   return invt;
                 });
                 boundEntityAC.updateEntityKey( 'inventory', _inventory );
-                boundEntityAC.updateEntityShield();
+                boundEntityAC.updateEntityShield(tmpItem);
               }
             }}
             
           />
         </TableRowColumn>
         <TableRowColumn style={{textAlign: 'center'}}>
-          <FloatingActionButton className="button" mini={true} secondary={true} disabled={bolNonAddable}
+          <FloatingActionButton className="button" mini={true} secondary={true} 
             onTouchTap={this._updateInventory.bind(this, tmpItem, 'add')}>
             <ContentAdd />
           </FloatingActionButton>
@@ -356,10 +363,9 @@ class CreateParty extends Component {
               }
               g = Variables.clone(gear);
               g.item.quantity = 1;
-console.log(g.category)
+
               return this.loadInventoryItem(g.item, index, g.category, inventory, spm.coin_purse);   
-    
-                                     
+                    
             })}
             {this.props.availableGear.map( (gear2, index) => {
               if(this.state.selectedCategory !== gear2.category){
@@ -385,10 +391,33 @@ console.log(g.category)
           label={'Save Party'}
           onTouchTap={this.handlePartySave}
         />
+        <RaisedButton primary={true}
+          label={'Save Member Inventory'}
+          style={{marginLeft:'20px'}}
+          onTouchTap={() => 
+            {
+              let updateSnackBar = this.updateSnackBar;
+              if(entity.uuid === undefined){
+                entity.uuid = uuidV4();
+              }
+              entitiesApi.saveEntity(entity)
+              .then( function(response){
+                updateSnackBar('Character saved.', true);
+              });
+            }
+          }
+        />
         <Snackbar
           open={this.state.snackbarOpen}
           message={this.state.snackbarMsg}
-          autoHideDuration={4000}    
+          autoHideDuration={4000}   
+          onRequestClose={() => {
+            let state = this.state;
+            state.snackbarMsg = '';          
+            state.snackbarOpen = false;
+            this.setState(state);
+            }
+          } 
         />
         <EntityTooltip entityField={this.entityField} hoverObj={this.props.entitiesState.hoverObj} mouse={this.props.entitiesState.mouse} />
       </div>

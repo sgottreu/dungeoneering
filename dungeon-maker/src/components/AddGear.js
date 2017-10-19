@@ -51,10 +51,6 @@ class AddGear extends Component {
     this.boundGearAC.updateKey( event.target.name, event.target.value );
   }
 
-  handleChooseGear(event, index) {
-    this.boundGearAC.changeGear( index );
-  }
-
   // handleRangeChange = (event) => {
   //   this.boundWeaponAC.updateRange( event.target.name, event.target.value );
   // }
@@ -164,17 +160,20 @@ class AddGear extends Component {
 
           </SelectField>
         </div>
-        <SelectField  floatingLabelText="Choose Gear" value={_i+1} 
-          onChange={(e, i) => { 
-            this.boundGearAC.changeGear( i ); 
+        <SelectField  floatingLabelText="Choose Gear" value={_gear._id} 
+          onChange={(e, i, v) => { 
+            let gear = Gear.findItem(v, availableGear);
+            this.boundGearAC.changeGear( gear ); 
           } 
         } >
-          <MenuItem key={0} value={0} primaryText="Add New Gear" />
-          {availableGear.map( (g, index) => {
-            if(this.state.selectedCategory && this.state.selectedCategory === g.category)
-            return (
-              <MenuItem key={index+1} value={index+1} primaryText={`${g.name}`} />
-            );
+          <MenuItem key={0} value={false} primaryText="Add New Gear" />
+          {Gear.findByCategory(this.state.selectedCategory, availableGear).map( (g, index) => {
+            if(this.state.selectedCategory && this.state.selectedCategory === g.category) {
+              return (
+                <MenuItem key={index+1} value={g._id} primaryText={`${g.name}`} />
+              );
+            }
+            return false;
           })}
         </SelectField>
         <h3>Add New Gear</h3>
