@@ -39,3 +39,9 @@
   width: 100%;
   display: inline-block;
 }
+
+.coinPurse .shortField, .inventoryWeight .shortField {
+  width: 65px !important;
+  margin-top: -15px;
+  float: right;
+}

@@ -215,11 +215,11 @@ export var removeInventoryCategory = (category, inventory) => {
 
 export var removeInventoryItem = (purchasedItem, category, inventory) => {
   let _i = inventory.findIndex((inv, i) => { return inv.item._id === purchasedItem._id});
+  let tmpItem = Variables.clone(purchasedItem);
+  tmpItem.quantity = (tmpItem.quantity === undefined) ? 1 : tmpItem.quantity;
+
   if(_i !== -1 && inventory[_i].item.quantity > 0){
-    if(purchasedItem.quantity === undefined){
-      purchasedItem.quantity = 1;
-    }
-    inventory[_i].item.quantity -= purchasedItem.quantity;
+    inventory[_i].item.quantity -= tmpItem.quantity;
   }
   return inventory;
 }

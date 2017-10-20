@@ -40,6 +40,8 @@ class CreateParty extends Component {
     this._updateInventory   = this._updateInventory.bind(this);
     this.handlePartySave    = this.handlePartySave.bind(this);
     this.handleNameChange   = this.handleNameChange.bind(this);
+    this.handleCoinChange   = this.handleCoinChange.bind(this);
+    this.handleEncumberedChange = this.handleEncumberedChange.bind(this);
 
     this.entityField = null;
 
@@ -89,8 +91,20 @@ class CreateParty extends Component {
 
   handleNameChange = (e) => {
     let party = this.props.partiesState.party;
-    party.name = e.target.value;
+    party.name = parseFloat(e.target.value, 10);
     this.boundPartyAC.updateParty(party);
+  }
+
+  handleCoinChange = (e) => {
+    let entity = Variables.clone(this.props.entitiesState.entity);
+    entity.coin_purse = e.target.value;
+    this.boundEntityAC.updateKey( 'entity', entity );
+  }
+
+  handleEncumberedChange = (e) => {
+    let entity = Variables.clone(this.props.entitiesState.entity);
+    entity.encumbered = e.target.value;
+    this.boundEntityAC.updateKey( 'entity', entity );
   }
 
   handleMemberBuyer = (e, value) =>
@@ -222,6 +236,7 @@ class CreateParty extends Component {
   render() {
     let { party, availableParties } = this.props.partiesState;
     let availableCharacters = this.props.availableCharacters;
+    let availableGear = this.props.availableGear;
     let { entity } = this.props.entitiesState;
 
     let spm = entity; //availableCharacters.find(member => { return member._id === selectedMember});
@@ -295,10 +310,10 @@ class CreateParty extends Component {
             </List>
           </div>
         </div>
-        <div style={ {height: '75px'} }>
+        <div style={ {height: '85px'} }>
           <div className="coinPurse">
             <Subheader>Coin Purse</Subheader>
-            <span className="value">{parseFloat(spm.coin_purse,10).toFixed(2)}</span>
+            <TextField className="shortField" type="text" value={parseFloat(spm.coin_purse, 10).toFixed(2)} name="coin_purse" onChange={this.handleCoinChange} />
           </div>
           <div className="carryingCapacity">
             <Subheader>Carrying Capacity</Subheader>
@@ -306,8 +321,8 @@ class CreateParty extends Component {
           </div>
           
           <div className="inventoryWeight">
-            <Subheader>Pack Weight</Subheader>
-            <span className="value">{parseInt(spm.encumbered,10)}</span>
+            <Subheader>Pack Weight</Subheader>          
+            <TextField className="shortField" type="text" value={parseInt(spm.encumbered,10)} name="encumbered" onChange={this.handleEncumberedChange} />
           </div>
 
 
@@ -361,8 +376,14 @@ class CreateParty extends Component {
               if(inventory === undefined){
                 return false;
               }
+              let _g = Gear.findItem(gear.item._id, availableGear);//Variables.clone(gear);
               g = Variables.clone(gear);
-              g.item.quantity = 1;
+              g.item.quantity = _g.quantity;
+
+              if(g.item.quantity === undefined){
+                g.item.quantity = 1;
+              }
+              
 
               return this.loadInventoryItem(g.item, index, g.category, inventory, spm.coin_purse);   
                     

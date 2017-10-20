@@ -325,18 +325,18 @@ app.post('/saveGear', function (req, res) {
 
 // ************* Admin ******************//
 app.get('/admin', function (req, res) {
+
+  
   // var query = { _type: {"$in": ["gear"] }};
-  // var query = { _type: "gear" };
+
 
 	// dungeon_grid.find(query).then(function(docs) {
 
 
   //   for(var x=0,len = docs.length;x<len;x++){
-  //     var _gear = JSON.parse( JSON.stringify( gear ) );
-
-
-
-  //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, _gear ).then(function (data) {
+  //     delete docs[x].inventory;
+  //     delete docs[x].inventory_log;
+  //     dungeon_grid.findOneAndUpdate( { "_id" : monk.id(docs[x]._id) }, docs[x] ).then(function (data) {
   //       console.log(`${docs[x].name} updated!`);
   //     }).catch(function(err){ 
   //       console.log(err);
@@ -345,6 +345,8 @@ app.get('/admin', function (req, res) {
 
   //   sendJSON(res, docs);
   // });
+
+
 });
 
 /*********** Global  *************/
