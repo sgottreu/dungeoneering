@@ -23,6 +23,7 @@ class AddGear extends Component {
     this.updateSnackBar = this.updateSnackBar.bind(this);
     this.loadRangeField = this.loadRangeField.bind(this);
     this.loadWeaponFields = this.loadWeaponFields.bind(this);
+    this.changeWeaponRange = this.changeWeaponRange.bind(this);
 
     this.weaponType = ['Melee', 'Ranged', 'Both'];
     this.weaponCategory = ['Simple', 'Military', 'Superior'];
@@ -32,6 +33,14 @@ class AddGear extends Component {
       snackbarOpen: false,
       snackbarMsg: '',
       selectedCategory: false
+    }
+
+    this.initialWeapon = {
+      category: '',
+      hands: '',
+      prof: 0,
+      range: false,
+      type: ''
     }
   }
 
@@ -51,83 +60,92 @@ class AddGear extends Component {
     this.boundGearAC.updateKey( event.target.name, event.target.value );
   }
 
-  // handleRangeChange = (event) => {
-  //   this.boundWeaponAC.updateRange( event.target.name, event.target.value );
-  // }
-
-  // handleCategoryChange = (event, index) => {    
-  //   this.boundWeaponAC.updateKey( 'category', this.weaponCategory[index]);
-  // }
-
-  // handleHandsChange = (event, index) => {
-  //   this.boundWeaponAC.updateKey( 'hands', this.hands[index]);
-  // }
-
-  // handleTypeChange = (event, index) => {
-  //   this.boundWeaponAC.updateKey( 'type', this.weaponType[index]);
-  // }
-
-  // handleProfChange = (event, index) => {
-  //   this.boundWeaponAC.updateKey( 'prof', index+2);
-  // }
+  changeWeaponRange = (range, event) => {
+    let _weapon = this.props.gear.weapon;
+    if(!_weapon.range){
+      _weapon.range = { low: 0, high: 0 };
+    }
+    _weapon.range[ range ] = event.target.value;
+    this.boundGearAC.updateKey( 'weapon', _weapon );
+  }
 
   loadWeaponFields(gear){
     let _weapon = gear.weapon;
+    let {boundGearAC, initialWeapon} = this;
+
     return (
       <div className="bottomAlign">
-        <SelectField className="bottomAlign" floatingLabelText="Category" value={_weapon.category}  onChange={this.handleCategoryChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Category" value={_weapon.category}  
+          onChange={(e,i,v) => {
+              let w = this.props.gear.weapon;
+              w = (w === undefined) ? initialWeapon : w;
+              w.category = v;
+              boundGearAC.updateKey( 'weapon', w );
+            }          
+          } 
+        >
           <MenuItem key={0} value={'Simple'} primaryText='Simple' />
           <MenuItem key={1} value={'Military'} primaryText='Military' />
           <MenuItem key={2} value={'Superior'} primaryText='Superior' />
         </SelectField>
-        <SelectField className="bottomAlign" floatingLabelText="Type" value={_weapon.type}  onChange={this.handleTypeChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Type" value={_weapon.type}  
+          onChange={(e,i,v) => {
+              let w = this.props.gear.weapon;
+              w = (w === undefined) ? initialWeapon : w;
+              w.type = v;
+              boundGearAC.updateKey( 'weapon', w );
+            }          
+          } 
+        >
           {this.weaponType.map( (type, index) => (
             <MenuItem key={index} value={type} primaryText={type} />
           ))}          
         </SelectField>
-        <SelectField className="bottomAlign" floatingLabelText="Hands" value={_weapon.hands}  onChange={this.handleHandsChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Hands" value={_weapon.hands} 
+          onChange={(e,i,v) => {
+              let w = this.props.gear.weapon;
+              w = (w === undefined) ? initialWeapon : w;
+              w.hands = v;
+              boundGearAC.updateKey( 'weapon', w );
+            }          
+          } 
+        >
           <MenuItem key={0} value={'One-Handed'} primaryText='One-Handed' />
           <MenuItem key={1} value={'Two-Handed'} primaryText='Two-Handed' />
         </SelectField>
-        <SelectField className="bottomAlign" floatingLabelText="Proficiency" value={_weapon.prof}  onChange={this.handleProfChange} >
+        <SelectField className="bottomAlign" floatingLabelText="Proficiency" value={_weapon.prof} 
+          onChange={(e,i,v) => {
+              let w = this.props.gear.weapon;
+              w = (w === undefined) ? initialWeapon : w;
+              w.prof = v;
+              boundGearAC.updateKey( 'weapon', w );
+            }          
+          } 
+        >
           <MenuItem key={0} value={2} primaryText='+2' />
           <MenuItem key={1} value={3} primaryText='+3' />
         </SelectField>
         <br/>
-        {this.loadRangeField(_weapon) }
+        {this.loadRangeField() }
       </div>
     );
   }
 
-  loadRangeField(weapon){
-    if((weapon.type === 'Melee')){
+  loadRangeField(){
+    if((this.props.gear.weapon.type === 'Melee' || this.props.gear.weapon.type === '')){
       return false;
     }
-    if(!weapon.range){
-      weapon.range = { low: 0, high: 0 };
+    if(!this.props.gear.weapon.range){
+      this.props.gear.weapon.range = { low: 0, high: 0 };
     }
     return (
       <div className="bottomAlign">
         <label style={{marginRight: '20px'}}>Range</label>
-        <TextField className="shortField" floatingLabelText="Low" type="number" value={weapon.range.low} name="low" 
-          onChange={() => {
-            let _weapon = this.props.gear.weapon;
-            if(!_weapon.range){
-              _weapon.range = { low: 0, high: 0 };
-            }
-            _weapon.range.low = event.target.value;
-            this.boundGearAC.updateKey( 'weapon', _weapon );
-          }} 
+        <TextField className="shortField" floatingLabelText="Low" type="number" value={this.props.gear.weapon.range.low} name="low" 
+          onChange={this.changeWeaponRange.bind(this, 'low')} 
         />
-        <TextField className="shortField" floatingLabelText="High" type="number" value={weapon.range.high} name="high" 
-          onChange={() => {
-            let _weapon = this.props.gear.weapon;
-            if(!_weapon.range){
-              _weapon.range = { low: 0, high: 0 };
-            }
-            _weapon.range.high = event.target.value;
-            this.boundGearAC.updateKey( 'weapon', _weapon );
-          }}
+        <TextField className="shortField" floatingLabelText="High" type="number" value={this.props.gear.weapon.range.high} name="high" 
+          onChange={this.changeWeaponRange.bind(this, 'high')} 
         />
       </div>
     );
@@ -166,9 +184,9 @@ class AddGear extends Component {
             this.boundGearAC.changeGear( gear ); 
           } 
         } >
-          <MenuItem key={0} value={false} primaryText="Add New Gear" />
+          <MenuItem key={0} value={null} primaryText="Add New Gear" />
           {Gear.findByCategory(this.state.selectedCategory, availableGear).map( (g, index) => {
-            if(this.state.selectedCategory && this.state.selectedCategory === g.category) {
+            if(!this.state.selectedCategory || this.state.selectedCategory === g.category) {
               return (
                 <MenuItem key={index+1} value={g._id} primaryText={`${g.name}`} />
               );

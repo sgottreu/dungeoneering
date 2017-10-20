@@ -29,7 +29,7 @@ const initialState = {
       "category": "",
       "type": "",
       "prof": false,
-      "range": false,
+      "range": { low: 0, high: 0 },
       "hands": false
     }
   }
@@ -70,10 +70,10 @@ const gearReducer = function(state = initialState, action) {
 
     case types.UPDATE_EXISTING_GEAR:
       let availableGear = state.availableGear;
-      if(!action.gear.id){
+      if(!action.gear._id){
         availableGear.push(action.gear);
       } else {
-        let _i = availableGear.findIndex( (grid, i) => { return grid._id === action.id });
+        let _i = availableGear.findIndex( (grid, i) => { return grid._id === action.action.gear._id });
         if(_i > -1){
           availableGear[_i] = action.gear; 
         }
