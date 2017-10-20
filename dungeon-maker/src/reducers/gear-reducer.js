@@ -73,7 +73,7 @@ const gearReducer = function(state = initialState, action) {
       if(!action.gear._id){
         availableGear.push(action.gear);
       } else {
-        let _i = availableGear.findIndex( (grid, i) => { return grid._id === action.action.gear._id });
+        let _i = availableGear.findIndex( (grid, i) => { return grid._id === action.gear._id });
         if(_i > -1){
           availableGear[_i] = action.gear; 
         }

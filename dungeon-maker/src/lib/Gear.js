@@ -29,3 +29,11 @@ export var getEntityArmor = (inventory) => {
     return invt.category.toLowerCase() === 'armor' && invt.item.equipped 
   });
 };
+
+export var mergeWeaponData = (gear) => {
+  return gear.map(g => {
+    Object.keys(g.weapon).map(w => {
+      gear['weapon_'+w] = JSON.parse(JSON.stringify(g.weapon[w]));
+    });
+  });
+}

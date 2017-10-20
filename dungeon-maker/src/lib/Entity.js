@@ -159,8 +159,8 @@ export var calcRemainingPoints = (points, entity, target) => {
 }
 
 export var checkCarryingCapacity = (entity, item) => {
-  let carrying = entity.abilities.strength.score * 10;
-  let final = entity.encumbered + parseFloat(item.weight, 10);
+  let carrying = parseInt(entity.abilities.strength.score,10) * 10;
+  let final = parseFloat(entity.encumbered,10) + parseFloat(item.weight, 10);
   if(final > carrying){
     return false;
   }
@@ -177,11 +177,6 @@ export var checkCoinPurse = (coin_purse, item) => {
 export var updateEncumbrance = (entity, item, action) => {
   if(action === 'add'){
     if(!checkCarryingCapacity(entity, item)){
-      return entity.encumbered;
-    }
-    let carrying = entity.abilities.strength.score * 10;
-    let final = entity.encumbered + parseFloat(item.weight, 10);
-    if(final > carrying){
       return entity.encumbered;
     }
     entity.encumbered += parseFloat(item.weight, 10);

@@ -157,8 +157,13 @@ class CreateParty extends Component {
     this.boundPartyAC.updatePartyMember(character._id);
   }
 
-  loadInventoryItem = (item, index, category, inventory, coin_purse) => {
+  loadInventoryItem = (source, item, index, category, inventory, coin_purse) => {
     let tmpItem = Variables.clone(item);
+
+    if(source === 'character'){
+      tmpItem = Gear.findItem(item._id, this.props.availableGear);//Variables.clone(gear);
+    }
+
     tmpItem.price = parseFloat(tmpItem.price, 10);
     tmpItem.quantity = (tmpItem.quantity !== undefined) ? tmpItem.quantity : 1;
     // console.log(item);
@@ -322,7 +327,7 @@ class CreateParty extends Component {
           
           <div className="inventoryWeight">
             <Subheader>Pack Weight</Subheader>          
-            <TextField className="shortField" type="text" value={parseInt(spm.encumbered,10)} name="encumbered" onChange={this.handleEncumberedChange} />
+            <TextField className="shortField" type="text" value={parseFloat(spm.encumbered,10)} name="encumbered" onChange={this.handleEncumberedChange} />
           </div>
 
 
@@ -385,10 +390,10 @@ class CreateParty extends Component {
               }
               
 
-              return this.loadInventoryItem(g.item, index, g.category, inventory, spm.coin_purse);   
+              return this.loadInventoryItem('character', g.item, index, g.category, inventory, spm.coin_purse);   
                     
             })}
-            {this.props.availableGear.map( (gear2, index) => {
+            {availableGear.map( (gear2, index) => {
               if(this.state.selectedCategory !== gear2.category){
                 if(this.state.selectedCategory){
                   return false;
@@ -399,10 +404,14 @@ class CreateParty extends Component {
               let inventory = spm.inventory.find(inv => { 
                 return inv.item.name === gear2.name
               });
+
               if(inventory !== undefined){
-                return false;
+                if(inventory.item.quantity > 0){
+                  return false;
+                }
+                
               }
-              return this.loadInventoryItem(gear2, index, gear2.category, inventory, spm.coin_purse);   
+              return this.loadInventoryItem('shop', gear2, index, gear2.category, inventory, spm.coin_purse);   
             })}
           </TableBody>
         </Table>
