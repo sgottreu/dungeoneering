@@ -30,6 +30,19 @@ export var getEntityArmor = (inventory) => {
   });
 };
 
+export var regularShields = (availableGear) => {
+  let regularShields = availableGear.filter(item => {
+      return item.category.toLowerCase() === 'shield' && item.rare === false;
+  });
+  return regularShields;
+};
+
+export var getEntityShield = (inventory) => {
+  return inventory.find( invt => { 
+    return invt.category.toLowerCase() === 'shield' && invt.item.equipped 
+  });
+};
+
 export var mergeWeaponData = (gear) => {
   return gear.map(g => {
     Object.keys(g.weapon).map(w => {

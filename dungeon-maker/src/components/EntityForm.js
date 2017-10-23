@@ -19,7 +19,7 @@ import Chip from 'material-ui/Chip';
 import Snackbar from 'material-ui/Snackbar';
 import Avatar from 'material-ui/Avatar';
 import uuidV4  from 'uuid/v4';
-// import SvgIcon from 'material-ui/SvgIcon';
+import Toggle from 'material-ui/Toggle';
 
 import '../css/EntityForm.css';
 
@@ -66,6 +66,8 @@ class EntityForm extends Component {
     this.handleSelectedEntity = this.handleSelectedEntity.bind(this);
     this.selectWeapon = this.selectWeapon.bind(this);
     this.selectCharacterPower = this.selectCharacterPower.bind(this);
+
+    this.loadShieldField = this.loadShieldField.bind(this);
 
     this.updateSnackBar = this.updateSnackBar.bind(this);
 
@@ -358,6 +360,58 @@ class EntityForm extends Component {
     );
   }
 
+  loadShieldField = () => {
+    let {entity} = this.props.entitiesState;
+
+    if(this.EntityType === 'character'){
+      return false;
+    }
+
+    let regularShields = Gear.regularShields(this.props.availableGear);
+    
+    let entityShield = Gear.getEntityShield (entity.inventory);
+    if(entityShield === undefined){
+      entityShield = {item: {_id: false}};
+    }
+    let boundEntityAC = this.boundEntityAC;
+
+    return(
+      <div className="shields"> 
+        <Subheader>Shield</Subheader> 
+        {regularShields.map( (shield, index) => { 
+          return ( 
+            <Toggle key={index} 
+              label={shield.name} 
+              toggled={ entityShield.item._id === shield._id } 
+              onToggle={(e, v) => { 
+                let bolFound = false;
+                shield.equipped = (v) ? true : false;
+                let _inventory = entity.inventory.map( invt => {
+                  if(invt.category.toLowerCase() === 'shield'){
+                    if(invt.item._id === shield._id && v){
+                      invt.item.equipped = true;
+                      bolFound = true;
+                    } else {
+                      invt.item.equipped = false;
+                    }
+                  }
+                  return invt;
+                });
+                if(!bolFound){
+                  boundEntityAC.updateEntityInventory(entity, shield, 'add');
+                } else {
+                  boundEntityAC.updateEntityKey( 'inventory', _inventory );
+                }
+                boundEntityAC.updateEntityShield(shield);
+              }}
+            /> 
+          ); 
+          })} 
+      </div> 
+
+    );
+  }
+
 	render() {
     let {entity, points} = this.props.entitiesState;
     let abilities = entity.abilities;
@@ -453,7 +507,7 @@ class EntityForm extends Component {
           {this.loadWeaponsField()}
         </div>
         <br/>
-        
+        {this.loadShieldField()}
         {(this.EntityType === 'monster') ? this.loadPowersForm() : ''}   
         <br/><br/>
         <RaisedButton primary={true}
