@@ -200,6 +200,30 @@ class EntityForm extends Component {
     this.boundEntityAC.updateEntityCharacterPower(power._id);
   }
 
+  loadArmorField(){
+    let {entity} = this.props.entitiesState;
+
+    let entityArmor = Gear.getEntityArmor(entity.inventory);
+    entityArmor = (entityArmor === undefined) ? { item: {_id : false }} : entityArmor;
+
+    let _armor = Gear.regularArmor(this.props.availableGear);
+
+    return (
+      <SelectField className="bottomAlign" floatingLabelText="Armor" value={entityArmor.item._id} 
+        onChange={(e,i,v) => {
+          let a = Gear.findItem(v, this.props.availableGear);
+          if(entity._type === 'monster'){
+            this.boundEntityAC.updateEntityArmor( v, a );
+          }
+        }} 
+      >
+        <MenuItem key={-1} value={false} primaryText="None" />
+        {_armor.map( (armor, index) => (
+          <MenuItem key={index} value={armor._id} primaryText={`${armor.name}`} />
+        ))}
+      </SelectField>
+    );
+  }
 
   loadRoleField(){
     let {entity} = this.props.entitiesState;
@@ -461,7 +485,7 @@ class EntityForm extends Component {
 
     let selectedStyle = Variables.getSelectListStyle(this.props.selectedEntity, saveEntities, true);
 
-    let _armor = Gear.regularArmor(this.props.availableGear);
+    
     let entityArmor = Gear.getEntityArmor(entity.inventory);
     entityArmor = (entityArmor === undefined) ? {_id: false} : entityArmor.item;
 
@@ -496,19 +520,7 @@ class EntityForm extends Component {
             <MenuItem key={index} value={index} primaryText={`${size.label}`} />
           ))}
         </SelectField>
-        <SelectField className="bottomAlign" floatingLabelText="Armor" value={entityArmor._id} 
-          onChange={(e,i,v) => {
-            let entityArmor = Gear.findItem(v, this.props.availableGear);
-            if(entity._type === 'monster'){
-              this.boundEntityAC.updateEntityArmor( v, entityArmor );
-            }
-          }} 
-        >
-          <MenuItem key={-1} value={false} primaryText="None" />
-          {_armor.map( (armor, index) => (
-            <MenuItem key={index} value={armor._id} primaryText={`${armor.name}`} />
-          ))}
-        </SelectField>
+        {(this.EntityType === 'monster') ? this.loadArmorField() : ''}
         <br/>
         <TextField className="shortField" floatingLabelText="Level" type="number" value={entity.level} name="level" onChange={this.handleLevelChange} />
         {(this.EntityType === 'monster') ? this.loadXPField() : ''}
