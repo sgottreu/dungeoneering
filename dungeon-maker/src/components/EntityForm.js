@@ -96,7 +96,26 @@ class EntityForm extends Component {
   }
 
   selectWeapon = (id) => {
-    this.boundEntityAC.updateEntityWeapon(id);
+    // this.boundEntityAC.updateEntityWeapon(id);
+
+    let item = Gear.findItem(id, this.props.availableGear);
+
+    let _this = this;
+    let { entity } = this.props.entitiesState;
+    let state = this.state;
+
+    let _foundItem = entity.inventory.find(function(_item) { 
+      return _item.item._id === id && _item.item.quantity > 0
+    });
+
+    let step = (_foundItem === undefined) ? 'add' : 'remove';
+
+    this.boundEntityAC.updateEntityInventory(entity, item, step);
+    state.snackbarMsg = 'Added to Inventory';   
+    state.snackbarOpen = true;
+
+    this.setState(state);
+
   }
 
   handleChange = (event) => {
@@ -323,11 +342,27 @@ class EntityForm extends Component {
   loadWeaponsField(){
     let {entity} = this.props.entitiesState;
     let listStyle = { height: '150px', width: '250px', overflowY: 'scroll' };
+    let {availableWeapons} = this.props;
 
-    let selWeapons = this.props.availableWeapons.filter(function(val){ 
-      return entity.weapons.includes(val._id);
+    let selWeapons = availableWeapons.filter(function(val){ 
+      return entity.inventory.find(function(_item) { 
+        return _item.item._id === val._id && _item.item.quantity > 0
+      });
+
+      // return entity.weapons.includes(val._id);
     });
-    let remWeapons = this.props.availableWeapons.filter(function(val){ return !entity.weapons.includes(val._id) });
+    let remWeapons = this.props.availableWeapons.filter(function(val){ 
+      let _found = entity.inventory.find(function(_item) { 
+        let quantity = (_item.item === undefined) ? 0 : _item.item.quantity;
+        return val._id === _item.item._id && quantity >= 1;
+      });  
+      if(_found === undefined) {
+        return true;
+      } else {
+        return false;
+      }
+      return true;
+    });
     let {boundEntityAC} = this.props;
     let _this = this;
     return(
@@ -335,23 +370,27 @@ class EntityForm extends Component {
         <Subheader>Weapons</Subheader>
         <List className="EntityWeapons" style={listStyle} >
           {selWeapons.concat(remWeapons).map( (weapon, index) => {
-            let _found = entity.weapons.findIndex(function(w) { 
-              return weapon._id === w
+            let _found = entity.inventory.findIndex(function(w) { 
+              return w.item._id === weapon._id && w.item.quantity > 0
             });
             let className = (_found > -1) ? ' active' : '';
-            let weapon_icon = (weapon.type !== undefined) ? `weapon_${weapon.type.toLowerCase()}` : '';
+            let weapon_icon = (weapon.weapon.type !== undefined) ? `weapon_${weapon.weapon.type.toLowerCase()}` : '';
             //
+
+            {/* onMouseEnter={(e,i,v) => { 
+                  boundEntityAC.updateMouseover(weapon, 'weapon', e) 
+                } } 
+                onMouseOut={(e,i,v) => { 
+                  boundEntityAC.updateMouseover(false, false, e) 
+                } } */}
+
+
             return (
               <ListItem className={className} key={index}  
                 onTouchTap={_this.selectWeapon.bind(_this, weapon._id)}
                 primaryText={<div >{weapon.name}</div>}  
                 leftAvatar={<Avatar className={'icon '+weapon_icon} />}
-                onMouseEnter={(e,i,v) => { 
-                  boundEntityAC.updateMouseover(weapon, 'weapon', e) 
-                } } 
-                onMouseOut={(e,i,v) => { 
-                  boundEntityAC.updateMouseover(false, false, e) 
-                } }
+
               />
             );
           })}
@@ -504,7 +543,7 @@ class EntityForm extends Component {
         <div className="Lists">
           {this.loadEntityIconField()}
           {this.loadPowersField()}
-          {this.loadWeaponsField()}
+          {(this.EntityType === 'monster') ? this.loadWeaponsField() : ''}
         </div>
         <br/>
         {this.loadShieldField()}

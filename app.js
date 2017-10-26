@@ -267,20 +267,20 @@ app.post('/savePower', function (req, res) {
 
 app.get('/findWeapons', function (req, res) {
   console.log('Finding Weapons');
-  dungeon_grid.find({ _type: 'weapon' }, 
+  dungeon_grid.find({ _type: 'gear', "category": "Weapons" }, 
     { sort : { name : 1 } }).then(function(docs) {
     console.log('Found '+docs.length+' weapons');
     sendJSON(res, docs);
   });
 });
 
-app.post('/saveWeapon', function (req, res) {
-  console.log('Saving Weapon');
+// app.post('/saveWeapon', function (req, res) {
+//   console.log('Saving Weapon');
   
-  var payload = JSON.parse(JSON.stringify(req.body));
-  payload._type = 'weapon';
-  _Save(req, res, payload);
-});
+//   var payload = JSON.parse(JSON.stringify(req.body));
+//   payload._type = 'weapon';
+//   _Save(req, res, payload);
+// });
 
 // ************* Gear ******************//
 
