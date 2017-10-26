@@ -397,11 +397,11 @@ class RunEncounter extends Component {
       } else {
         // Add Entity to new slot
         state = this.setEntity(e, state, slot);
-        // if(state.currentActor.uuid === state.selectedEntity.uuid && state.currentActor.slot){
+        if(state.currentActor.uuid === state.selectedEntity.uuid && state.currentActor.slot){
           // state.slots[ state.currentActor.slot ].overlays.entity = false;
           // state.slots[ state.selectedEntity.slot ].overlays.entity = false;
-          // state.currentActor.slot = slot;
-        // }
+          state.currentActor.slot = slot;
+        }
         
         // Remove Entity from old slot
         state = this.setEntity(e, state, state.moving);
