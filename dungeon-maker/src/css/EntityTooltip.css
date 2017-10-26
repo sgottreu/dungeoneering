@@ -10,6 +10,18 @@
     z-index: 9999;
 }
 
+.entityStatBox .EntityTooltip {
+    width: 250px !important;
+}
+
+.entityStatBox .EntityTooltip .flex-horiz {
+    width: 200px !important;
+}
+
+.entityStatBox .EntityTooltip .flex-vert {
+    height: 115px !important;
+}
+
 .tooltip_icon {
     width: 40px !important;
     height: 40px !important;

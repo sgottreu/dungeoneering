@@ -627,10 +627,13 @@ class RunEncounter extends Component {
                 })
               }
             </div>
+            <div className="entityStatBox">
+              <EntityTooltip hoverObj={this.state.hoverObj} combatList={combatList} monster={availableMonsters[0]}/>
 
+            </div>
           </div>
           
-           <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} combatList={combatList}/>
+           
            <PowerTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} powerField={this.state.powerField} />
            {this.state.showAttackDialog ? this.loadAttackDialog() : '' }
         </div>
