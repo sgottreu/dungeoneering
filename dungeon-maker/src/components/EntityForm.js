@@ -385,10 +385,10 @@ class EntityForm extends Component {
       } else {
         return false;
       }
-      return true;
     });
-    let {boundEntityAC} = this.props;
+    
     let _this = this;
+
     return(
       <div className="container" ref={(list) => { this.weaponField = list; }}>
         <Subheader>Weapons</Subheader>
@@ -399,15 +399,6 @@ class EntityForm extends Component {
             });
             let className = (_found > -1) ? ' active' : '';
             let weapon_icon = (weapon.weapon.type !== undefined) ? `weapon_${weapon.weapon.type.toLowerCase()}` : '';
-            //
-
-            {/* onMouseEnter={(e,i,v) => { 
-                  boundEntityAC.updateMouseover(weapon, 'weapon', e) 
-                } } 
-                onMouseOut={(e,i,v) => { 
-                  boundEntityAC.updateMouseover(false, false, e) 
-                } } */}
-
 
             return (
               <ListItem className={className} key={index}  
@@ -484,10 +475,6 @@ class EntityForm extends Component {
     let formClassName = (this.EntityType === 'monster') ? 'AddMonster' : 'AddCharacter';
 
     let selectedStyle = Variables.getSelectListStyle(this.props.selectedEntity, saveEntities, true);
-
-    
-    let entityArmor = Gear.getEntityArmor(entity.inventory);
-    entityArmor = (entityArmor === undefined) ? {_id: false} : entityArmor.item;
 
 		return (
 			<div className={`EntityForm inset ${formClassName}`}>

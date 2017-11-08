@@ -170,8 +170,6 @@ class CreateParty extends Component {
     inventory =  (inventory === undefined || inventory.item === undefined) ? inventory : inventory.item;
     let quantity = (inventory !== undefined && inventory.quantity !== undefined) ? inventory.quantity : 0;
     let equipped = (inventory !== undefined && inventory.equipped !== undefined) ? inventory.equipped : false;
-    let bolNonAddable = false; //(['shield'].includes(category)) ? true : false;
-    bolNonAddable = (!bolNonAddable && tmpItem.price > coin_purse) ? true : bolNonAddable;
 
     let totalWeight = tmpItem.weight * (quantity/tmpItem.quantity);
 
@@ -180,7 +178,7 @@ class CreateParty extends Component {
     let showEquipped = (['shield', 'armor'].includes(category.toLowerCase()) && item.character) ? '' : 'hide';
 
     let boundEntityAC = this.boundEntityAC;
-    let {availableGear} = this.props;
+
     let _inventory = this.props.entitiesState.entity.inventory;
     _inventory = (_inventory === undefined) ? [] : _inventory;
 
@@ -281,7 +279,7 @@ class CreateParty extends Component {
                         }
                         boundEntityAC.updateMouseover(this.props.entitiesState.entity, 'entity', e) } 
                       } 
-                      onMouseOut ={(e,i,v) => { 
+                      onMouseOut={(e,i,v) => { 
                         boundEntityAC.updateMouseover(false, false, e) } 
                       }
                       label={

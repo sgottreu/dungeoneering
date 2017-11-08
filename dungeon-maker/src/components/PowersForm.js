@@ -251,7 +251,7 @@ class PowersForm extends Component {
 	render(){
     let { entityType, weapons, powersState } = this.props;
 
-    let { power, current_power } = powersState;
+    let { power } = powersState;
 		return (
       
 			<div 

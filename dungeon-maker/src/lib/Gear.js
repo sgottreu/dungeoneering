@@ -1,5 +1,3 @@
-import {Variables} from '../lib/Variables';
-
 //************ Variables *******************/
 
 export var GearCategories = ["Adventurer Kit", "Ammunition", "Equipment", "Armor", "Shield", "Weapons"];
@@ -47,6 +45,8 @@ export var mergeWeaponData = (gear) => {
   return gear.map(g => {
     Object.keys(g.weapon).map(w => {
       gear['weapon_'+w] = JSON.parse(JSON.stringify(g.weapon[w]));
+      return w;
     });
+    return g;
   });
 }
