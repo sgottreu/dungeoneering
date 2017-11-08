@@ -11,13 +11,24 @@ class DungeonGridSlot extends Component {
     let className = 'DungeonGridSlot ';
     className += (slot.tileType === undefined || slot.tileType === '') ? '' : slot.tileType;
 
-    if(onAddTile === undefined){
-      onAddTile = () => { return false };
-    }
+    // if(onAddTile === undefined){
+    //   onAddTile = () => { return false };
+    // }
 
     return (
       <div ref={'tile'+slot.id} id={'_slot'+slot.id}
-        className={className} data-slot={id} onClick={ (e,i,v) => { onAddTile(id, e) } }>&nbsp;
+        className={className} data-slot={id} 
+        onClick={ 
+          (e,i,v) => { 
+            if(onAddTile !== undefined){
+              onAddTile(id, e) 
+            } else {
+              if(slot.chest !== undefined && slot.chest){
+                console.log(slot);
+              }
+            }
+          }
+        }>&nbsp;
         <EntityTile 
           slot={slot}
           entity={entity}

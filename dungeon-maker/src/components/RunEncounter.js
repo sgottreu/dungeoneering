@@ -30,7 +30,7 @@ class RunEncounter extends Component {
     this.setWeaponField = this.setWeaponField.bind(this);
     this.selectTile = this.selectTile.bind(this);
     this.handleMyEvent = this.handleMyEvent.bind(this);
-    this.addTile = this.addTile.bind(this);
+    // this.addTile = this.addTile.bind(this);
     this.chooseDungeon = this.chooseDungeon.bind(this);
     // this.chooseEncounter = this.chooseEncounter.bind(this);
     this.setEncounter = this.setEncounter.bind(this);
@@ -120,7 +120,7 @@ class RunEncounter extends Component {
     this.setState(state);
   }
 
-  addTile(slot) {}
+  // addTile(slot) {}
 
   openDrawer = (name, status) => {
     let state = this.state;
@@ -547,7 +547,7 @@ class RunEncounter extends Component {
 	      <div className="RunEncounter">
           <DungeonGrid slots={slots} 
             availableMonsters={availableMonsters}
-            onAddTile={this.addTile} 
+
             selectedDungeon={selectedDungeon} 
             onSetDungeon={this.setDungeon} 
             combatList={combatList}

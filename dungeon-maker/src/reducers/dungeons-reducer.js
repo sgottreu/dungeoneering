@@ -102,12 +102,12 @@ const dungeonsReducer = function(state = initialState, action) {
       slots[ s ].left = action.event.offsetLeft;
       slots[ s ].top = action.event.offsetTop;
 
-      let props = ['entrance', 'exit', 'door'];
+      let props = ['entrance', 'exit', 'door', 'chest'];
 
       for(var x=0;x<props.length;x++){
-        slots[ s ][ props[ x] ] = false;
-        if(tileType[ props[ x] ]) {
-          slots[ s ][ props[ x] ] = true;
+        slots[ s ][ props[ x ] ] = false;
+        if(tileType[ props[ x ] ]) {
+          slots[ s ][ props[ x ] ] = true;
         }
       }
 
