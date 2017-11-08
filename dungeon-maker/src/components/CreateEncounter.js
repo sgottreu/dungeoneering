@@ -37,6 +37,7 @@ class CreateEncounter extends Component {
     this.handleObjMouseOver = this.handleObjMouseOver.bind(this);
     this.handleDungeonChoice = this.handleDungeonChoice.bind(this);
     this.getDroppedItem = this.getDroppedItem.bind(this);
+    this.removeDungeon = this.removeDungeon.bind(this);
     this.moveItem = this.moveItem.bind(this);
 
     this.updateSnackBar = this.updateSnackBar.bind(this);
@@ -135,6 +136,10 @@ class CreateEncounter extends Component {
     this.boundEncounterAC.updateEncounterDungeons( item._id );
   }
 
+  removeDungeon = (item) => {
+    this.boundEncounterAC.updateEncounterDungeons( item );
+  }
+
   updateSnackBar = (msg, open=false) => {
     this.setState( { snackbarMsg: msg, snackbarOpen: open } );
   }
@@ -175,7 +180,12 @@ class CreateEncounter extends Component {
             );
           })}
         </List>
-        <DroppableList onMoveItem={this.moveItem} availableDungeons={availableDungeons} encounterDungeons={encounter.dungeons} onHandleDungeonChoice={this.handleDungeonChoice}/>
+        <DroppableList onMoveItem={this.moveItem} 
+          availableDungeons={availableDungeons} 
+          encounterDungeons={encounter.dungeons} 
+          onHandleDungeonChoice={this.handleDungeonChoice}
+          onRemoveDungeon={this.removeDungeon}
+        />
         <EntityTooltip hoverObj={this.state.hoverObj} mouse={this.state.mouse} />
         <br/>
 				
